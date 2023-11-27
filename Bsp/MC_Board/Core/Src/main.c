@@ -28,7 +28,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "Interface.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -106,7 +106,7 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-
+  Setup();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -116,9 +116,10 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
-		HAL_UART_Transmit_IT(&huart5, "Hello\r\n", 7);
-		HAL_Delay(1000);
+    HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+    HAL_UART_Transmit_IT(&huart5, "Hello\r\n", 7);
+    Loop();
+    HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
