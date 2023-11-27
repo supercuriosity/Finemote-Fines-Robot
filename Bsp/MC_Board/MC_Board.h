@@ -11,6 +11,6 @@
 #include "gpio.h"
 
 
-#define SerialHost huart4
-#define SerialUser huart5
+#define Serial_Host huart4
+#define Serial_User huart5
 #endif //FINEMOTE_MC_BOARD_H
