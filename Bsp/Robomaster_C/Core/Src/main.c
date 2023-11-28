@@ -122,9 +122,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_UART_Transmit_IT(&huart6, "Hello\r\n", 7);
     Loop();
-    HAL_Delay(1000);
   }
   /* USER CODE END 3 */
 }
