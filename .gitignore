@@ -10,7 +10,7 @@
 # MDK-ARM
 .MDK-ARM
 *DebugConfig*
-*RTE*
+RTE_Components.h
 *uvguix*
 
 *.o
@@ -23,7 +23,6 @@
 *.map
 *.htm
 *.lnp
-*.sct
 *.dep
 *.lst
 *.scvd
