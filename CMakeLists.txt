@@ -123,8 +123,10 @@ include_directories(
         Bsp/${BOARD_NAME}/Core/Inc
 
         Interface
-        Devices/*
-        #Services/*
+        Devices
+        Algorithms
+        Services
+        Components
 )
 
 string(TOUPPER ${BOARD_NAME} UPPER_BOARD_NAME)
@@ -140,7 +142,9 @@ file(GLOB_RECURSE SOURCES
 file(GLOB_RECURSE SOURCES ${SOURCES}
         "Interface/*.*"
         "Devices/*.*"
-        #"Services/*.*"
+        "Algorithms/*.*"
+        "Services/*.*"
+        "Components/*.*"
         )
 
 # 将由 CubeMX 生成的 GCC 编译环境中的会干扰ARMCC环境的文件，放在 EXCLUDE_SRCS 自定义列表中
