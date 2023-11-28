@@ -5,7 +5,9 @@
 .vscode/
 
 # CLion
-.idea/
+.idea/*
+!.idea/copyright/
+!.idea/runConfigurations/
 
 # MDK-ARM
 .MDK-ARM
