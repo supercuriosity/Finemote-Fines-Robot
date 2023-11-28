@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F446xx,__MC_BOARD</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../../../Interface</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..;../../../Interface;../../../Services</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -583,6 +583,16 @@
               <FileName>Interface.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\Interface\Interface.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Services/MultiMedia</GroupName>
+          <Files>
+            <File>
+              <FileName>BeepMusic.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Services\MultiMedia\BeepMusic.cpp</FilePath>
             </File>
           </Files>
         </Group>

@@ -19,4 +19,7 @@
 #define Serial_User huart4
 #define Serial_Host huart5
 
+#define TIM_Buzzer htim2
+#define TIM_Buzzer_Channel TIM_CHANNEL_4
+
 #endif //FINEMOTE_MC_BOARD_H
