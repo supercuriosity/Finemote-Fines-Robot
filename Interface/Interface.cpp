@@ -8,14 +8,16 @@
 
 #include "MultiMedia/BeepMusic.h"
 
+void Task1();
+void Task2();
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 void Setup() {
-    HAL_TIM_Base_Start_IT(&htim7);
+    HAL_TIM_Base_Start_IT(&TIM_Control);
     HAL_TIM_PWM_Start(&TIM_Buzzer,TIM_Buzzer_Channel);
-    BeepMusic::MusicChannels[0].Play(0);
 }
 
 void Loop() {
@@ -29,19 +31,28 @@ void Loop() {
 #endif
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-    if(htim == &htim7) {
-        BeepMusic::MusicChannels[0].BeepService();
-        static int cnt = 0;
-        cnt++;
-        if(cnt > 1000) {
-            cnt = 0;
-            HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
-        }
+    if(htim == &TIM_Control) {
+        Task1();
+        Task2();
+
 
         if(GPIO_PIN_RESET == HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15)) {
             static int index = 1;
             BeepMusic::MusicChannels[0].Play(index++);
             index %= 3;
         }
+    }
+}
+
+void Task1() {
+    BeepMusic::MusicChannels[0].BeepService();
+}
+
+void Task2() {
+    static int cnt = 0;
+    cnt++;
+    if(cnt > 1000) {
+        cnt = 0;
+        HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
     }
 }

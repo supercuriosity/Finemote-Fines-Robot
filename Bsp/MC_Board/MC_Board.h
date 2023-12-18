@@ -22,4 +22,6 @@
 #define TIM_Buzzer htim2
 #define TIM_Buzzer_Channel TIM_CHANNEL_4
 
+#define TIM_Control htim7
+
 #endif //FINEMOTE_MC_BOARD_H
