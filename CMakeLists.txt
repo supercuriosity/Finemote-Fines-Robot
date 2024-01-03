@@ -10,7 +10,6 @@ set(PROJECT_NAME FineMote)
 # 2. 设定芯片类型
 # 设定芯片类型，必须正确以 -mcpu 的参数规则命名，后边的编译参数会调用这个值
 set(CMAKE_SYSTEM_PROCESSOR cortex-m4)
-set(BOARD_NAME MC_Board)
 
 ############################################################
 # 1. 指定编译器和链接器，避免使用默认的 gcc
@@ -35,11 +34,11 @@ set(CMAKE_CXX_LINK_EXECUTABLE armlink.exe)
 
 
 #*******************************************************************************************#
-# 2. 获取芯片地址描述信息
+# 2. 此部分移动到子目录中(获取芯片地址描述信息)
 # 获取当前 MCU 的 section 描述，及存储空间和起始地址的描述（注意：需要先用 keil 打开编译一下当前项目才能生成）
 # 设置Sections脚本路径,CubeMX生成 MDK 后先编译一下，就会在MDK-ARM 目录下生成工程名命名的文件夹
 # 在那个目录里会生成以项目名命名的sct文件。 由于在本地调用，不需要加 global 全局变量标记，更简洁
-set(SECTIONS_SCRIPT_PATH ${CMAKE_HOME_DIRECTORY}/Bsp/${BOARD_NAME}/MDK-ARM/${BOARD_NAME}/${BOARD_NAME}.sct)
+# set(SECTIONS_SCRIPT_PATH ${CMAKE_HOME_DIRECTORY}/Bsp/${BOARD_NAME}/MDK-ARM/${BOARD_NAME}/${BOARD_NAME}.sct)
 
 
 #********************************************************************************************#
@@ -87,23 +86,16 @@ set(CMAKE_ASM_FLAGS_INIT "${ASM_TARGET_FLAG} ${COMPILE_RULE_FLAG} \
 #set(CMAKE_ASM_FLAGS_INIT "${ASM_TARGET_FLAG} --cpu=Cortex-M3")
 
 
-# 设置链接器选项
-# 这些参数再 ARMCC 文档里么有，但 MDK 的 link 分页有，
-# 使用忽略所有警告的配置时没有 --map 及其之后的内容， 这里根据需要保留了一些信息，在 demo.map 中可以看到
-set(CMAKE_EXE_LINKER_FLAGS_INIT " \
-    ${LINKER_TARGET_FLAG} \
-    --strict \
-    --scatter ${SECTIONS_SCRIPT_PATH} \
-    --info sizes --info totals --info unused --info veneers \
-    --summary_stderr \
-    --info summarysizes "
-        )
-
 
 # project settings
 project(${PROJECT_NAME} C CXX ASM)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 99)
+
+# 设置可执行文件和库文件的输出目录
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib) # 对于静态库
 
 #Uncomment for hardware floating point
 add_compile_definitions(ARM_MATH_CM4;ARM_MATH_MATRIX_CHECK;ARM_MATH_ROUNDING)
@@ -113,73 +105,25 @@ add_compile_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
 #Uncomment for software floating point
 #add_compile_options(-mfloat-abi=soft)
 
-
 include_directories(
-        Bsp/${BOARD_NAME}
-        Bsp/${BOARD_NAME}/Drivers/CMSIS/Include
-        Bsp/${BOARD_NAME}/Drivers/CMSIS/Device/ST/STM32F4xx/Include
-        Bsp/${BOARD_NAME}/Drivers/STM32F4xx_HAL_Driver/Inc
-        Bsp/${BOARD_NAME}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
-        Bsp/${BOARD_NAME}/Core/Inc
-
         Interface
         Devices
         Algorithms
         Services
         Components
-
         Tests
 )
 
-string(TOUPPER ${BOARD_NAME} UPPER_BOARD_NAME)
-add_definitions(-DUSE_HAL_DRIVER -DSTM32F446xx -D__${UPPER_BOARD_NAME})
-
-file(GLOB_RECURSE SOURCES
-        "Bsp/${BOARD_NAME}/Drivers/*.*"
-        "Bsp/${BOARD_NAME}/Core/*.*"
-        "Bsp/${BOARD_NAME}/MDK-ARM/startup_*.s"
-        )
 # 对于混合兼容的环境，需要屏蔽各种编译环境引起的文件“干扰”,通过 list(REMOVE_ITEM) 命令移除不同编译环境下的干扰文件
-# 在原来 CubeMX 自动生成的 gcc 编译环境目录上,附加 ARMCC 编译需要的文件
-file(GLOB_RECURSE SOURCES ${SOURCES}
+# 获取不同芯片的公共代码，于子模块中调用此变量
+file(GLOB_RECURSE COMMON_SOURCE_FILES
         "Interface/*.*"
         "Devices/*.*"
         "Algorithms/*.*"
         "Services/*.*"
         "Components/*.*"
-
         "Tests/*.*"
         )
 
-# 将由 CubeMX 生成的 GCC 编译环境中的会干扰ARMCC环境的文件，放在 EXCLUDE_SRCS 自定义列表中
-file(GLOB_RECURSE EXCLUDE_SRCS
-        "Bsp/${BOARD_NAME}/Core/Startup/*.*"
-        "Bsp/${BOARD_NAME}/Core/Src/syscalls.c"
-        "Bsp/${BOARD_NAME}/Core/Src/sysmem.c"
-        "Bsp/${BOARD_NAME}/STM32*_FLASH.ld"
-        "Bsp/${BOARD_NAME}/STM32*_RAM.ld"
-        )
-# 从源文件列表(SOURCES)中剔除干扰文件(EXCLUDE_SRCS)
-list(REMOVE_ITEM SOURCES ${EXCLUDE_SRCS})
-
-
-add_executable(${BOARD_NAME} ${SOURCES} ${LINKER_SCRIPT})
-
-set(HEX_FILE ${PROJECT_BINARY_DIR}/${BOARD_NAME}.hex)
-set(BIN_FILE ${PROJECT_BINARY_DIR}/${BOARD_NAME}.bin)
-set(ELF_FILE ${PROJECT_BINARY_DIR}/${BOARD_NAME}.elf)
-
-# 使用 armclang 自带的 fromelf 工具，实现 elf 转 hex
-set(ARMCC_fromelf fromelf.exe)
-add_custom_command(TARGET ${BOARD_NAME} POST_BUILD
-        # 相当于fromelf.exe" --i32combined --output="xxx/demo.hex" "xxx/demo.elf"
-        COMMAND ${ARMCC_fromelf} --i32combined --output="${HEX_FILE}" "${ELF_FILE}"
-        COMMENT "Building ${HEX_FILE}"
-        )
-
-## 使用了 gcc 的 arm-none-eabi-objcopy 工具实现 elf 转 hex 和 bin， 跟 armclang 不是一脉
-#set(CMAKE_OBJCOPY arm-none-eabi-objcopy)
-#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-#        COMMAND ${CMAKE_OBJCOPY} -Oihex $<TARGET_FILE:${PROJECT_NAME}> ${HEX_FILE}
-#        COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}> ${BIN_FILE}
-#        COMMENT "Building ${HEX_FILE} Building ${BIN_FILE}")
+add_subdirectory(Bsp/MC_Board)
+add_subdirectory(Bsp/Robomaster_C)
