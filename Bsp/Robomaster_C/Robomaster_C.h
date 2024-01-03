@@ -21,6 +21,11 @@
 #define Serial_Host huart6
 #define Serial_RS4851 huart1
 
+#define TIM_Buzzer htim4
+#define TIM_Buzzer_Channel TIM_CHANNEL_3
+
+#define TIM_Control htim7
+
 #define SPI_BMI088 hspi1 /** todo */
 
 #endif //FINEMOTE_ROBOMASTER_C_H

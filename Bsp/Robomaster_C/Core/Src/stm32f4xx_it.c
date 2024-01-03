@@ -60,6 +60,7 @@ extern CAN_HandleTypeDef hcan2;
 extern DMA_HandleTypeDef hdma_spi1_rx;
 extern DMA_HandleTypeDef hdma_spi1_tx;
 extern TIM_HandleTypeDef htim6;
+extern TIM_HandleTypeDef htim7;
 extern TIM_HandleTypeDef htim8;
 extern DMA_HandleTypeDef hdma_usart1_tx;
 extern DMA_HandleTypeDef hdma_usart1_rx;
@@ -69,8 +70,6 @@ extern DMA_HandleTypeDef hdma_usart6_tx;
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart3;
 extern UART_HandleTypeDef huart6;
-extern TIM_HandleTypeDef htim14;
-
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -200,7 +199,7 @@ void SysTick_Handler(void)
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
   /* USER CODE END SysTick_IRQn 0 */
-
+  HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
   /* USER CODE END SysTick_IRQn 1 */
@@ -320,7 +319,6 @@ void TIM8_TRG_COM_TIM14_IRQHandler(void)
 
   /* USER CODE END TIM8_TRG_COM_TIM14_IRQn 0 */
   HAL_TIM_IRQHandler(&htim8);
-  HAL_TIM_IRQHandler(&htim14);
   /* USER CODE BEGIN TIM8_TRG_COM_TIM14_IRQn 1 */
 
   /* USER CODE END TIM8_TRG_COM_TIM14_IRQn 1 */
@@ -338,6 +336,20 @@ void TIM6_DAC_IRQHandler(void)
   /* USER CODE BEGIN TIM6_DAC_IRQn 1 */
 
   /* USER CODE END TIM6_DAC_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM7 global interrupt.
+  */
+void TIM7_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM7_IRQn 0 */
+
+  /* USER CODE END TIM7_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim7);
+  /* USER CODE BEGIN TIM7_IRQn 1 */
+
+  /* USER CODE END TIM7_IRQn 1 */
 }
 
 /**
