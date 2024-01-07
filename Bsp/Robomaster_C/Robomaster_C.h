@@ -28,4 +28,16 @@
 
 #define SPI_BMI088 hspi1 /** todo */
 
+#define CAN_BUS_MAXIMUM_COUNT 2
+
+#define USER_I2C hi2c2
+
+ typedef struct {
+    TIM_HandleTypeDef* timerPtr; // 定时器HAL对象指针
+    uint32_t channel;              // 定时器通道
+    uint32_t activeFlag=0;
+}PWM_UNIT_t;
+
+extern PWM_UNIT_t pwmList[7];
+
 #endif //FINEMOTE_ROBOMASTER_C_H
