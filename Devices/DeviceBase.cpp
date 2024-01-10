@@ -5,3 +5,18 @@
  ******************************************************************************/
 
 #include "DeviceBase.h"
+
+
+void DeviceBase::DevicesHandle() {
+    for (DeviceBase* devicePtr :deviceList){
+        devicePtr->Handle();
+    }
+}
+
+DeviceBase::DeviceBase() {
+    deviceList.push_back(this);
+}
+
+DeviceBase::~DeviceBase() {
+    deviceList.remove(this);
+}
