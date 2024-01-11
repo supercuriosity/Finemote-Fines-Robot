@@ -12,17 +12,26 @@ bool I2C_Bus<busID>::isFree = true;
 template <uint8_t busID>
 std::queue<I2C_Task_t> I2C_Bus<busID>::taskQueue = {};
 
+template <uint8_t busID>
+std::list<I2C_Task_t> I2C_Bus<busID>::resourceList = {};
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c) {
-    I2C_Bus<2>::RTHandle();
+    I2C_Bus<2>::CallbackHandle( I2C_Bus<2>::Callback_e::MASTER_TX);
+}
+void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c) {
+    I2C_Bus<2>::CallbackHandle( I2C_Bus<2>::Callback_e::MASTER_RX);
+}
+void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c){
+    I2C_Bus<2>::CallbackHandle( I2C_Bus<2>::Callback_e::MEM_READ);
+}
+void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c){
+    I2C_Bus<2>::CallbackHandle( I2C_Bus<2>::Callback_e::ERROR_CALL);
 }
 
-void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c) {
-    I2C_Bus<2>::RTHandle();
-}
 
 #ifdef __cplusplus
 }
