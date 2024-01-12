@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2V8M.DLL</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -312,7 +312,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>6</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -328,7 +328,7 @@
             <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>3</v6Lang>
-            <v6LangP>6</v6LangP>
+            <v6LangP>8</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx,__ROBOMASTER_C</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../../../Interface;..;../../../Services</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../../../Interface;..;../../../Services;../../../Devices;../../../Algorithms/Control;../../../Algorithms</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -606,6 +606,41 @@
               <FileName>BeepMusic.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\Services\MultiMedia\BeepMusic.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>I2C_Base.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Services\Bus\I2C_Base.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Devices</GroupName>
+          <Files>
+            <File>
+              <FileName>DeviceBase.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Devices\DeviceBase.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Sensor.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Devices\Sensors\Sensor.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Algorithms</GroupName>
+          <Files>
+            <File>
+              <FileName>Matix.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Algorithms\Matix.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>PID.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Algorithms\Control\PID.cpp</FilePath>
             </File>
           </Files>
         </Group>
