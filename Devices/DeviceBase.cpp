@@ -6,11 +6,10 @@
 
 #include "DeviceBase.h"
 
-std::list<DeviceBase*> DeviceBase::deviceList={};
 
 void DeviceBase::DevicesHandle() {
-    auto tmp = deviceList.size();
-    for (DeviceBase* devicePtr :deviceList){
+    auto tmp = getDeviceList().size();
+    for (DeviceBase* devicePtr :getDeviceList()){
         if (++(devicePtr->cnt)>= devicePtr->divisionFactor) {
             devicePtr->Handle();
             devicePtr->cnt = 0;
@@ -19,13 +18,13 @@ void DeviceBase::DevicesHandle() {
 }
 
 DeviceBase::DeviceBase() {
-    auto tmp = deviceList.size();
-    deviceList.push_back(this);
+    getDeviceList().push_back(this);
+	auto tmp = getDeviceList().size();
 }
 
 DeviceBase::~DeviceBase() {
-    auto tmp = deviceList.size();
-    deviceList.remove(this);
+    auto tmp = getDeviceList().size();
+    getDeviceList().remove(this);
 }
 
 void DeviceBase::SetDivisionFactor(uint32_t divisionFactor) {
