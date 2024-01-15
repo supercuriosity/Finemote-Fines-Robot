@@ -12,8 +12,9 @@
 #include <utility>
 #include <vector>
 #include "PeripheralDefination.h"
+#include "DeviceBase.h"
 
-#define AGNET_TASK_MAX_NUM 20
+#define AGNET_TASK_MAX_NUM 200
 
 using ByteVector = std::vector<uint8_t>;
 
@@ -24,6 +25,7 @@ typedef enum : uint8_t {
     READ_VECTOR,
     WRITE_VECTOR,
     WRITE_READ_VECTOR,
+    DELAY,
 } I2C_Task_e;
 
 typedef struct I2C_Task_t{
@@ -32,18 +34,18 @@ typedef struct I2C_Task_t{
     I2C_Task_e task;
     uint8_t reg;
     uint8_t * bufPtr;
-    uint16_t size;
+    uint32_t size;
     ByteVector data;
     std::function<void(I2C_Task_t)> callbackFuncPtr = nullptr;
 
-} I2C_Task_t __packed;
+} I2C_Task_t;
 
 using CallbackFuncPtr = std::function<void(I2C_Task_t)>;
 
 
 
 template <uint8_t busID>
-class I2C_Bus {
+class I2C_Bus {//TODO 防止一条无效指令卡死总线，设置超时功能
 public:
     static I2C_Bus& GetInstance() {
         static I2C_Bus<busID> instance;
@@ -51,8 +53,7 @@ public:
     }
     I2C_Bus(const I2C_Bus &) = delete;
     I2C_Bus& operator=(const I2C_Bus&) = delete;
-
-    static void RTHandle() {
+    void RTHandle()  {
         enum class Handle_State_e{
             READY,
             RETRYING,
@@ -89,14 +90,27 @@ public:
                                                     resourceList.back().data.data(), resourceList.back().data.size());
                 break;
             case WRITE_READ:
-                status = HAL_I2C_Mem_Read_IT(&USER_I2C, resourceList.back().addr, resourceList.back().reg,
+                status = HAL_I2C_Mem_Read_IT(&USER_I2C, resourceList.back().addr << 1, resourceList.back().reg,
                                              I2C_MEMADD_SIZE_8BIT, resourceList.back().bufPtr,
                                              resourceList.back().size);
                 break;
             case WRITE_READ_VECTOR:
-                status = HAL_I2C_Mem_Read_IT(&USER_I2C, resourceList.back().addr, resourceList.back().reg,
+                status = HAL_I2C_Mem_Read_IT(&USER_I2C, resourceList.back().addr << 1, resourceList.back().reg,
                                              I2C_MEMADD_SIZE_8BIT, resourceList.back().data.data(),
                                              resourceList.back().data.size());
+                break;
+            case DELAY:
+                if (handleStateE == Handle_State_e::READY) {
+                    status = HAL_BUSY;
+                    resourceList.back().size = resourceList.back().size + HAL_GetTick();
+                }else{
+                    if (HAL_GetTick()>resourceList.back().size){
+                        status = HAL_OK;
+                        resourceList.pop_back();
+                    }else{
+                        status = HAL_BUSY;
+                    }
+                }
                 break;
         }
         if(status != HAL_OK) {
@@ -112,7 +126,7 @@ public:
         MEM_READ,
         ERROR_CALL
     };
-    static void CallbackHandle(Callback_e callbackE){
+    void CallbackHandle(Callback_e callbackE){
         switch (callbackE) {
             case Callback_e::MASTER_TX:
                 break;
@@ -128,17 +142,13 @@ public:
         resourceList.pop_front();
     }
 
-    static std::queue<I2C_Task_t> taskQueue;
-    static std::list<I2C_Task_t> resourceList;
-    inline static uint8_t taskID = 0;
+    std::queue<I2C_Task_t> taskQueue;
+    std::list<I2C_Task_t> resourceList;
+    uint8_t taskID = 0;
 
 private:
-    I2C_Bus() {
-        instanceVector.push_back(busID);
-    }
-
-    inline static std::vector<uint8_t> instanceVector= {};
-    static bool isFree;
+    I2C_Bus() {}
+    bool isFree;
 };
 
 template <uint8_t busID/*, uint8_t bufferSize*/>
@@ -217,6 +227,19 @@ public:
         tmpTask.data = std::move(dataVector);
         tmpTask.reg = reg;
         tmpTask.callbackFuncPtr = std::move(callPtr);
+        i2CBusRef.taskQueue.push( std::move(tmpTask));
+    }
+/**
+ * 将总线完全静默一段时间 //todo 实际需求大部分是对同一器件的操作挂起
+ * @param _ms
+ */
+    void Delay(uint32_t _ms){
+        if (i2CBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        I2C_Task_t tmpTask;
+        tmpTask.taskID = ++i2CBusRef.taskID;
+        tmpTask.addr = addr;
+        tmpTask.task = DELAY;
+        tmpTask.size = _ms;
         i2CBusRef.taskQueue.push( std::move(tmpTask));
     }
 
