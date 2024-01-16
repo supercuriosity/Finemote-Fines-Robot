@@ -15,6 +15,7 @@
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
+#include "iwdg.h"
 
 #define Serial_User huart4
 #define Serial_Host huart5
@@ -23,5 +24,7 @@
 #define TIM_Buzzer_Channel TIM_CHANNEL_4
 
 #define TIM_Control htim7
+
+#define CAN_BUS_MAXIMUM_COUNT 2
 
 #endif //FINEMOTE_MC_BOARD_H
