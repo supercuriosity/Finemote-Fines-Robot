@@ -6,6 +6,8 @@
 
 #include "I2C_Base.h"
 
+#ifdef I2C_Base_Module
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -27,3 +29,5 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c){//TODO Ïë°ì·¨´æ´¢ÈÎÎñ·¢ËÍÊ§°
 #ifdef __cplusplus
 }
 #endif
+
+#endif //I2C_Base_Module

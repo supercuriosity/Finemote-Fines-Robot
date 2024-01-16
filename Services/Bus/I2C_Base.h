@@ -7,6 +7,8 @@
 #ifndef FINEMOTE_I2C_BASE_H
 #define FINEMOTE_I2C_BASE_H
 
+#ifdef I2C_Base_Module
+
 #include <queue>
 #include <list>
 #include <utility>
@@ -251,5 +253,7 @@ private:
 };
 
 template class I2C_Bus<2>;//显式实例化能解决部分奇怪的链接时报错
+
+#endif //I2C_Base_Module
 
 #endif //FINEMOTE_I2C_BASE_H
