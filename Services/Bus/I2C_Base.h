@@ -45,7 +45,7 @@ using CallbackFuncPtr = std::function<void(I2C_Task_t)>;
 
 
 template <uint8_t busID>
-class I2C_Bus {//TODO 防止一条无效指令卡死总线，设置超时功能
+class I2C_Bus :public DeviceBase{//TODO 防止一条无效指令卡死总线，设置超时功能
 public:
     static I2C_Bus& GetInstance() {
         static I2C_Bus<busID> instance;
@@ -53,7 +53,7 @@ public:
     }
     I2C_Bus(const I2C_Bus &) = delete;
     I2C_Bus& operator=(const I2C_Bus&) = delete;
-    void RTHandle()  {
+    void Handle() override{
         enum class Handle_State_e{
             READY,
             RETRYING,
