@@ -4,7 +4,7 @@
  * All rights reserved.
  ******************************************************************************/
 
-#include "PeripheralDefination.h"
+#include "ProjectConfig.h"
 
 #include "MultiMedia/BeepMusic.h"
 #include "DeviceBase.h"
@@ -17,6 +17,8 @@ void Task2();
 #ifdef __cplusplus
 extern "C" {
 #endif
+//TODO Setup 应该尽可能减少使用而使用构造函数替代，loop应该通过继承Devicebase并重写handle函数来替代
+
 
 void Setup() {
     HAL_TIM_Base_Start_IT(&TIM_Control);

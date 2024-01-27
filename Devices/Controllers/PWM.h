@@ -6,7 +6,7 @@
 #ifndef FINEMOTE_PWM_H
 #define FINEMOTE_PWM_H
 
-#include "PeripheralDefination.h"
+#include "ProjectConfig.h"
 
 template<uint32_t deviceID>
 class PWM {

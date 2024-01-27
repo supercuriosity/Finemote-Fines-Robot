@@ -10,7 +10,7 @@
 #include <map>
 #include <queue>
 
-#include "PeripheralDefination.h"
+#include "ProjectConfig.h"
 
 constexpr CAN_HandleTypeDef* qwq[] = {&hcan1, &hcan2};
 

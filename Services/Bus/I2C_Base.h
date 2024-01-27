@@ -13,7 +13,7 @@
 #include <list>
 #include <utility>
 #include <vector>
-#include "PeripheralDefination.h"
+
 #include "DeviceBase.h"
 
 #define AGNET_TASK_MAX_NUM 200

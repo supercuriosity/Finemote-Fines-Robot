@@ -7,7 +7,7 @@
 #define FINEMOTE_BEEPMUSIC_C
 
 #include "BeepMusic.h"
-#include "PeripheralDefination.h"
+#include "ProjectConfig.h"
 
 /*****   曲库   *****/
 #include "Music_Astronomia.h"
