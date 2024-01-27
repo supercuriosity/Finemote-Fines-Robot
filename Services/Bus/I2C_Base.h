@@ -7,7 +7,10 @@
 #ifndef FINEMOTE_I2C_BASE_H
 #define FINEMOTE_I2C_BASE_H
 
-#ifdef I2C_Base_Module
+#include "ProjectConfig.h"
+
+
+#ifdef I2C_BASE_MODULE
 
 #include <queue>
 #include <list>
@@ -16,7 +19,7 @@
 
 #include "DeviceBase.h"
 
-#define AGNET_TASK_MAX_NUM 200
+
 
 using ByteVector = std::vector<uint8_t>;
 
@@ -153,10 +156,19 @@ private:
     bool isFree;
 };
 
+/**
+ * I2C代理
+ * @tparam busID //TODO 当不同BSP支持不同数目，不同标号的I2C总线时，busID可能出现混淆定义
+ */
 template <uint8_t busID/*, uint8_t bufferSize*/>
 class I2C_Agent {
 public:
-    explicit I2C_Agent(uint8_t _addr,I2C_Bus<busID>& i2CBusIstance) : addr(_addr),i2CBusRef(i2CBusIstance) {
+    /**
+     *
+     * @param _addr 这里需要的是不带读写位的地址，即实际为6位地址
+     * @param i2CBusIstance
+     */
+    explicit I2C_Agent(uint8_t _addr) : addr(_addr),i2CBusRef(I2C_Bus<busID>::GetInstance()) {
         //I2C_Bus<busID>::Init();
         //HAL_I2C_IsDeviceReady(&hi2c2, addr << 1, 10, 1000);
     }
