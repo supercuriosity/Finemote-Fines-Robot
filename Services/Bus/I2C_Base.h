@@ -152,7 +152,9 @@ public:
     uint8_t taskID = 0;
 
 private:
-    I2C_Bus() {}
+    I2C_Bus() {
+        HALInit::GetInstance();
+    }
     bool isFree;
 };
 

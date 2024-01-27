@@ -19,13 +19,14 @@ private:
     static inline uint32_t maxDeviceCount = sizeof(pwmList)/sizeof(pwmList[0]);
 public:
     explicit PWM(){
-            static_assert(deviceID < maxDeviceCount);
-            static_assert(pwmList[deviceID].activeFlag == 0);
+        HALInit::GetInstance();
+        static_assert(deviceID < maxDeviceCount);
+        static_assert(pwmList[deviceID].activeFlag == 0);
 
-            currentDeviceCount++;
-            timerPtr = pwmList[deviceID].timerPtr;
-            channel = pwmList[deviceID].channel;
-            pwmList[deviceID].activeFlag = 1;
+        currentDeviceCount++;
+        timerPtr = pwmList[deviceID].timerPtr;
+        channel = pwmList[deviceID].channel;
+        pwmList[deviceID].activeFlag = 1;
         };
     ~PWM(){
             pwmList[deviceID].activeFlag = 0;

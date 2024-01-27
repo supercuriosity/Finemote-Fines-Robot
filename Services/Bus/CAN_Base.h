@@ -31,6 +31,8 @@ public:
 
 private:
     CAN_Bus() {
+        HALInit::GetInstance();
+
         HAL_CAN_ActivateNotification(qwq[busID - 1], CAN_IT_RX_FIFO0_MSG_PENDING);
         HAL_CAN_ActivateNotification(qwq[busID - 1], CAN_IT_TX_MAILBOX_EMPTY);
 
