@@ -1,0 +1,12 @@
+
+/*******************************************************************************
+ * Copyright (c) 2024.
+ * IWIN-FINS Lab, Shanghai Jiao Tong University, Shanghai, China.
+ * All rights reserved.
+ ******************************************************************************/
+
+#include "I2CTest.h"
+
+#ifdef I2CTEST_COMPONENTS
+
+#endif
