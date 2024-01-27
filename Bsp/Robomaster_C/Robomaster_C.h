@@ -77,9 +77,13 @@ public:
 
 #define TIM_Buzzer htim4
 #define TIM_Buzzer_Channel TIM_CHANNEL_3
+#define BUZZER_PERIPHERAL
+
+#define LED_GPIO_Port   LED_B_GPIO_Port
+#define LED_Pin         LED_B_Pin
+#define LED_PERIPHERAL
 
 #define TIM_Control htim7
-
 #define SPI_BMI088 hspi1 /** todo */
 
 #define CAN_BUS_MAXIMUM_COUNT 2
