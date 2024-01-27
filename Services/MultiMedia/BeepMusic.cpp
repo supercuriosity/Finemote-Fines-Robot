@@ -7,7 +7,7 @@
 #define FINEMOTE_BEEPMUSIC_C
 
 #include "BeepMusic.h"
-#include "ProjectConfig.h"
+#ifdef BEEPMUSIC_MODULE
 
 /*****   曲库   *****/
 #include "Music_Astronomia.h"
@@ -67,3 +67,4 @@ BeepMusic BeepMusic::MusicChannels[] = {
         }
     }),
 };
+#endif

@@ -70,7 +70,23 @@ extern PWM_UNIT_t pwmList[7];
 #endif
 
 
+/**
+ * BUZZER_PERIPHERAL PWM驱动的蜂鸣器
+ * @def TIM_Buzzer 蜂鸣器对应PWM定时器
+ * @def TIM_Buzzer_Channel  蜂鸣器对应定时器通道
+ */
+#if defined(BUZZER_PERIPHERAL)
+#define BEEPMUSIC_MODULE
+#endif
 
+/**
+ * LED_PERIPHERAL 单个LED灯
+ * @def LED_GPIO_Port   LED对应端口组
+ * @def LED_Pin         LED对应引脚号
+ */
+#if defined(LED_PERIPHERAL)
+#define LED_MODULE
+#endif
 
 /******************************************************************************************************
 3.处理各组件对模块的依赖，以及是否被用户启用

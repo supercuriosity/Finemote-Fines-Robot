@@ -6,9 +6,10 @@
 
 #ifndef FINEMOTE_BEEPMUSIC_H
 #define FINEMOTE_BEEPMUSIC_H
+#include "ProjectConfig.h"
 
+#ifdef BEEPMUSIC_MODULE
 #include "BeepMusicBasic.h"
-
 class BeepMusic {
 public:
     explicit BeepMusic(void (*handle)(uint32_t freq));
@@ -26,5 +27,5 @@ private:
     int16_t curSong = -1;
     MusicNote_t* curNote = nullptr;
 };
-
+#endif
 #endif //FINEMOTE_BEEPMUSIC_H

@@ -8,7 +8,7 @@
 
 #include "MultiMedia/BeepMusic.h"
 #include "DeviceBase.h"
-
+#include "MultiMedia/LED.h"
 
 
 void Task1();
@@ -79,6 +79,6 @@ void Task2() {
     cnt++;
     if(cnt > 1000) {
         cnt = 0;
-        HAL_GPIO_TogglePin(LED1_GPIO_Port, LED1_Pin);
+        LED::Toggle();
     }
 }
