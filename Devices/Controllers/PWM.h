@@ -8,6 +8,8 @@
 
 #include "ProjectConfig.h"
 
+#ifdef PWM_MODULE
+
 template<uint32_t deviceID>
 class PWM {
 private:
@@ -42,6 +44,6 @@ public:
     };
 
 };
-
+#endif
 
 #endif //FINEMOTE_PWM_H
