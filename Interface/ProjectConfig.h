@@ -45,6 +45,17 @@ static_assert(false);
 
 
 /**
+ * CAN_PERIPHERAL //todo 完善此部分内容
+ * @def
+ * @variable
+ *
+ */
+#if defined(CAN_PERIPHERAL)
+#define CAN_BASE_MODULE
+#endif
+
+
+/**
  * PWM_PERIPHERAL 模块所需的PWM外设依赖条件
  * @variable pwmList 配置好的PWM通道列表，参照下面的结构体和声明，并且需要在源文件中定义 TODO 使用动态数组实现，可以简化这一过程
 typedef struct {
@@ -57,6 +68,9 @@ extern PWM_UNIT_t pwmList[7];
 #if defined(PWM_PERIPHERAL)
 #define PWM_MODULE
 #endif
+
+
+
 
 /******************************************************************************************************
 3.处理各组件对模块的依赖，以及是否被用户启用

@@ -5,7 +5,7 @@
  ******************************************************************************/
 
 #include "CAN_Base.h"
-
+#ifdef CAN_BASE_MODULE
 template <int num>
 std::map<uint32_t, uint8_t *> CAN_Agent<num>::map = {};
 
@@ -35,4 +35,5 @@ void HAL_CAN_TxMailbox2CompleteCallback(CAN_HandleTypeDef *hcan) {
 
 #ifdef __cplusplus
 }
+#endif
 #endif

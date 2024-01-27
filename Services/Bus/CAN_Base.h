@@ -7,10 +7,13 @@
 #ifndef FINEMOTE_CAN_BASE_H
 #define FINEMOTE_CAN_BASE_H
 
+#include "ProjectConfig.h"
+
+#ifdef CAN_BASE_MODULE
+
 #include <map>
 #include <queue>
 
-#include "ProjectConfig.h"
 
 constexpr CAN_HandleTypeDef* qwq[] = {&hcan1, &hcan2};
 
@@ -95,5 +98,5 @@ private:
     static std::map<uint32_t, uint8_t *> map;
     static std::queue<CAN_Package_t> dataQueue;
 };
-
+#endif
 #endif //FINEMOTE_CAN_BASE_H
