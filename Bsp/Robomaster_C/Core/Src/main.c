@@ -72,7 +72,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+goto usercode;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -112,7 +112,9 @@ int main(void)
   MX_TIM6_Init();
   MX_IWDG_Init();
   MX_TIM7_Init();
+  MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
+    usercode:
   Setup();
   /* USER CODE END 2 */
 

@@ -1,18 +1,12 @@
+
 /*******************************************************************************
- * Copyright (c) 2023.
+ * Copyright (c) 2024.
  * IWIN-FINS Lab, Shanghai Jiao Tong University, Shanghai, China.
  * All rights reserved.
  ******************************************************************************/
 
-#ifndef FINEMOTE_PERIPHERALDEFINATION_H
-#define FINEMOTE_PERIPHERALDEFINATION_H
+#include "I2CTest.h"
 
-#ifdef __MC_BOARD
-#include "MC_Board.h"
+#ifdef I2CTEST_COMPONENTS
+
 #endif
-
-#ifdef __ROBOMASTER_C
-#include "Robomaster_C.h"
-#endif
-
-#endif //FINEMOTE_PERIPHERALDEFINATION_H
