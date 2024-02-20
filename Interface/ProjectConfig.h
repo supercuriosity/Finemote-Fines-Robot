@@ -33,6 +33,14 @@
 static_assert(false);
 #endif
 
+/**
+ * UART_PERIPHERAL 模块所需的UART外设依赖条件
+ * @def USER_UART 配置的UART外设
+ */
+#if defined(UART_PERIPHERAL) //TODO 当不同BSP支持不同数目的UART串口时，应该将每个串口都作为依赖条件
+#define UART_BASE_MODULE
+#define AGNET_TASK_MAX_NUM 200
+#endif
 
 /**
  * I2C_PERIPHERAL 模块所需的I2C外设依赖条件

@@ -8,14 +8,15 @@
 #ifndef FINEMOTE_UART_BASE_H
 #define FINEMOTE_UART_BASE_H
 
+#include "ProjectConfig.h"
+
+#ifdef UART_BASE_MODULE
+
 #include "DeviceBase.h"
-#include "PeripheralDefination.h"
 #include <queue>
 #include <vector>
 #include <list>
 #include <utility>
-
-#define AGNET_TASK_MAX_NUM 200
 
 using ByteVector = std::vector<uint8_t>;
 
@@ -133,7 +134,9 @@ public:
     uint8_t taskID = 0;
 
 private:
-    UART_Bus() {}
+    UART_Bus() {
+        HALInit::GetInstance();
+    }
 };
 
 template <uint8_t busID>
@@ -192,5 +195,7 @@ private:
 };
 
 template class UART_Bus<6>; // 显式实例化能解决部分奇怪的链接时报错
+
+#endif //UART_BASE_MODULE
 
 #endif //FINEMOTE_UART_BASE_H

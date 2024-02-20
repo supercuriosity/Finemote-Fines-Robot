@@ -6,6 +6,8 @@
 
 # include "UART_Base.h"
 
+#ifdef UART_BASE_MODULE
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -31,3 +33,5 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) {
 #ifdef __cplusplus
 }
 #endif
+
+#endif //UART_BASE_MODULE
