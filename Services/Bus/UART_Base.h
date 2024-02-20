@@ -191,6 +191,6 @@ private:
     UART_Bus<busID>& uartBusRef;
 };
 
-//template class UART_Bus<6>; // 显式实例化能解决部分奇怪的链接时报错
+template class UART_Bus<6>; // 显式实例化能解决部分奇怪的链接时报错
 
 #endif //FINEMOTE_UART_BASE_H

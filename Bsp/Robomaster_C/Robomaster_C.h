@@ -74,6 +74,8 @@ public:
 
 #define Serial_Host huart6
 #define Serial_RS4851 huart1
+/* For Test */
+#define User_UART huart6
 
 #define TIM_Buzzer htim4
 #define TIM_Buzzer_Channel TIM_CHANNEL_3
