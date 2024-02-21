@@ -26,12 +26,49 @@ typedef struct {
 template <int busID>
 class CAN_Bus {
 public:
-    static void Init() {
-        volatile static CAN_Bus instance;
+    static CAN_Bus &GetInstance() {
+        static CAN_Bus<busID> instance;
+        return instance;
     }
+    static void Init() {
+        CAN_Bus<busID>();
+    }
+
     CAN_Bus(const CAN_Bus &) = delete;
     CAN_Bus& operator=(const CAN_Bus&) = delete;
 
+    static void RxHandle() {
+        static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT));
+
+        uint8_t tempBuf[8];
+        CAN_RxHeaderTypeDef Header;
+        HAL_CAN_GetRxMessage(qwq[busID - 1], CAN_RX_FIFO0, &Header, tempBuf);
+        memcpy(map[Header.StdId], tempBuf, sizeof(tempBuf));//未被执行
+
+    }
+
+    static void TxLoader() {
+        static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT));
+     
+        if (!dataQueue.empty()) {
+            CAN_TxHeaderTypeDef Header;
+            uint32_t TxMailbox;
+            Header.StdId = dataQueue.front().addr;
+            Header.DLC = dataQueue.front().DLC;
+            Header.IDE = CAN_ID_STD;
+            Header.RTR = CAN_RTR_DATA;
+            Header.TransmitGlobalTime = DISABLE;
+
+            HAL_CAN_AddTxMessage(qwq[busID - 1], &Header, dataQueue.front().message, &TxMailbox);
+
+            dataQueue.pop();
+        }
+    }
+
+
+    static std::map<uint32_t, uint8_t *> map;
+    static std::queue<CAN_Package_t> dataQueue;
+    
 private:
     CAN_Bus() {
         HALInit::GetInstance();
@@ -54,49 +91,38 @@ private:
 
         HAL_CAN_Start(qwq[busID - 1]);
     }
+
 };
+
+template<int busID>
+std::map<uint32_t, uint8_t *> CAN_Bus<busID>::map = {};
+template<int busID>
+std::queue<CAN_Package_t> CAN_Bus<busID>::dataQueue = {};
 
 template <int busID>
 class CAN_Agent {
 public:
-    explicit CAN_Agent(uint32_t addr) {
+    CAN_Agent(uint32_t addr, CAN_Bus<busID> &CANBusInstance) : addr(addr), CANBusRef(CANBusInstance) {
         static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT));
-
-        CAN_Bus<busID>::Init();
-        map[addr] = buf;
+        CANBusRef.GetInstance().map[addr] = rxbuf;
     }
 
-    static void RxHandle() {
-        static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT));
-
-        uint8_t tempBuf[8];
-        CAN_RxHeaderTypeDef Header;
-        HAL_CAN_GetRxMessage(qwq[busID - 1], CAN_RX_FIFO0, &Header, tempBuf);
-        if(map[Header.StdId] != nullptr) {
-            memcpy(map[Header.StdId], tempBuf, sizeof(tempBuf));
-        }
+    void Send() {
+        CAN_Package_t temp;
+        temp.addr = addr;
+        temp.DLC = DLC;
+        memcpy(temp.message, txbuf, DLC);
+        CANBusRef.GetInstance().dataQueue.push(temp);
     }
 
-    static void TxLoader() {
-        static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT));
-
-        if(!dataQueue.empty()) {
-            CAN_TxHeaderTypeDef Header;
-            Header.StdId = dataQueue.front().addr;
-            Header.DLC = dataQueue.front().DLC;
-            Header.IDE = CAN_ID_STD;
-            Header.RTR = CAN_RTR_DATA;
-            Header.TransmitGlobalTime = DISABLE;
-
-            //HAL_CAN_AddTxMessage(qwq[busID - 1], &Header, dataQueue.front().message, CAN_TX_MAILBOX0);
-            dataQueue.pop();
-        }
-    }
+    uint8_t rxbuf[8] = {0};
+    uint8_t txbuf[8] = {0};
+    uint8_t DLC{};
+    uint32_t addr;
 
 private:
-    uint8_t buf[8] = {0};
-    static std::map<uint32_t, uint8_t *> map;
-    static std::queue<CAN_Package_t> dataQueue;
+    CAN_Bus<busID> &CANBusRef;
+
 };
 #endif
 #endif //FINEMOTE_CAN_BASE_H
