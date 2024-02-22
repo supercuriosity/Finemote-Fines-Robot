@@ -14,6 +14,7 @@
 
 #include "DeviceBase.h"
 #include <queue>
+#include <utility>
 #include <vector>
 #include <list>
 #include <utility>
@@ -144,7 +145,12 @@ class UART_Agent {
 public:
     explicit UART_Agent(UART_Bus<busID>& UartBusInstance) : uartBusRef(UartBusInstance) {}
 
-    // 不定长接收
+/**
+ * 不定长接收
+ * @param _bufPtr 接收字符串首地址
+ * @param _size 最大接收长度
+ * @param callPtr 用户回调函数
+ */
     void Read(uint8_t* _bufPtr, uint8_t _size, CallbackFuncPtr callPtr = nullptr) {
         if (uartBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
         UART_Task_t tmpTask;
@@ -152,7 +158,7 @@ public:
         tmpTask.task = READ;
         tmpTask.bufPtr = _bufPtr;
         tmpTask.size = _size;
-        tmpTask.callbackFuncPtr = callPtr;
+        tmpTask.callbackFuncPtr = std::move(callPtr);
         uartBusRef.taskQueue.push(std::move(tmpTask));
     }
 
@@ -163,7 +169,7 @@ public:
         tmpTask.taskID = ++uartBusRef.taskID;
         tmpTask.task = READ_VECTOR;
         tmpTask.data = std::move(dataVector);
-        tmpTask.callbackFuncPtr = callPtr;
+        tmpTask.callbackFuncPtr = std::move(callPtr);
         uartBusRef.taskQueue.push(std::move(tmpTask));
     }
 
@@ -175,7 +181,7 @@ public:
         tmpTask.task = WRITE;
         tmpTask.bufPtr = _bufPtr;
         tmpTask.size = _size;
-        tmpTask.callbackFuncPtr = callPtr;
+        tmpTask.callbackFuncPtr = std::move(callPtr);
         uartBusRef.taskQueue.push(std::move(tmpTask));
     }
 
@@ -186,7 +192,16 @@ public:
         tmpTask.taskID = ++uartBusRef.taskID;
         tmpTask.task = WRITE_VECTOR;
         tmpTask.data = std::move(dataVector);
-        tmpTask.callbackFuncPtr = callPtr;
+        tmpTask.callbackFuncPtr = std::move(callPtr);
+        uartBusRef.taskQueue.push(std::move(tmpTask));
+    }
+
+    void Delay(uint32_t _ms) {
+        if (uartBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        UART_Task_t tmpTask;
+        tmpTask.taskID = ++uartBusRef.taskID;
+        tmpTask.task = DELAY;
+        tmpTask.size = _ms;
         uartBusRef.taskQueue.push(std::move(tmpTask));
     }
     
