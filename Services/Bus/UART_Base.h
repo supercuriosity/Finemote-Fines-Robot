@@ -26,6 +26,7 @@ typedef enum : uint8_t {
     WRITE,
     READ_VECTOR,
     WRITE_VECTOR,
+    READ_FIXED_LENGTH,
     DELAY,
 } UART_Task_e;
 
@@ -87,6 +88,9 @@ public:
             case WRITE_VECTOR:
                 HAL_UART_Transmit_IT(&User_UART, resourceList.front().data.data(),resourceList.front().data.size());
                 break;
+            case READ_FIXED_LENGTH:
+                HAL_UART_Receive_IT(&User_UART, resourceList.front().bufPtr, resourceList.front().size);
+                break;
             case DELAY:
                 if (handleStateE == Handle_State_e::READY) {
                     status = HAL_BUSY;
@@ -145,17 +149,25 @@ class UART_Agent {
 public:
     explicit UART_Agent() : uartBusRef(UART_Bus<busID>::GetInstance()) {}
 
-/**
- * 不定长接收
- * @param _bufPtr 接收字符串首地址
- * @param _size 最大接收长度
- * @param callPtr 用户回调函数
- */
-    void Read(uint8_t* _bufPtr, uint8_t _size, CallbackFuncPtr callPtr = nullptr) {
+
+    // 不定长接收
+    void Read(uint8_t* _bufPtr, CallbackFuncPtr callPtr = nullptr) {
         if (uartBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
         UART_Task_t tmpTask;
         tmpTask.taskID = ++uartBusRef.taskID;
         tmpTask.task = READ;
+        tmpTask.bufPtr = _bufPtr;
+        tmpTask.size = UNFIXED_READ_MAX_LENGTH;
+        tmpTask.callbackFuncPtr = std::move(callPtr);
+        uartBusRef.taskQueue.push(std::move(tmpTask));
+    }
+
+    // 定长接收
+    void Read(uint8_t* _bufPtr, uint8_t _size, CallbackFuncPtr callPtr = nullptr) {
+        if (uartBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        UART_Task_t tmpTask;
+        tmpTask.taskID = ++uartBusRef.taskID;
+        tmpTask.task = READ_FIXED_LENGTH;
         tmpTask.bufPtr = _bufPtr;
         tmpTask.size = _size;
         tmpTask.callbackFuncPtr = std::move(callPtr);

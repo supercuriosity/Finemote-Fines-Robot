@@ -40,6 +40,7 @@ static_assert(false);
 #if defined(UART_PERIPHERAL) //TODO 当不同BSP支持不同数目的UART串口时，应该将每个串口都作为依赖条件
 #define UART_BASE_MODULE
 #define AGNET_TASK_MAX_NUM 200
+#define UNFIXED_READ_MAX_LENGTH 100
 #endif
 
 /**
