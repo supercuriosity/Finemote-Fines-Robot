@@ -59,6 +59,9 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart){
 
 //实例化电机测试类
 MotorTest<1> motorTest1(0x141);
+MotorTest<1> motorTest2(0x142);
+MotorTest<1> motorTest3(0x143);
+
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if(htim == &TIM_Control) {
@@ -70,6 +73,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
         Task2();
 
         CAN_Bus<1>::TxLoader();
+        CAN_Bus<2>::TxLoader();
+
 
         if(GPIO_PIN_RESET == HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15)) {
             static int index = 1;
@@ -88,9 +93,7 @@ void Task2() {
     cnt++;
     if(cnt > 1000) {
         cnt = 0;
-
-        HAL_GPIO_TogglePin(LED_G_GPIO_Port, LED_G_Pin);
-        HAL_GPIO_TogglePin(LED_R_GPIO_Port, LED_R_Pin);
+        HAL_GPIO_WritePin(LED_B_GPIO_Port, LED_B_Pin, GPIO_PIN_SET);
         if(Angle > 360) {
             Angle = 0;
         }

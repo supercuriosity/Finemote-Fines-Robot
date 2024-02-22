@@ -19,7 +19,10 @@
 template<int busID>
 class MotorTest : public MotorBase {
 public:
-    explicit MotorTest(uint32_t addr): canAgent(addr, CAN_Bus<busID>::GetInstance()) {}
+    explicit MotorTest(uint32_t addr): canAgent(addr, CAN_Bus<busID>::GetInstance()) {
+        HAL_GPIO_WritePin(LED_G_GPIO_Port, LED_G_Pin, GPIO_PIN_SET);
+
+    }
 
     void Handle() override {
         feedback.angle = canAgent.rxbuf[6] | (canAgent.rxbuf[7] << 8u);
@@ -39,7 +42,13 @@ public:
         canAgent.txbuf[5] = txAngle >> 8;
         canAgent.txbuf[6] = txAngle >> 16;
         canAgent.txbuf[7] = txAngle >> 24;
-        canAgent.Send();
+
+        static int num = 0;
+        num++;
+        if(num > 10) {
+            canAgent.Send();
+            num = 0;
+        }
 
     };
 

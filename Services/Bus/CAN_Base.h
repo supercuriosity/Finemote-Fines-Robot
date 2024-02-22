@@ -43,7 +43,7 @@ public:
         uint8_t tempBuf[8];
         CAN_RxHeaderTypeDef Header;
         HAL_CAN_GetRxMessage(qwq[busID - 1], CAN_RX_FIFO0, &Header, tempBuf);
-        memcpy(map[Header.StdId], tempBuf, sizeof(tempBuf));//未被执行
+        memcpy(map[Header.StdId], tempBuf, sizeof(tempBuf));//TODO 未被执行
 
     }
 
@@ -104,6 +104,7 @@ class CAN_Agent {
 public:
     CAN_Agent(uint32_t addr, CAN_Bus<busID> &CANBusInstance) : addr(addr), CANBusRef(CANBusInstance) {
         static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT));
+        HAL_GPIO_WritePin(LED_R_GPIO_Port, LED_R_Pin, GPIO_PIN_SET);
         CANBusRef.GetInstance().map[addr] = rxbuf;
     }
 
