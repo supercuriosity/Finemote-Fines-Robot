@@ -143,7 +143,7 @@ private:
 template <uint8_t busID>
 class UART_Agent {
 public:
-    explicit UART_Agent(UART_Bus<busID>& UartBusInstance) : uartBusRef(UartBusInstance) {}
+    explicit UART_Agent() : uartBusRef(UART_Bus<busID>::GetInstance()) {}
 
 /**
  * 不定长接收
