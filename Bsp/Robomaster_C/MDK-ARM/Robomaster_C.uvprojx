@@ -634,6 +634,11 @@
               <FileType>8</FileType>
               <FilePath>..\..\..\Devices\Motors\MotorBase.cpp</FilePath>
             </File>
+            <File>
+              <FileName>MotorTest.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Devices\Motors\MotorTest.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

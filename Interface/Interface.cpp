@@ -9,6 +9,7 @@
 #include "MultiMedia/BeepMusic.h"
 #include "DeviceBase.h"
 #include "MultiMedia/LED.h"
+#include "Motors/MotorTest.h"
 
 
 void Task1();
@@ -27,12 +28,13 @@ void Setup() {
     uint8_t ss[7] = "Hello\n";
     //HAL_UART_Transmit_IT(&Serial_Host, ss, 7);
     BeepMusic::MusicChannels[0].Play(3);
+   
 }
 
 void Loop() {
-    uint8_t ss[7] = "Hello\n";
-    HAL_UART_Transmit_IT(&Serial_Host, ss, 7);
-    HAL_Delay(1000);
+   // uint8_t ss[7] = "Hello\n";
+    //HAL_UART_Transmit_IT(&Serial_Host, ss, 7);
+    //HAL_Delay(1000);
 }
 
 #ifdef __cplusplus
@@ -55,12 +57,19 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart){
     }
 }
 
+//实例化电机测试类
+MotorTest<1> motorTest1(0x141);
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if(htim == &TIM_Control) {
         HAL_IWDG_Refresh(&hiwdg);
+        CAN_Bus<1>::Init();
+        CAN_Bus<2>::Init();
         DeviceBase::DevicesHandle();
         Task1();
         Task2();
+
+        CAN_Bus<1>::TxLoader();
 
         if(GPIO_PIN_RESET == HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15)) {
             static int index = 1;
@@ -73,12 +82,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 void Task1() {
     BeepMusic::MusicChannels[0].BeepService();
 }
-
+static float Angle = 0;
 void Task2() {
     static int cnt = 0;
     cnt++;
     if(cnt > 1000) {
         cnt = 0;
-        LED::Toggle();
+
+        HAL_GPIO_TogglePin(LED_G_GPIO_Port, LED_G_Pin);
+        HAL_GPIO_TogglePin(LED_R_GPIO_Port, LED_R_Pin);
+        if(Angle > 360) {
+            Angle = 0;
+        }
+        Angle += 6;
     }
+    motorTest1.SetTargetAngle(Angle);
 }
