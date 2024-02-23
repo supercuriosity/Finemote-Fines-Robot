@@ -107,5 +107,9 @@ extern PWM_UNIT_t pwmList[7];
 #define I2CTEST_COMPONENTS
 #endif
 
+#if defined(UART_TEST_ENABLED) && defined(UART_BASE_MODULE)
+#define UART_TEST_COMPONENTS
+#endif
+
 
 #endif //FINEMOTE_PROJECTCONFIG_H
