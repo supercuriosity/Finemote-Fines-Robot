@@ -46,7 +46,7 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-
+#define MINIMUM_RX_LENGTH 80u
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/

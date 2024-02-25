@@ -41,7 +41,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+uint8_t usart3_RxFlag[2];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -56,8 +56,9 @@
 
 /* External variables --------------------------------------------------------*/
 extern TIM_HandleTypeDef htim7;
-extern UART_HandleTypeDef huart4;
+extern DMA_HandleTypeDef hdma_usart3_rx;
 extern UART_HandleTypeDef huart5;
+extern UART_HandleTypeDef huart3;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -201,17 +202,68 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
-  * @brief This function handles UART4 global interrupt.
+  * @brief This function handles DMA1 stream1 global interrupt.
   */
-void UART4_IRQHandler(void)
+void DMA1_Stream1_IRQHandler(void)
 {
-  /* USER CODE BEGIN UART4_IRQn 0 */
+  /* USER CODE BEGIN DMA1_Stream1_IRQn 0 */
 
-  /* USER CODE END UART4_IRQn 0 */
-  HAL_UART_IRQHandler(&huart4);
-  /* USER CODE BEGIN UART4_IRQn 1 */
+  /* USER CODE END DMA1_Stream1_IRQn 0 */
+  HAL_DMA_IRQHandler(&hdma_usart3_rx);
+  /* USER CODE BEGIN DMA1_Stream1_IRQn 1 */
 
-  /* USER CODE END UART4_IRQn 1 */
+  /* USER CODE END DMA1_Stream1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USART3 global interrupt.
+  */
+void USART3_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART3_IRQn 0 */
+    if (huart3.Instance->SR & UART_FLAG_RXNE)//Received message
+    {
+        __HAL_UART_CLEAR_PEFLAG(&huart3);
+    } else if (USART3->SR & UART_FLAG_IDLE) {
+        static uint16_t usart3_rx_len = 0;
+
+        __HAL_UART_CLEAR_PEFLAG(&huart3);
+
+        if ((hdma_usart3_rx.Instance->CR & DMA_SxCR_CT) == RESET) {
+            /* Current memory buffer used is Memory 0 */
+
+            //disable DMA
+            __HAL_DMA_DISABLE(&hdma_usart3_rx);
+
+            //reset rx_buff base address
+            hdma_usart3_rx.Instance->NDTR = 0;
+
+
+            //set memory buffer 1
+            hdma_usart3_rx.Instance->CR |= DMA_SxCR_CT;
+
+            //enable DMA
+            __HAL_DMA_ENABLE(&hdma_usart3_rx);
+        } else {
+            /* Current memory buffer used is Memory 1 */
+            //disable DMA
+            __HAL_DMA_DISABLE(&hdma_usart3_rx);
+
+            //reset rx_buff base address
+            hdma_usart3_rx.Instance->NDTR = 0;
+
+            //set memory buffer 0
+            DMA1_Stream1->CR &= ~(DMA_SxCR_CT);
+
+            //enable DMA
+            __HAL_DMA_ENABLE(&hdma_usart3_rx);
+        }
+    }
+  /* USER CODE END USART3_IRQn 0 */
+  HAL_UART_IRQHandler(&huart3);
+  /* USER CODE BEGIN USART3_IRQn 1 */
+
+  /* USER CODE END USART3_IRQn 1 */
 }
 
 /**

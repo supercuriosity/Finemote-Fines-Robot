@@ -20,6 +20,7 @@
 #include "main.h"
 #include "adc.h"
 #include "can.h"
+#include "dma.h"
 #include "i2c.h"
 #include "iwdg.h"
 #include "spi.h"
@@ -72,7 +73,7 @@ void SystemClock_PostConfig(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+goto usercode;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -93,10 +94,10 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_CAN1_Init();
   MX_CAN2_Init();
   MX_SPI1_Init();
-  MX_UART4_Init();
   MX_UART5_Init();
   MX_USART1_UART_Init();
   MX_ADC1_Init();
@@ -108,8 +109,10 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM2_Init();
   MX_TIM7_Init();
+  MX_USART3_UART_Init();
   MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
+  usercode:
   Setup();
   /* USER CODE END 2 */
 
@@ -174,7 +177,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 /**
- * @brief 将时钟源选择为内部时钟，避免Clion的Debug模式无法使能锁相�?
+ * @brief 将时钟源选择为内部时钟，避免Clion的Debug模式无法使能锁相�???
  */
 void SystemClock_PreConfig(void) {
     RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
