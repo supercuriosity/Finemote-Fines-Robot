@@ -88,6 +88,19 @@ extern PWM_UNIT_t pwmList[7];
 #define LED_MODULE
 #endif
 
+/**
+ * UART_PERIPHERAL 遥控器
+ * @def Serial_RC 遥控器对应串口
+ * @def DMA_SBUS 遥控器对应DMA
+ */
+#if defined(UART_PERIPHERAL)
+#define DBUS_MODULE
+#define SBUS_MODULE
+#define REMOTECONTROL_MODULE
+#define DJI_DT7_MODULE
+#define RADIOMASTER_ZORRO_MODULE
+#endif
+
 /******************************************************************************************************
 3.处理各组件对模块的依赖，以及是否被用户启用
  测试组件应该默认保持关闭状态

@@ -9,7 +9,12 @@
 #include "MultiMedia/BeepMusic.h"
 #include "DeviceBase.h"
 #include "MultiMedia/LED.h"
+#include "Controllers/RadioMaster_Zorro.h"
+#include "Controllers/RemoteControl.h"
 
+extern RadioMaster_Zorro zorro;
+
+RemoteControl::RemoteControlData_t data;
 
 void Task1();
 void Task2();
@@ -25,14 +30,16 @@ void Setup() {
     HAL_TIM_PWM_Start(&TIM_Buzzer,TIM_Buzzer_Channel);
 
     uint8_t ss[7] = "Hello\n";
-    //HAL_UART_Transmit_IT(&Serial_Host, ss, 7);
-    BeepMusic::MusicChannels[0].Play(3);
+//    HAL_UART_Transmit_IT(&Serial_Host, ss, 7);
+//    BeepMusic::MusicChannels[0].Play(3);
+    zorro.Init();
 }
 
 void Loop() {
     uint8_t ss[7] = "Hello\n";
     HAL_UART_Transmit_IT(&Serial_Host, ss, 7);
     HAL_Delay(1000);
+		
 }
 
 #ifdef __cplusplus
@@ -57,21 +64,23 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart){
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if(htim == &TIM_Control) {
-        HAL_IWDG_Refresh(&hiwdg);
+//        HAL_IWDG_Refresh(&hiwdg);
         DeviceBase::DevicesHandle();
         Task1();
         Task2();
+        zorro.Handle(); // 在这里更新基类RemoteControl中的info
+        data = zorro.GetInfo();
 
         if(GPIO_PIN_RESET == HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15)) {
             static int index = 1;
-            BeepMusic::MusicChannels[0].Play(index++);
+            //BeepMusic::MusicChannels[0].Play(index++);
             index %= 3;
         }
     }
 }
 
 void Task1() {
-    BeepMusic::MusicChannels[0].BeepService();
+    //BeepMusic::MusicChannels[0].BeepService();
 }
 
 void Task2() {
