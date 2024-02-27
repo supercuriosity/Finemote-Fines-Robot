@@ -61,15 +61,17 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart){
 MotorTest<1> motorTest1(0x141);
 MotorTest<1> motorTest2(0x142);
 MotorTest<1> motorTest3(0x143);
-MotorTest<1> motorTest4(0x144);
 
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if(htim == &TIM_Control) {
         HAL_IWDG_Refresh(&hiwdg);
+        CAN_Bus<1>::Init();
+        CAN_Bus<2>::Init();
         DeviceBase::DevicesHandle();
         Task1();
         Task2();
+
         CAN_Bus<1>::TxLoader();
         CAN_Bus<2>::TxLoader();
 
@@ -98,5 +100,4 @@ void Task2() {
         Angle += 6;
     }
     motorTest1.SetTargetAngle(Angle);
-    motorTest2.SetTargetAngle(Angle);
 }

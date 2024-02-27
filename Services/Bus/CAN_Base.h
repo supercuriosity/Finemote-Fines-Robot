@@ -13,7 +13,6 @@
 
 #include <map>
 #include <queue>
-#include "Map.h"
 
 
 constexpr CAN_HandleTypeDef* qwq[] = {&hcan1, &hcan2};
@@ -30,6 +29,9 @@ public:
     static CAN_Bus &GetInstance() {
         static CAN_Bus<busID> instance;
         return instance;
+    }
+    static void Init() {
+        CAN_Bus<busID>();
     }
 
     CAN_Bus(const CAN_Bus &) = delete;
@@ -63,7 +65,8 @@ public:
         }
     }
 
-    static MyMap<uint32_t, uint8_t *> map;
+
+    static std::map<uint32_t, uint8_t *> map;
     static std::queue<CAN_Package_t> dataQueue;
     
 private:
@@ -92,7 +95,7 @@ private:
 };
 
 template<int busID>
-MyMap<uint32_t, uint8_t *> CAN_Bus<busID>::map = {};
+std::map<uint32_t, uint8_t *> CAN_Bus<busID>::map = {};
 template<int busID>
 std::queue<CAN_Package_t> CAN_Bus<busID>::dataQueue = {};
 
@@ -102,7 +105,7 @@ public:
     CAN_Agent(uint32_t addr, CAN_Bus<busID> &CANBusInstance) : addr(addr), CANBusRef(CANBusInstance) {
         static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT));
         HAL_GPIO_WritePin(LED_R_GPIO_Port, LED_R_Pin, GPIO_PIN_SET);
-        CANBusRef.GetInstance().map.insert(addr, rxbuf);
+        CANBusRef.GetInstance().map[addr] = rxbuf;
     }
 
     void Send() {
@@ -111,7 +114,6 @@ public:
         temp.DLC = DLC;
         memcpy(temp.message, txbuf, DLC);
         CANBusRef.GetInstance().dataQueue.push(temp);
-
     }
 
     uint8_t rxbuf[8] = {0};
