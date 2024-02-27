@@ -66,8 +66,6 @@ MotorTest<1> motorTest3(0x143);
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if(htim == &TIM_Control) {
         HAL_IWDG_Refresh(&hiwdg);
-        CAN_Bus<1>::Init();
-        CAN_Bus<2>::Init();
         DeviceBase::DevicesHandle();
         Task1();
         Task2();

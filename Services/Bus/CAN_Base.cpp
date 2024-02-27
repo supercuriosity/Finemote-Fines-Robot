@@ -8,6 +8,9 @@
 #ifdef CAN_BASE_MODULE
 
 
+template<int busID>
+std::queue<CAN_Package_t> CAN_Bus<busID>::dataQueue = {};
+
 #ifdef __cplusplus
 extern "C" {
 #endif
