@@ -98,5 +98,10 @@ extern PWM_UNIT_t pwmList[7];
 #define I2CTEST_COMPONENTS
 #endif
 
+#define MOTOR_ENABLED
+#if defined(MOTOR_ENABLED)&& defined(CAN_BASE_MODULE)
+#define MOTOR_COMPONENTS
+#endif
+
 
 #endif //FINEMOTE_PROJECTCONFIG_H

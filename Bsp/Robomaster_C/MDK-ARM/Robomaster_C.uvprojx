@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx,__ROBOMASTER_C</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../../../Interface;..;../../../Services;../../../Devices;../../../Algorithms/Control;../../../Algorithms</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../../../Interface;..;../../../Services;../../../Devices;../../../Algorithms/Control;../../../Algorithms;..\..\..\Components\Examples;..\..\..\Components</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -637,7 +637,7 @@
             <File>
               <FileName>MotorTest.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Devices\Motors\MotorTest.cpp</FilePath>
+              <FilePath>..\..\..\Components\Examples\MotorTest.cpp</FilePath>
             </File>
           </Files>
         </Group>

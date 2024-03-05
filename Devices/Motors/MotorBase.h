@@ -4,6 +4,8 @@
 
 #include "DeviceBase.h"
 #include "Bus/CAN_Base.h"
+#include "Control/PID.h"
+
 typedef enum {
     DIRECT = 0,
     SPEED_Single,
@@ -24,23 +26,32 @@ typedef struct {
     float temperature;//电机温度，单位摄氏度
 } MOTOR_STATE_t;
 
-class MotorBase: public DeviceBase{
-public:
-    MotorBase()= default;
+typedef struct {
+    uint32_t addr;
+    PID_Regulator_t *speedPID;//速度环pid参数结构体指针
+    PID_Regulator_t *anglePID;//角度环pid参数结构体指针
+    MOTOR_CTRL_TYPE_e ctrlType;//控制电机的方式
+    float reductionRatio;//减速比
+} MOTOR_INIT_t;
 
-    void Stop(){
+class MotorBase : public DeviceBase {
+public:
+    MotorBase() = default;
+
+    void Stop() {
         stopflag = true;
     };
-    void SetTargetSpeed(float _targetSpeed){
+
+    void SetTargetSpeed(float _targetSpeed) {
         targetSpeed = _targetSpeed;
     };
-    void SetTargetAngle(float _targetAngle){
+
+    void SetTargetAngle(float _targetAngle) {
         targetAngle = _targetAngle;
     };
 
-
     float reductionRatio{};
-    //PID speedPID,anglePID;
+    PID speedPID, anglePID;
     bool stopflag{};
     float targetSpeed{};
     float targetAngle{};
@@ -48,7 +59,6 @@ public:
     MOTOR_FEEDBACK_t feedback{};
     MOTOR_STATE_t state{};
 };
-
 
 
 #endif //FINEMOTE_MOTORBASE_H
