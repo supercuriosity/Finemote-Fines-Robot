@@ -88,6 +88,8 @@ public:
 
 #define CAN_BUS_MAXIMUM_COUNT 2
 
+#define User_UART huart6
+#define UART_PERIPHERAL
 
 #define USER_I2C hi2c2
 #define I2C_PERIPHERAL
