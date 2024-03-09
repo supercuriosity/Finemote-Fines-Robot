@@ -15,6 +15,11 @@ RemoteControl::~RemoteControl() {
 
 }
 
+void RemoteControl::Handle(void) {
+
+}
+
 void RemoteControl::Decode(void) {
 
 }
+

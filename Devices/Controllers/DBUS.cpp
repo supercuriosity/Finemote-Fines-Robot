@@ -9,18 +9,18 @@
 #ifdef DBUS_MODULE
 
 DBUS::DBUS() {
-
+    Enable_DoubleMemBuff(&DMA_SBUS, (uint32_t)&rxBuff[0][0], (uint32_t)&rxBuff[1][0], DBUS_RX_BUF_NUM);
 }
 
 DBUS::~DBUS() {
 
 }
 
-void DBUS::Init() {
-    Enable_DoubleMemBuff(&DMA_SBUS, (uint32_t)&rxBuff[0][0], (uint32_t)&rxBuff[1][0], DBUS_RX_BUF_NUM);
-}
+void DBUS::Receive() {
+    if (usart3_RxFlag == 0) {
+        return;
+    }
 
-void DBUS::Handle(void) {
     if ((DMA_SBUS.Instance->CR & DMA_SxCR_CT) == RESET) { // Current memory buffer used is Memory 0, Memory 1 is modifiable
 
         channel[0] = (rxBuff[1][0] | (rxBuff[1][1] << 8)) & 0x07FF;
@@ -40,6 +40,8 @@ void DBUS::Handle(void) {
         keyboard = rxBuff[1][14] | (rxBuff[1][15] << 8);
 
         wheel = rxBuff[1][16] | (rxBuff[1][17] << 8);
+
+        usart3_RxFlag = 0;
     }
     else{ // Current memory buffer used is Memory 1, Memory 0 is modifiable
         channel[0] = (rxBuff[0][0] | (rxBuff[0][1] << 8)) & 0x07FF;
@@ -59,6 +61,8 @@ void DBUS::Handle(void) {
         keyboard = rxBuff[0][14] | (rxBuff[0][15] << 8);
 
         wheel = rxBuff[0][16] | (rxBuff[0][17] << 8);
+
+        usart3_RxFlag = 0;
     }
 }
 

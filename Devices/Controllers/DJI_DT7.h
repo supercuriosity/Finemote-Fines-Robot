@@ -16,13 +16,14 @@
 #include "SBUS.h"
 #include "DBUS.h"
 
-class DT7 : public RemoteControl, public DBUS{
+class DT7 : public RemoteControl{
 public:
     DT7();
     ~DT7();
     void Handle(void) override;
     void Decode(void) override;
 private:
+    DBUS dbus;
     static constexpr int32_t RC_CH_VALUE_OFFSET = 1024;
 };
 

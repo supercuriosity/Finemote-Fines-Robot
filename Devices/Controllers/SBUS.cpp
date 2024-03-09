@@ -10,17 +10,17 @@
 
 SBUS::SBUS() {
 	HALInit::GetInstance();
+    Enable_DoubleMemBuff(&DMA_SBUS, (uint32_t)&rxBuff[0][0], (uint32_t)&rxBuff[1][0], SBUS_RX_BUF_NUM);
 }
 
 SBUS::~SBUS() {
 
 }
 
-void SBUS::Init() {
-    Enable_DoubleMemBuff(&DMA_SBUS, (uint32_t)&rxBuff[0][0], (uint32_t)&rxBuff[1][0], SBUS_RX_BUF_NUM);
-}
-
-void SBUS::Handle(void) {
+void SBUS::Receive() {
+    if (usart3_RxFlag == 0) {
+        return;
+    }
     if ((DMA_SBUS.Instance->CR & DMA_SxCR_CT) == RESET) { // Current memory buffer used is Memory 0, Memory 1 is modifiable
         channel[0] = (rxBuff[1][1] | (rxBuff[1][2] << 8)) & 0x07FF;
         channel[1] = ((rxBuff[1][2] >> 3) | (rxBuff[1][3] << 5)) & 0x07FF;
@@ -38,6 +38,8 @@ void SBUS::Handle(void) {
         channel[13] = ((rxBuff[1][18] >> 7) | (rxBuff[1][19] << 1) | (rxBuff[1][20] << 9)) & 0x07FF;
         channel[14] = ((rxBuff[1][20] >> 2) | (rxBuff[1][21] << 6)) & 0x07FF;
         channel[15] = ((rxBuff[1][21] >> 5) | (rxBuff[1][22] << 3)) & 0x07FF;
+
+        usart3_RxFlag = 0;
     } else { // Current memory buffer used is Memory 1, Memory 0 is modifiable
         channel[0] = (rxBuff[0][1] | (rxBuff[0][2] << 8)) & 0x07FF;
         channel[1] = ((rxBuff[0][2] >> 3) | (rxBuff[0][3] << 5)) & 0x07FF;
@@ -55,6 +57,8 @@ void SBUS::Handle(void) {
         channel[13] = ((rxBuff[0][18] >> 7) | (rxBuff[0][19] << 1) | (rxBuff[0][20] << 9)) & 0x07FF;
         channel[14] = ((rxBuff[0][20] >> 2) | (rxBuff[0][21] << 6)) & 0x07FF;
         channel[15] = ((rxBuff[0][21] >> 5) | (rxBuff[0][22] << 3)) & 0x07FF;
+
+        usart3_RxFlag = 0;
     }
 }
 

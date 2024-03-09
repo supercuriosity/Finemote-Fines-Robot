@@ -13,21 +13,22 @@
 
 #include "DeviceBase.h"
 
-class DBUS : public DeviceBase{
+extern uint8_t usart3_RxFlag;
+
+class DBUS{
 public:
     DBUS();
     ~DBUS();
-    virtual void Handle(void) = 0;
-    void Init(void);
-private:
-    static constexpr uint32_t DBUS_RX_BUF_NUM = 36;
-protected:
-    volatile uint8_t rxBuff[2][DBUS_RX_BUF_NUM];
+    void Receive(void);
     int32_t channel[4];
     uint32_t switches[2];
     int32_t mouse[5];
     uint32_t keyboard;
     int16_t wheel;
+private:
+    static constexpr uint32_t DBUS_RX_BUF_NUM = 36;
+    volatile uint8_t rxBuff[2][DBUS_RX_BUF_NUM];
+
 };
 
 #endif

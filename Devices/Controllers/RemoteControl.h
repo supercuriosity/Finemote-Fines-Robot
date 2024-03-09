@@ -11,7 +11,9 @@
 
 #ifdef REMOTECONTROL_MODULE
 
-class RemoteControl {
+#include "DeviceBase.h"
+
+class RemoteControl : public DeviceBase{
 public:
     enum SWITCH_STATE_E{
         UP_POS = 1u, MID_POS = 3u, DOWN_POS = 2u
@@ -39,6 +41,7 @@ public:
     RemoteControl();
     ~RemoteControl();
     virtual void Decode(void) = 0;
+    void Handle(void) override;
     inline const RemoteControlData_t& GetInfo() {
         return info;
     };
