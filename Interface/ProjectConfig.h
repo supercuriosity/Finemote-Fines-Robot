@@ -33,6 +33,15 @@
 static_assert(false);
 #endif
 
+/**
+ * UART_PERIPHERAL 模块所需的UART外设依赖条件
+ * @def USER_UART 配置的UART外设
+ */
+#if defined(UART_PERIPHERAL) //TODO 当不同BSP支持不同数目的UART串口时，应该将每个串口都作为依赖条件
+#define UART_BASE_MODULE
+#define AGNET_TASK_MAX_NUM 200
+#define UNFIXED_READ_MAX_LENGTH 100
+#endif
 
 /**
  * I2C_PERIPHERAL 模块所需的I2C外设依赖条件
@@ -109,6 +118,15 @@ extern PWM_UNIT_t pwmList[7];
 //#define I2CTEST_ENABLED
 #if defined(I2CTEST_ENABLED)&& defined(I2C_BASE_MODULE)
 #define I2CTEST_COMPONENTS
+#endif
+
+#if defined(UART_TEST_ENABLED) && defined(UART_BASE_MODULE)
+#define UART_TEST_COMPONENTS
+#endif
+
+#define MOTOR_ENABLED
+#if defined(MOTOR_ENABLED)&& defined(CAN_BASE_MODULE)
+#define MOTOR_COMPONENTS
 #endif
 
 

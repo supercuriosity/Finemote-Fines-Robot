@@ -6,8 +6,10 @@
 
 #include "CAN_Base.h"
 #ifdef CAN_BASE_MODULE
-template <int num>
-std::map<uint32_t, uint8_t *> CAN_Agent<num>::map = {};
+
+
+template<int busID>
+std::queue<CAN_Package_t> CAN_Bus<busID>::dataQueue = {};
 
 #ifdef __cplusplus
 extern "C" {
@@ -15,22 +17,37 @@ extern "C" {
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
     if(hcan == &hcan1) {
-        CAN_Agent<1>::RxHandle();
+        CAN_Bus<1>::RxHandle();
     }
-    if(hcan == &hcan1) {
-        CAN_Agent<2>::RxHandle();
+    if(hcan == &hcan2) {
+        CAN_Bus<2>::RxHandle();
     }
 }
 
 void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef *hcan) {
-
+    if(hcan == &hcan1) {
+        CAN_Bus<1>::TxLoader();
+    }
+    if(hcan == &hcan2) {
+        CAN_Bus<2>::TxLoader();
+    }
 }
 
 void HAL_CAN_TxMailbox1CompleteCallback(CAN_HandleTypeDef *hcan) {
-
+    if(hcan == &hcan1) {
+        CAN_Bus<1>::TxLoader();
+    }
+    if(hcan == &hcan2) {
+        CAN_Bus<2>::TxLoader();
+    }
 }
 void HAL_CAN_TxMailbox2CompleteCallback(CAN_HandleTypeDef *hcan) {
-
+    if(hcan == &hcan1) {
+        CAN_Bus<1>::TxLoader();
+    }
+    if(hcan == &hcan2) {
+        CAN_Bus<2>::TxLoader();
+    }
 }
 
 #ifdef __cplusplus

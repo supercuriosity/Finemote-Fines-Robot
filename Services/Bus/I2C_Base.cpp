@@ -13,7 +13,7 @@ extern "C" {
 #endif
 
 void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c) {
-    //TODO µ±´æÔÚ¶à¸öI2C×ÜÏßÊ±£¬Ó¦¸ÃÍ¨¹ı±éÀúÄ£°åÀàÊ¾ÀıµÄ·½·¨Ö´ĞĞ£¬Ä¿Ç°ĞèÒªÊÖ¶¯Ìí¼Ó
+    //TODO å½“å­˜åœ¨å¤šä¸ªI2Cæ€»çº¿æ—¶ï¼Œåº”è¯¥é€šè¿‡éå†æ¨¡æ¿ç±»ç¤ºä¾‹çš„æ–¹æ³•æ‰§è¡Œï¼Œç›®å‰éœ€è¦æ‰‹åŠ¨æ·»åŠ 
     I2C_Bus<2>::GetInstance().CallbackHandle( I2C_Bus<2>::Callback_e::MASTER_TX);
 }
 void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c) {
@@ -22,7 +22,7 @@ void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c) {
 void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c){
     I2C_Bus<2>::GetInstance().CallbackHandle( I2C_Bus<2>::Callback_e::MEM_READ);
 }
-void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c){//TODO Ïë°ì·¨´æ´¢ÈÎÎñ·¢ËÍÊ§°ÜÕâ¸öĞÅÏ¢
+void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c){//TODO æƒ³åŠæ³•å­˜å‚¨ä»»åŠ¡å‘é€å¤±è´¥è¿™ä¸ªä¿¡æ¯
     I2C_Bus<2>::GetInstance().CallbackHandle( I2C_Bus<2>::Callback_e::ERROR_CALL);
 }
 
