@@ -41,7 +41,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-uint8_t usart3_RxFlag[2];
+uint8_t usart3_RxFlag = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -244,6 +244,8 @@ void USART3_IRQHandler(void)
 
             //enable DMA
             __HAL_DMA_ENABLE(&hdma_usart3_rx);
+
+            usart3_RxFlag = 1;
         } else {
             /* Current memory buffer used is Memory 1 */
             //disable DMA
@@ -257,6 +259,8 @@ void USART3_IRQHandler(void)
 
             //enable DMA
             __HAL_DMA_ENABLE(&hdma_usart3_rx);
+
+            usart3_RxFlag = 1;
         }
     }
   /* USER CODE END USART3_IRQn 0 */
