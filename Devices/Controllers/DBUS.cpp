@@ -9,6 +9,7 @@
 #ifdef DBUS_MODULE
 
 DBUS::DBUS() {
+    HALInit::GetInstance();
     Enable_DoubleMemBuff(&DMA_SBUS, (uint32_t)&rxBuff[0][0], (uint32_t)&rxBuff[1][0], DBUS_RX_BUF_NUM);
 }
 
