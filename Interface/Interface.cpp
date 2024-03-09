@@ -11,7 +11,7 @@
 #include "MultiMedia/LED.h"
 #include "Controllers/RadioMaster_Zorro.h"
 #include "Controllers/RemoteControl.h"
-
+#include "Examples/MotorTest.h"
 extern RadioMaster_Zorro zorro;
 
 RemoteControl::RemoteControlData_t data;
@@ -36,10 +36,9 @@ void Setup() {
 }
 
 void Loop() {
-    uint8_t ss[7] = "Hello\n";
-    HAL_UART_Transmit_IT(&Serial_Host, ss, 7);
-    HAL_Delay(1000);
-		
+   // uint8_t ss[7] = "Hello\n";
+    //HAL_UART_Transmit_IT(&Serial_Host, ss, 7);
+    //HAL_Delay(1000);
 }
 
 #ifdef __cplusplus
@@ -62,14 +61,49 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart){
     }
 }
 
+PID_Regulator_t pidRegulator1 = {//此为储存pid参数的结构体
+        .kp = 0.3f,
+        .ki = 0.002f,
+        .kd = 0.3f,
+        .componentKpMax = 2000,
+        .componentKiMax = 0,
+        .componentKdMax = 0,
+        .outputMax = 2000
+};
+PID_Regulator_t pidRegulator2 = {//此为储存pid参数的结构体
+        .kp = 1.0f,
+        .ki = 0.0f,
+        .kd = 0.0f,
+        .componentKpMax = 2000,
+        .componentKiMax = 0,
+        .componentKdMax = 0,
+        .outputMax = 2000 //4010电机输出电流上限，可以调小，勿调大
+};
+
+MOTOR_INIT_t motorInit1 = {
+        .addr = 0x141,
+        .speedPID = &pidRegulator1,
+        .anglePID = &pidRegulator2,
+        .ctrlType = POSITION_Double,
+        .reductionRatio = 1
+};
+//实例化电机测试类
+MotorTest<1> motorTest1(motorInit1);
+
+
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if(htim == &TIM_Control) {
-//        HAL_IWDG_Refresh(&hiwdg);
+        HAL_IWDG_Refresh(&hiwdg);
         DeviceBase::DevicesHandle();
         Task1();
         Task2();
         zorro.Handle(); // 在这里更新基类RemoteControl中的info
         data = zorro.GetInfo();
+
+        CAN_Bus<1>::TxLoader();
+        CAN_Bus<2>::TxLoader();
+
 
         if(GPIO_PIN_RESET == HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15)) {
             static int index = 1;
@@ -82,12 +116,17 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 void Task1() {
     //BeepMusic::MusicChannels[0].BeepService();
 }
-
+static float Angle = 0;
 void Task2() {
     static int cnt = 0;
     cnt++;
     if(cnt > 1000) {
         cnt = 0;
         LED::Toggle();
+        if(Angle > 360) {
+            Angle = 0;
+        }
+        Angle += 80;
     }
+    motorTest1.SetTargetAngle(Angle);
 }

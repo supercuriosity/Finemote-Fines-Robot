@@ -13,7 +13,7 @@
 
 #include "string.h"
 
-extern uint8_t usart3_RxFlag;
+extern volatile uint8_t usart3_RxFlag;
 
 class SBUS{
 public:
