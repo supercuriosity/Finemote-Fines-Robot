@@ -80,6 +80,7 @@ public:
 
 #define DMA_SBUS hdma_usart3_rx
 #define Serial_RC huart3
+#define User_UART huart2
 #define UART_PERIPHERAL
 
 #define Serial_User huart4
@@ -99,5 +100,5 @@ public:
 #define TIM_Control htim7
 
 #define CAN_BUS_MAXIMUM_COUNT 2
-
+#define CAN_PERIPHERAL
 #endif //FINEMOTE_MC_BOARD_H
