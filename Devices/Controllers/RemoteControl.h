@@ -12,6 +12,7 @@
 #ifdef REMOTECONTROL_MODULE
 
 #include "DeviceBase.h"
+#include "Bus/UART_Base.h"
 
 class RemoteControl : public DeviceBase{
 public:
@@ -40,8 +41,8 @@ protected:
 public:
     RemoteControl();
     ~RemoteControl();
-    virtual void Decode(void) = 0;
     void Handle(void) override;
+    virtual void Decode(UART_Task_t _data) = 0;
     inline const RemoteControlData_t& GetInfo() {
         return info;
     };
