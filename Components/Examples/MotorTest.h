@@ -23,7 +23,7 @@ template<int busID>
 class MotorTest : public MotorBase {
 public:
     explicit MotorTest(MOTOR_INIT_t &motorInit) :canAgent(motorInit.addr, CAN_Bus<busID>::GetInstance()) {
-        HAL_GPIO_WritePin(LED_G_GPIO_Port, LED_G_Pin, GPIO_PIN_SET);
+
         speedPID.PIDInfo = *motorInit.speedPID;
         anglePID.PIDInfo = *motorInit.anglePID;
         reductionRatio = motorInit.reductionRatio;

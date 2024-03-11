@@ -99,7 +99,6 @@ class CAN_Agent {
 public:
     CAN_Agent(uint32_t addr, CAN_Bus<busID> &CANBusInstance) : addr(addr), CANBusRef(CANBusInstance) {
         static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT));
-        HAL_GPIO_WritePin(LED_R_GPIO_Port, LED_R_Pin, GPIO_PIN_SET);
         CANBusRef.GetInstance().Getmap()[addr] = rxbuf;
     }
 

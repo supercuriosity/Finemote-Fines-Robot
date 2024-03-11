@@ -10,14 +10,14 @@
       <TargetName>MC_Board</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6210000::V6.21::ARMCLANG</pCCUsed>
+      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F446RCTx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F4xx_DFP.2.17.1</PackID>
-          <PackURL>https://www.keil.com/pack/</PackURL>
+          <PackID>Keil.STM32F4xx_DFP.2.14.0</PackID>
+          <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000-0x2001FFFF) IROM(0x8000000-0x803FFFF)  CLOCK(25000000) FPU2 CPUTYPE("Cortex-M4") TZ</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -792,6 +792,16 @@
               <FileType>8</FileType>
               <FilePath>..\..\..\Devices\DeviceBase.cpp</FilePath>
             </File>
+            <File>
+              <FileName>MotorBase.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Devices\Motors\MotorBase.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>MotorTest.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Components\Examples\MotorTest.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -801,6 +811,11 @@
               <FileName>PID.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\Algorithms\Control\PID.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Matix.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Algorithms\Matix.cpp</FilePath>
             </File>
           </Files>
         </Group>
