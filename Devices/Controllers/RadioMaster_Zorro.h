@@ -18,6 +18,7 @@ public:
     RadioMaster_Zorro()
     {
         HALInit::GetInstance();
+        remoteUart.Read(rxBuff, [this](UART_Task_t a) { this->Decode(a); });
     }
     ~RadioMaster_Zorro();
     void Handle(void) override;

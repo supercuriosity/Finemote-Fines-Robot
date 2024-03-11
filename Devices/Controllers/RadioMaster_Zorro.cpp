@@ -44,10 +44,12 @@ void RadioMaster_Zorro::Decode(UART_Task_t _data) {
               ? static_cast <SWITCH_STATE_E> (3) : static_cast <SWITCH_STATE_E> (1);
     info.sF = ((((rxBuff[9] >> 2) | (rxBuff[10] << 6)) & 0x07FF) == 191) ? static_cast <SWITCH_STATE_E> (1)
                                                                          : static_cast <SWITCH_STATE_E> (2);
+
+    remoteUart.Read(rxBuff, [this](UART_Task_t a) { this->Decode(a); });
 }
 
 void RadioMaster_Zorro::Handle() {
-    remoteUart.Read(rxBuff, [this](UART_Task_t a) { this->Decode(a); });
+    //remoteUart.Read(rxBuff, [this](UART_Task_t a) { this->Decode(a); });
 }
 
 #endif
