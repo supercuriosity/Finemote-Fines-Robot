@@ -32,7 +32,6 @@ void Setup() {
     uint8_t ss[7] = "Hello\n";
 //    HAL_UART_Transmit_IT(&Serial_Host, ss, 7);
 //    BeepMusic::MusicChannels[0].Play(3);
-    zorro.Init();
 }
 
 void Loop() {
@@ -47,19 +46,6 @@ void Loop() {
 
 //I2C_test<2> i2CTest(0x70);
 
-
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t datasize)
-{
-    if(huart == &Serial_Host) {
-        //i2CTest.Trigger();
-    }
-}
-
-void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart){
-    if(huart == &Serial_Host) {
-        //i2CTest.rxState = HAL_ERROR;
-    }
-}
 
 PID_Regulator_t pidRegulator1 = {//此为储存pid参数的结构体
         .kp = 0.3f,
@@ -98,7 +84,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
         DeviceBase::DevicesHandle();
         Task1();
         Task2();
-        zorro.Handle(); // 在这里更新基类RemoteControl中的info
         data = zorro.GetInfo();
 
         CAN_Bus<1>::TxLoader();
