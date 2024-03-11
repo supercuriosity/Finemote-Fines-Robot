@@ -266,48 +266,7 @@ void USART2_IRQHandler(void)
 void USART3_IRQHandler(void)
 {
   /* USER CODE BEGIN USART3_IRQn 0 */
-    if (huart3.Instance->SR & UART_FLAG_RXNE)//Received message
-    {
-        __HAL_UART_CLEAR_PEFLAG(&huart3);
-    } else if (USART3->SR & UART_FLAG_IDLE) {
-        static uint16_t usart3_rx_len = 0;
 
-        __HAL_UART_CLEAR_PEFLAG(&huart3);
-
-        if ((hdma_usart3_rx.Instance->CR & DMA_SxCR_CT) == RESET) {
-            /* Current memory buffer used is Memory 0 */
-
-            //disable DMA
-            __HAL_DMA_DISABLE(&hdma_usart3_rx);
-
-            //reset rx_buff base address
-            hdma_usart3_rx.Instance->NDTR = 0;
-
-
-            //set memory buffer 1
-            hdma_usart3_rx.Instance->CR |= DMA_SxCR_CT;
-
-            //enable DMA
-            __HAL_DMA_ENABLE(&hdma_usart3_rx);
-
-            usart3_RxFlag = 1;
-        } else {
-            /* Current memory buffer used is Memory 1 */
-            //disable DMA
-            __HAL_DMA_DISABLE(&hdma_usart3_rx);
-
-            //reset rx_buff base address
-            hdma_usart3_rx.Instance->NDTR = 0;
-
-            //set memory buffer 0
-            DMA1_Stream1->CR &= ~(DMA_SxCR_CT);
-
-            //enable DMA
-            __HAL_DMA_ENABLE(&hdma_usart3_rx);
-
-            usart3_RxFlag = 1;
-        }
-    }
   /* USER CODE END USART3_IRQn 0 */
   HAL_UART_IRQHandler(&huart3);
   /* USER CODE BEGIN USART3_IRQn 1 */

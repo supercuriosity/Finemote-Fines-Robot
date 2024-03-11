@@ -80,7 +80,7 @@ public:
 
 #define DMA_SBUS hdma_usart3_rx
 #define Serial_RC huart3
-#define User_UART huart2
+#define User_UART huart3
 #define UART_PERIPHERAL
 
 #define Serial_User huart4

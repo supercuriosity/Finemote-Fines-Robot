@@ -330,7 +330,7 @@
             <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>3</v6Lang>
-            <v6LangP>8</v6LangP>
+            <v6LangP>6</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F446xx,__MC_BOARD</Define>
               <Undefine></Undefine>
-              <IncludePath>../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..;../../../Interface;../../../Services;../../../Devices;../Core/Inc;..\..\..\Algorithms;..\..\..\Components</IncludePath>
+              <IncludePath>../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..;../../../Interface;../../../Services;../../../Devices;../Core/Inc;..\..\..\Components;..\..\..\Algorithms</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -782,16 +782,6 @@
               <FileType>8</FileType>
               <FilePath>..\..\..\Devices\Controllers\RemoteControl.cpp</FilePath>
             </File>
-            <File>
-              <FileName>DBUS.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Devices\Controllers\DBUS.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>SBUS.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Devices\Controllers\SBUS.cpp</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -821,6 +811,11 @@
               <FileName>CAN_Base.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\Services\Bus\CAN_Base.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>UART_Base.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Services\Bus\UART_Base.cpp</FilePath>
             </File>
           </Files>
         </Group>
