@@ -78,13 +78,13 @@ public:
 
 #define HAL_INIT_HANDLE
 
+
+extern UART_HandleTypeDef uartHandleList[4];
 #define DMA_SBUS hdma_usart3_rx
 #define Serial_RC huart3
-#define User_UART huart3
 #define UART_PERIPHERAL
 
-#define Serial_User huart4
-#define Serial_Host huart5
+
 
 #define TIM_Buzzer htim2
 #define TIM_Buzzer_Channel TIM_CHANNEL_4

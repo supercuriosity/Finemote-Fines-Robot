@@ -37,6 +37,7 @@ file(GLOB_RECURSE SOURCES ${COMMON_SOURCE_FILES}
         "Drivers/*.*"
         "Core/*.*"
         "MDK-ARM/startup_*.s"
+        "./*.cpp"
         )
 
 # 将由 CubeMX 生成的 GCC 编译环境中的会干扰ARMCC环境的文件，放在 EXCLUDE_SRCS 自定义列表中
