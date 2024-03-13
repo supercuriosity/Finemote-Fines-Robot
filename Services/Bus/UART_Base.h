@@ -72,13 +72,10 @@ public:
     std::list<UART_Task_t> resourceList; // 任务执行内存
 };
 
-std::map<UART_HandleTypeDef*,UART_Base*>& GetUartHandle_BusMap() {
-    static std::map<UART_HandleTypeDef*,UART_Base*> uartHandle_BusMap;
-    return uartHandle_BusMap;
-}
+extern std::map<UART_HandleTypeDef*,UART_Base*>& GetUartHandle_BusMap();
 
 template <uint8_t busID>
-class UART_Bus: public DeviceBase,UART_Base{
+class UART_Bus: public DeviceBase,public UART_Base{
 public:
     static UART_Bus& GetInstance() { // 单例模式，提供实例获取方法
         static UART_Bus<busID> instance;
@@ -155,7 +152,7 @@ public:
 private:
     UART_Bus() {
         HALInit::GetInstance();
-        GetUartHandle_BusMap()[&uartHandleList[busID]]=this;
+        GetUartHandle_BusMap()[&(uartHandleList[busID])]=this;
     }
 };
 

@@ -8,9 +8,17 @@
 
 #ifdef UART_BASE_MODULE
 
+
+std::map<UART_HandleTypeDef*,UART_Base*>& GetUartHandle_BusMap() {
+    static std::map<UART_HandleTypeDef*,UART_Base*> uartHandle_BusMap;
+    return uartHandle_BusMap;
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
 
 // 发送完成中断回调函数
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
