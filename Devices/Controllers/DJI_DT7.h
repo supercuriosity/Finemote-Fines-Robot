@@ -26,7 +26,7 @@ private:
     static constexpr int32_t RC_CH_VALUE_OFFSET = 1024;
     uint8_t rxBuff[SBUS_RX_BUF_NUM];
     int32_t channel[16];
-    UART_Agent<6> remoteUart;
+    UART_Agent<0> remoteUart;
 };
 
 #endif
