@@ -18,6 +18,7 @@
 #include <vector>
 #include <list>
 #include <utility>
+#include <map>
 
 using ByteVector = std::vector<uint8_t>;
 
@@ -41,8 +42,40 @@ typedef struct UART_Task_t{
 
 using CallbackFuncPtr = std::function<void(UART_Task_t)>;
 
+/**
+ * 无模板参数的基类，用于提供同一调用接口
+ */
+class UART_Base{
+public:
+    // 回调函数处理
+    enum class Callback_e {
+        READ,
+        WRITE,
+        ERROR_CALL,
+    };
+    void CallbackHandle(Callback_e callbackE) {
+        switch (callbackE) {
+            case Callback_e::READ:
+                if (resourceList.front().callbackFuncPtr != nullptr) {
+                    resourceList.front().callbackFuncPtr(resourceList.front());
+                }
+                break;
+            case Callback_e::WRITE:
+                break;
+            case Callback_e::ERROR_CALL:
+                break;
+        }
+        resourceList.pop_front();
+    }
+
+    std::queue<UART_Task_t> taskQueue; // 任务调度队列
+    std::list<UART_Task_t> resourceList; // 任务执行内存
+};
+
+extern std::map<UART_HandleTypeDef*,UART_Base*>& GetUartHandle_BusMap();
+
 template <uint8_t busID>
-class UART_Bus: public DeviceBase{
+class UART_Bus: public DeviceBase,public UART_Base{
 public:
     static UART_Bus& GetInstance() { // 单例模式，提供实例获取方法
         static UART_Bus<busID> instance;
@@ -76,20 +109,21 @@ public:
         }
 
         switch (resourceList.front().task) {
+            static_assert(busID<(sizeof (uartHandleList)/sizeof (uartHandleList[0])));
             case READ: 
-                HAL_UARTEx_ReceiveToIdle_IT(&User_UART, resourceList.front().bufPtr, resourceList.front().size);
+                HAL_UARTEx_ReceiveToIdle_IT(&uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
                 break;
             case WRITE:
-                HAL_UART_Transmit_IT(&User_UART, resourceList.front().bufPtr, resourceList.front().size);
+                HAL_UART_Transmit_IT(&uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
                 break;
             case READ_VECTOR:
-                HAL_UART_Receive_IT(&User_UART, resourceList.front().data.data(), resourceList.front().data.size());
+                HAL_UART_Receive_IT(&uartHandleList[busID], resourceList.front().data.data(), resourceList.front().data.size());
                 break;
             case WRITE_VECTOR:
-                HAL_UART_Transmit_IT(&User_UART, resourceList.front().data.data(),resourceList.front().data.size());
+                HAL_UART_Transmit_IT(&uartHandleList[busID], resourceList.front().data.data(),resourceList.front().data.size());
                 break;
             case READ_FIXED_LENGTH:
-                HAL_UART_Receive_IT(&User_UART, resourceList.front().bufPtr, resourceList.front().size);
+                HAL_UART_Receive_IT(&uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
                 break;
             case DELAY:
                 if (handleStateE == Handle_State_e::READY) {
@@ -113,36 +147,16 @@ public:
         }
     }
 
-    // 回调函数处理
-    enum class Callback_e {
-        READ,
-        WRITE,
-        ERROR_CALL,
-    };
-    void CallbackHandle(Callback_e callbackE) {
-        switch (callbackE) {
-            case Callback_e::READ:
-                if (resourceList.front().callbackFuncPtr != nullptr) {
-                    resourceList.front().callbackFuncPtr(resourceList.front());
-                }
-                break;
-            case Callback_e::WRITE:
-                break;
-            case Callback_e::ERROR_CALL:
-                break;
-        }
-        resourceList.pop_front();
-    }
-
-    std::queue<UART_Task_t> taskQueue; // 任务调度队列
-    std::list<UART_Task_t> resourceList; // 任务执行内存
     uint8_t taskID = 0;
 
 private:
     UART_Bus() {
         HALInit::GetInstance();
+        GetUartHandle_BusMap()[&(uartHandleList[busID])]=this;
     }
 };
+
+
 
 template <uint8_t busID>
 class UART_Agent {
@@ -220,8 +234,6 @@ public:
 private:
     UART_Bus<busID>& uartBusRef;
 };
-
-template class UART_Bus<6>; // 显式实例化能解决部分奇怪的链接时报错
 
 #endif //UART_BASE_MODULE
 

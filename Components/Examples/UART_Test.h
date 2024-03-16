@@ -17,7 +17,7 @@
  * UARTBase类的示例用法
  */
 class UART_Test {
-    UART_Agent<6> hostUart;
+    UART_Agent<0> hostUart;
     uint8_t receivedMessage[40]{};
     ByteVector receivedByteVector;
 
