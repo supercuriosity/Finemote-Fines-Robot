@@ -12,7 +12,9 @@
 #include "Controllers/RadioMaster_Zorro.h"
 #include "Controllers/RemoteControl.h"
 #include "Motor4010.h"
+#include "Motor4315.h"
 #include "Chassis.h"
+#include "../Services/Bus/UART_Base.h"
 extern RadioMaster_Zorro zorro;
 
 RemoteControl::RemoteControlData_t data;
@@ -46,7 +48,6 @@ void Loop() {
 #endif
 
 //I2C_test<2> i2CTest(0x70);
-
 
 PID_Regulator_t pidRegulator1 = {//此为储存pid参数的结构体
         .kp = 0.3f,
@@ -107,8 +108,10 @@ Motor4010<1> motor4010_1(motorInit1);
 Motor4010<1> motor4010_2(motorInit2);
 Motor4010<1> motor4010_3(motorInit3);
 Motor4010<1> motor4010_4(motorInit4);
-//Motor4315<2> motor4315_1(motorInit5);
-
+Motor4315<2> motor4315_1(motorInit5);
+UART_Agent<2> uartTest;
+UART_Agent<1> uartTest1;
+UART_Agent<3> uartTest2;
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if(htim == &TIM_Control) {
@@ -134,6 +137,7 @@ void Task1() {
     //BeepMusic::MusicChannels[0].BeepService();
 }
 static float Angle = 0;
+static uint8_t TxBuf[8]={0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08};
 void Task2() {
     static int cnt = 0;
     cnt++;
@@ -144,10 +148,16 @@ void Task2() {
             Angle = 0;
         }
         Angle += 80;
+        TxBuf[0] += 1;
+     //   auto Re = HAL_UART_Transmit(&huart2, TxBuf, 8, 10);
+        uartTest.Write(TxBuf, 8);
+        uartTest1.Write(TxBuf, 8);
+        uartTest2.Write(TxBuf, 8);
+       // uartTest.Write(TxBuf, 8);
     }
     motor4010_1.SetTargetAngle(Angle);
     motor4010_2.SetTargetAngle(Angle);
     motor4010_3.SetTargetAngle(Angle);
     motor4010_4.SetTargetAngle(Angle);
-   // motor4315_1.SetTargetAngle(Angle);
+    motor4315_1.SetTargetAngle(Angle);
 }
