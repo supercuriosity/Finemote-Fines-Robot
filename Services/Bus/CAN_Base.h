@@ -107,7 +107,10 @@ public:
         temp.addr = addr;
         temp.DLC = DLC;
         memcpy(temp.message, txbuf, DLC);
-        CANBusRef.GetInstance().dataQueue.push(temp);
+        if (CANBusRef.GetInstance().dataQueue.size() < CAN_AGNET_TASK_MAX_NUM) {
+            CANBusRef.GetInstance().dataQueue.push(temp);
+        }
+
     }
 
     uint8_t rxbuf[8] = {0};

@@ -11,7 +11,8 @@
 #include "MultiMedia/LED.h"
 #include "Controllers/RadioMaster_Zorro.h"
 #include "Controllers/RemoteControl.h"
-#include "Examples/MotorTest.h"
+#include "Motor4010.h"
+#include "Chassis.h"
 extern RadioMaster_Zorro zorro;
 
 RemoteControl::RemoteControlData_t data;
@@ -73,9 +74,40 @@ MOTOR_INIT_t motorInit1 = {
         .ctrlType = POSITION_Double,
         .reductionRatio = 1
 };
+MOTOR_INIT_t motorInit2 = {
+        .addr = 0x142,
+        .speedPID = &pidRegulator1,
+        .anglePID = &pidRegulator2,
+        .ctrlType = POSITION_Double,
+        .reductionRatio = 1
+};
+MOTOR_INIT_t motorInit3 = {
+        .addr = 0x143,
+        .speedPID = &pidRegulator1,
+        .anglePID = &pidRegulator2,
+        .ctrlType = POSITION_Double,
+        .reductionRatio = 1
+};
+MOTOR_INIT_t motorInit4 = {
+        .addr = 0x144,
+        .speedPID = &pidRegulator1,
+        .anglePID = &pidRegulator2,
+        .ctrlType = POSITION_Double,
+        .reductionRatio = 1
+};
+MOTOR_INIT_t motorInit5 = {
+        .addr = 0x01,
+        .speedPID = nullptr,
+        .anglePID = nullptr,
+        .ctrlType = DIRECT,
+        .reductionRatio = 1
+};
 //实例化电机测试类
-MotorTest<1> motorTest1(motorInit1);
-
+Motor4010<1> motor4010_1(motorInit1);
+Motor4010<1> motor4010_2(motorInit2);
+Motor4010<1> motor4010_3(motorInit3);
+Motor4010<1> motor4010_4(motorInit4);
+//Motor4315<2> motor4315_1(motorInit5);
 
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
@@ -84,7 +116,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
         DeviceBase::DevicesHandle();
         Task1();
         Task2();
-        data = zorro.GetInfo();
+      //  data = zorro.GetInfo();
 
         CAN_Bus<1>::TxLoader();
         CAN_Bus<2>::TxLoader();
@@ -113,5 +145,9 @@ void Task2() {
         }
         Angle += 80;
     }
-    motorTest1.SetTargetAngle(Angle);
+    motor4010_1.SetTargetAngle(Angle);
+    motor4010_2.SetTargetAngle(Angle);
+    motor4010_3.SetTargetAngle(Angle);
+    motor4010_4.SetTargetAngle(Angle);
+   // motor4315_1.SetTargetAngle(Angle);
 }

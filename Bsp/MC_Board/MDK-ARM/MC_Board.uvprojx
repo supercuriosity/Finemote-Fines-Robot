@@ -798,9 +798,14 @@
               <FilePath>..\..\..\Devices\Motors\MotorBase.cpp</FilePath>
             </File>
             <File>
-              <FileName>MotorTest.cpp</FileName>
+              <FileName>Motor4010.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Components\Examples\MotorTest.cpp</FilePath>
+              <FilePath>..\..\..\Components\Motor4010.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Chassis.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Components\Chassis.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -831,6 +836,16 @@
               <FileName>UART_Base.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\Services\Bus\UART_Base.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>BSP</GroupName>
+          <Files>
+            <File>
+              <FileName>MC_Board.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\MC_Board.cpp</FilePath>
             </File>
           </Files>
         </Group>
