@@ -79,7 +79,7 @@ public:
 #define HAL_INIT_HANDLE
 
 
-extern UART_HandleTypeDef uartHandleList[4];
+extern UART_HandleTypeDef* uartHandleList[4];
 #define DMA_SBUS hdma_usart3_rx
 #define Serial_RC huart3
 #define UART_PERIPHERAL

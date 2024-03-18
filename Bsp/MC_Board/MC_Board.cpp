@@ -6,4 +6,4 @@
  ******************************************************************************/
 
 #include "MC_Board.h"
-UART_HandleTypeDef uartHandleList[4] ={huart3,huart1,huart2,huart5};
+UART_HandleTypeDef* uartHandleList[4] ={&huart3,&huart1,&huart2,&huart5};

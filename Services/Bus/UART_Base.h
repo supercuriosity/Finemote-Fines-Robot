@@ -65,7 +65,7 @@ public:
             case Callback_e::ERROR_CALL:
                 break;
         }
-        resourceList.pop_front();
+        if(!resourceList.empty() ) resourceList.pop_front();
     }
 
     std::queue<UART_Task_t> taskQueue; // 任务调度队列
@@ -111,19 +111,21 @@ public:
         switch (resourceList.front().task) {
             static_assert(busID<(sizeof (uartHandleList)/sizeof (uartHandleList[0])));
             case READ: 
-                HAL_UARTEx_ReceiveToIdle_IT(&uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
+                HAL_UARTEx_ReceiveToIdle_IT(uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
                 break;
             case WRITE:
-                HAL_UART_Transmit_IT(&uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
+                uint8_t tmp[8];
+                memcpy(tmp,resourceList.front().bufPtr,8);
+                HAL_UART_Transmit_IT(uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
                 break;
             case READ_VECTOR:
-                HAL_UART_Receive_IT(&uartHandleList[busID], resourceList.front().data.data(), resourceList.front().data.size());
+                HAL_UART_Receive_IT(uartHandleList[busID], resourceList.front().data.data(), resourceList.front().data.size());
                 break;
             case WRITE_VECTOR:
-                HAL_UART_Transmit_IT(&uartHandleList[busID], resourceList.front().data.data(),resourceList.front().data.size());
+                HAL_UART_Transmit_IT(uartHandleList[busID], resourceList.front().data.data(),resourceList.front().data.size());
                 break;
             case READ_FIXED_LENGTH:
-                HAL_UART_Receive_IT(&uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
+                HAL_UART_Receive_IT(uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
                 break;
             case DELAY:
                 if (handleStateE == Handle_State_e::READY) {
@@ -152,7 +154,7 @@ public:
 private:
     UART_Bus() {
         HALInit::GetInstance();
-        GetUartHandle_BusMap()[&(uartHandleList[busID])]=this;
+        GetUartHandle_BusMap()[uartHandleList[busID]]=this;
     }
 };
 
