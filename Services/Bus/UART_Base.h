@@ -166,7 +166,7 @@ public:
 
     // 不定长接收
     void Read(uint8_t* _bufPtr, CallbackFuncPtr callPtr = nullptr) {
-        if (uartBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        if (uartBusRef.taskQueue.size() >= UART_AGNET_TASK_MAX_NUM) return;
         UART_Task_t tmpTask;
         tmpTask.taskID = ++uartBusRef.taskID;
         tmpTask.task = READ;
@@ -178,7 +178,7 @@ public:
 
     // 定长接收
     void Read(uint8_t* _bufPtr, uint8_t _size, CallbackFuncPtr callPtr = nullptr) {
-        if (uartBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        if (uartBusRef.taskQueue.size() >= UART_AGNET_TASK_MAX_NUM) return;
         UART_Task_t tmpTask;
         tmpTask.taskID = ++uartBusRef.taskID;
         tmpTask.task = READ_FIXED_LENGTH;
@@ -190,7 +190,7 @@ public:
 
     // 定长接收(ByteVector)
     void Read(ByteVector dataVector, CallbackFuncPtr callPtr = nullptr) {
-        if (uartBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        if (uartBusRef.taskQueue.size() >= UART_AGNET_TASK_MAX_NUM) return;
         UART_Task_t tmpTask;
         tmpTask.taskID = ++uartBusRef.taskID;
         tmpTask.task = READ_VECTOR;
@@ -201,7 +201,7 @@ public:
 
     // 串口发送
     void Write(uint8_t* _bufPtr, uint8_t _size, CallbackFuncPtr callPtr = nullptr) {
-        if (uartBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        if (uartBusRef.taskQueue.size() >= UART_AGNET_TASK_MAX_NUM) return;
         UART_Task_t tmpTask;
         tmpTask.taskID = ++uartBusRef.taskID;
         tmpTask.task = WRITE;
@@ -213,7 +213,7 @@ public:
 
     // 小批量发送(ByteVector)
     void Write(ByteVector dataVector, CallbackFuncPtr callPtr = nullptr) {
-        if (uartBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        if (uartBusRef.taskQueue.size() >= UART_AGNET_TASK_MAX_NUM) return;
         UART_Task_t tmpTask;
         tmpTask.taskID = ++uartBusRef.taskID;
         tmpTask.task = WRITE_VECTOR;
@@ -223,7 +223,7 @@ public:
     }
 
     void Delay(uint32_t _ms) {
-        if (uartBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        if (uartBusRef.taskQueue.size() >= UART_AGNET_TASK_MAX_NUM) return;
         UART_Task_t tmpTask;
         tmpTask.taskID = ++uartBusRef.taskID;
         tmpTask.task = DELAY;

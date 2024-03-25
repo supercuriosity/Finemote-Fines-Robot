@@ -35,11 +35,12 @@ static_assert(false);
 
 /**
  * UART_PERIPHERAL 模块所需的UART外设依赖条件
- * @def USER_UART 配置的UART外设
+ * @variable UART_HandleTypeDef uartHandleList[size] 所有可用的串口句柄列表，其定义和声明应该分离。使用时，
+ *           传入的模板参数busID与此列表中串口的顺序相对应。
  */
-#if defined(UART_PERIPHERAL) //TODO 当不同BSP支持不同数目的UART串口时，应该将每个串口都作为依赖条件
+#if defined(UART_PERIPHERAL)
 #define UART_BASE_MODULE
-#define AGNET_TASK_MAX_NUM 200
+#define UART_AGNET_TASK_MAX_NUM 200
 #define UNFIXED_READ_MAX_LENGTH 100
 #endif
 
@@ -49,7 +50,7 @@ static_assert(false);
  */
 #if defined(I2C_PERIPHERAL) //TODO 当不同BSP支持不同数目的I2C总线时，应该将每一条总线都作为依赖条件
 #define I2C_BASE_MODULE
-#define AGNET_TASK_MAX_NUM 200
+#define I2C_AGNET_TASK_MAX_NUM 200
 #endif
 
 
