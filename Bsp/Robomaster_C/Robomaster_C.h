@@ -88,7 +88,7 @@ public:
 
 #define CAN_BUS_MAXIMUM_COUNT 2
 
-#define User_UART huart6
+extern UART_HandleTypeDef uartHandleList[3];
 #define UART_PERIPHERAL
 
 #define USER_I2C hi2c2
