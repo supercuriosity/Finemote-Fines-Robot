@@ -8,122 +8,120 @@
 #define FINEMOTE_BMI088_H
 
 #include "ProjectConfig.h"
-
+#define BMI088_MODULE
 #ifdef BMI088_MODULE
 
 #include "BMI088reg.h"
+#include "DeviceBase.h"
 
-extern uint16_t TempPidTimer;
-constexpr uint8_t ExpectTemp = 60;
 
-class BMI088 : public DeviceBase {
-public:
-    enum BMI088_ERROR_E
-    {
-        BMI088_NO_ERROR = 0x00,
-        BMI088_ACC_PWR_CTRL_ERROR = 0x01,
-        BMI088_ACC_PWR_CONF_ERROR = 0x02,
-        BMI088_ACC_CONF_ERROR = 0x03,
-        BMI088_ACC_SELF_TEST_ERROR = 0x04,
-        BMI088_ACC_RANGE_ERROR = 0x05,
-        BMI088_INT1_IO_CTRL_ERROR = 0x06,
-        BMI088_INT_MAP_DATA_ERROR = 0x07,
-        BMI088_GYRO_RANGE_ERROR = 0x08,
-        BMI088_GYRO_BANDWIDTH_ERROR = 0x09,
-        BMI088_GYRO_LPM1_ERROR = 0x0A,
-        BMI088_GYRO_CTRL_ERROR = 0x0B,
-        BMI088_GYRO_INT3_INT4_IO_CONF_ERROR = 0x0C,
-        BMI088_GYRO_INT3_INT4_IO_MAP_ERROR = 0x0D,
-        BMI088_SELF_TEST_ACCEL_ERROR = 0x80,
-        BMI088_SELF_TEST_GYRO_ERROR = 0x40,
-        BMI088_NO_SENSOR = 0xFF,
-    };
-    struct __packed BMI088RawData_t{
-            float accel[3];
-            float temp;
-            float gyro[3];
-    };
-    struct __packed BMI088RealData_t{
-            float accel[3];
-            float temp;
-            float gyro[3];
-    };
-    struct TempPID_t{
-        float kp;
-        float ki;
-        float kd;
-        float T;
-        float err;
-        float err_last;
-        float err_sum;
-        float output;
-    };
-public:
-    BMI088();
-    ~BMI088();
+#define BMI088_TEMP_FACTOR 0.125f
+#define BMI088_TEMP_OFFSET 23.0f
 
-    void IMU_Init();
-    void Acc_Init();
-    void Gyro_Init();
+#define BMI088_WRITE_ACCEL_REG_NUM  6
+#define BMI088_WRITE_GYRO_REG_NUM   6
 
-    void ProcessRaw(); // TODO: 处理原始数据
-    void Handle() override;
+#define BMI088_GYRO_DATA_READY_BIT          0
+#define BMI088_ACCEL_DATA_READY_BIT         1
+#define BMI088_ACCEL_TEMP_DATA_READY_BIT    2
 
-    void IMU_Read_Data(BMI088RawData_t *rawData);
+#define BMI088_LONG_DELAY_TIME      80
+#define BMI088_COM_WAIT_SENSOR_TIME 150
 
-    inline const BMI088RawData_t &GetRaw() const { return rawData; }
-    inline const BMI088RealData_t &GetReal() const { return realData; }
-private:
-    BMI088RawData_t rawData;
-    BMI088RealData_t realData;
-    TempPID_t tempPID;
-    BMI088_ERROR_E errorStatus[2];
-private:
-    void BMI088_Delay_us(uint32_t us);
-    void BMI088_Delay_ms(uint32_t ms);
 
-    void BMI088_ACC_NS_L(void);
-    void BMI088_ACC_NS_H(void);
-    void BMI088_GYRO_NS_L(void);
-    void BMI088_GYRO_NS_H(void);
+#define BMI088_ACCEL_IIC_ADDRESSE   (0x18 << 1)
+#define BMI088_GYRO_IIC_ADDRESSE    (0x68 << 1)
 
-    uint8_t BMI088_Read_Write_Byte(uint8_t txdata);
+#define BMI088_ACCEL_RANGE_3G
+//#define BMI088_ACCEL_RANGE_6G
+//#define BMI088_ACCEL_RANGE_12G
+//#define BMI088_ACCEL_RANGE_24G
 
-    void BMI088_Write_Single_Reg(uint8_t reg, uint8_t data);
-    void BMI088_Read_Single_Reg(uint8_t reg, uint8_t *return_data);
-    void BMI088_Read_Multi_Reg(uint8_t reg, uint8_t *buf, uint8_t len);
+#define BMI088_GYRO_RANGE_2000
+//#define BMI088_GYRO_RANGE_1000
+//#define BMI088_GYRO_RANGE_500
+//#define BMI088_GYRO_RANGE_250
+//#define BMI088_GYRO_RANGE_125
 
-    void BMI088_ACC_Write_Single_Reg(uint8_t reg, uint8_t data);
-    void BMI088_ACC_Read_Single_Reg(uint8_t reg, uint8_t *return_data);
-    void BMI088_ACC_Read_Multi_Reg(uint8_t reg, uint8_t *buf, uint8_t len);
 
-    void BMI088_GYRO_Write_Single_Reg(uint8_t reg, uint8_t data);
-    void BMI088_GYRO_Read_Single_Reg(uint8_t reg, uint8_t *return_data);
-    void BMI088_GYRO_Read_Multi_Reg(uint8_t reg, uint8_t *buf, uint8_t len);
+#define BMI088_ACCEL_3G_SEN     0.0008974358974f
+#define BMI088_ACCEL_6G_SEN     0.00179443359375f
+#define BMI088_ACCEL_12G_SEN    0.0035888671875f
+#define BMI088_ACCEL_24G_SEN    0.007177734375f
 
-    void TempPid_calc(TempPID_t *pid, float target, float measure);
-    void TempPid_output(TempPID_t *pid);
-private:
-    uint8_t Write_BMI088_ACC_Reg_Data_Error[BMI088_WRITE_ACCEL_REG_NUM][3] =
-            {
-                    {BMI088_ACC_PWR_CTRL, BMI088_ACC_ENABLE_ACC_ON, BMI088_ACC_PWR_CTRL_ERROR},
-                    {BMI088_ACC_PWR_CONF, BMI088_ACC_PWR_ACTIVE_MODE, BMI088_ACC_PWR_CONF_ERROR},
-                    {BMI088_ACC_CONF,  BMI088_ACC_NORMAL| BMI088_ACC_800_HZ | BMI088_ACC_CONF_MUST_Set, BMI088_ACC_CONF_ERROR},
-                    {BMI088_ACC_RANGE, BMI088_ACC_RANGE_3G, BMI088_ACC_RANGE_ERROR},
-                    {BMI088_INT1_IO_CTRL, BMI088_ACC_INT1_IO_ENABLE | BMI088_ACC_INT1_GPIO_PP | BMI088_ACC_INT1_GPIO_LOW, BMI088_INT1_IO_CTRL_ERROR},
-                    {BMI088_INT_MAP_DATA, BMI088_ACC_INT1_DRDY_INTERRUPT, BMI088_INT_MAP_DATA_ERROR}
-            };
-    uint8_t Write_BMI088_Gyro_Reg_Data_Error[BMI088_WRITE_GYRO_REG_NUM][3] =
-            {
-                    {BMI088_GYRO_RANGE, BMI088_GYRO_2000, BMI088_GYRO_RANGE_ERROR},
-                    {BMI088_GYRO_BANDWIDTH, BMI088_GYRO_1000_116_HZ | BMI088_GYRO_BANDWIDTH_MUST_Set, BMI088_GYRO_BANDWIDTH_ERROR},
-                    {BMI088_GYRO_LPM1, BMI088_GYRO_NORMAL_MODE, BMI088_GYRO_LPM1_ERROR},
-                    {BMI088_GYRO_CTRL, BMI088_DRDY_ON, BMI088_GYRO_CTRL_ERROR},
-                    {BMI088_GYRO_INT3_INT4_IO_CONF, BMI088_GYRO_INT3_GPIO_PP | BMI088_GYRO_INT3_GPIO_LOW, BMI088_GYRO_INT3_INT4_IO_CONF_ERROR},
-                    {BMI088_GYRO_INT3_INT4_IO_MAP, BMI088_GYRO_DRDY_IO_INT3, BMI088_GYRO_INT3_INT4_IO_MAP_ERROR}
 
-            };
+#define BMI088_GYRO_2000_SEN    0.00106526443603169529841533860381f
+#define BMI088_GYRO_1000_SEN    0.00053263221801584764920766930190693f
+#define BMI088_GYRO_500_SEN     0.00026631610900792382460383465095346f
+#define BMI088_GYRO_250_SEN     0.00013315805450396191230191732547673f
+#define BMI088_GYRO_125_SEN     0.000066579027251980956150958662738366f
+
+
+typedef  struct BMI088_RAW_DATA
+{
+    uint8_t status;
+    int16_t accel[3];
+    int16_t temp;
+    int16_t gyro[3];
+} __packed bmi088_raw_data_t;
+
+typedef struct BMI088_REAL_DATA
+{
+    uint8_t status;
+    float accel[3];
+    float temp;
+    float gyro[3];
+    float time;
+} bmi088_real_data_t;
+
+
+enum
+{
+    BMI088_NO_ERROR                     = 0x00,
+    BMI088_ACC_PWR_CTRL_ERROR           = 0x01,
+    BMI088_ACC_PWR_CONF_ERROR           = 0x02,
+    BMI088_ACC_CONF_ERROR               = 0x03,
+    BMI088_ACC_SELF_TEST_ERROR          = 0x04,
+    BMI088_ACC_RANGE_ERROR              = 0x05,
+    BMI088_INT1_IO_CTRL_ERROR           = 0x06,
+    BMI088_INT_MAP_DATA_ERROR           = 0x07,
+    BMI088_GYRO_RANGE_ERROR             = 0x08,
+    BMI088_GYRO_BANDWIDTH_ERROR         = 0x09,
+    BMI088_GYRO_LPM1_ERROR              = 0x0A,
+    BMI088_GYRO_CTRL_ERROR              = 0x0B,
+    BMI088_GYRO_INT3_INT4_IO_CONF_ERROR = 0x0C,
+    BMI088_GYRO_INT3_INT4_IO_MAP_ERROR  = 0x0D,
+
+    BMI088_SELF_TEST_ACCEL_ERROR        = 0x80,
+    BMI088_SELF_TEST_GYRO_ERROR         = 0x40,
+    BMI088_NO_SENSOR                    = 0xFF,
 };
+
+extern uint8_t ist8310_IIC_read_single_reg(uint8_t reg);
+extern void ist8310_delay_ms(uint16_t ms);
+extern void ist8310_delay_us(uint16_t us);
+extern void ist8310_RST_H(void);
+extern void ist8310_RST_L(void);
+
+
+extern uint8_t BMI088_init(void);
+extern uint8_t bmi088_accel_self_test(void);
+extern uint8_t bmi088_gyro_self_test(void);
+extern uint8_t bmi088_accel_init(void);
+extern uint8_t bmi088_gyro_init(void);
+
+extern void BMI088_accel_read_over(uint8_t *rx_buf, float accel[3], float *time);
+extern void BMI088_gyro_read_over(uint8_t *rx_buf, float gyro[3]);
+extern void BMI088_temperature_read_over(uint8_t *rx_buf, float *temperate);
+extern void BMI088_read(float gyro[3], float accel[3], float *temperate);
+extern uint32_t get_BMI088_sensor_time(void);
+extern float get_BMI088_temperate(void);
+extern void get_BMI088_gyro(int16_t gyro[3]);
+extern void get_BMI088_accel(float accel[3]);
+
+
+extern void BMI088_read_gyro_who_am_i(void);
+extern void BMI088_read_accel_who_am_i(void);
 
 #endif
 

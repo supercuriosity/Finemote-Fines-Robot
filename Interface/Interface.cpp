@@ -12,6 +12,7 @@
 #include "Controllers/RadioMaster_Zorro.h"
 #include "Controllers/RemoteControl.h"
 #include "Examples/MotorTest.h"
+#include "Sensors/IMUBase.h"
 extern RadioMaster_Zorro zorro;
 
 RemoteControl::RemoteControlData_t data;
@@ -73,6 +74,13 @@ MOTOR_INIT_t motorInit1 = {
         .ctrlType = POSITION_Double,
         .reductionRatio = 1
 };
+extern IMUBase imu;
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+
+    imu.ITHandle(GPIO_Pin);
+
+}
+
 //实例化电机测试类
 MotorTest<1> motorTest1(motorInit1);
 

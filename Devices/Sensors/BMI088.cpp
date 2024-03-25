@@ -7,254 +7,492 @@
 #include "BMI088.h"
 
 #ifdef BMI088_MODULE
+#include <cmath>
 
-BMI088 imu;
+float BMI088_ACCEL_SEN = BMI088_ACCEL_3G_SEN;
+float BMI088_GYRO_SEN = BMI088_GYRO_2000_SEN;
 
-BMI088::BMI088() {
-    tempPID = TempPID_t{10, 0.1, 5, 0, 0, 0, 0};
-}
+#define BMI088_USE_SPI
 
-BMI088::~BMI088() {
+#if defined(BMI088_USE_SPI)
 
-}
+#define BMI088_accel_write_single_reg(reg, data) \
+    {                                            \
+        BMI088_ACCEL_NS_L();                     \
+        BMI088_write_single_reg((reg), (data));  \
+        BMI088_ACCEL_NS_H();                     \
+    }
+#define BMI088_accel_read_single_reg(reg, data) \
+    {                                           \
+        BMI088_ACCEL_NS_L();                    \
+        BMI088_read_write_byte((reg) | 0x80);   \
+        BMI088_read_write_byte(0x55);           \
+        (data) = BMI088_read_write_byte(0x55);  \
+        BMI088_ACCEL_NS_H();                    \
+    }
+//#define BMI088_accel_write_muli_reg( reg,  data, len) { BMI088_ACCEL_NS_L(); BMI088_write_muli_reg(reg, data, len); BMI088_ACCEL_NS_H(); }
+#define BMI088_accel_read_muli_reg(reg, data, len) \
+    {                                              \
+        BMI088_ACCEL_NS_L();                       \
+        BMI088_read_write_byte((reg) | 0x80);      \
+        BMI088_read_muli_reg(reg, data, len);      \
+        BMI088_ACCEL_NS_H();                       \
+    }
 
-void BMI088::BMI088_ACC_Write_Single_Reg(std::uint8_t reg, std::uint8_t data) {
-    BMI088_ACC_NS_L();
-    BMI088_Write_Single_Reg(reg, data);
-    BMI088_ACC_NS_H();
-}
+#define BMI088_gyro_write_single_reg(reg, data) \
+    {                                           \
+        BMI088_GYRO_NS_L();                     \
+        BMI088_write_single_reg((reg), (data)); \
+        BMI088_GYRO_NS_H();                     \
+    }
+#define BMI088_gyro_read_single_reg(reg, data)  \
+    {                                           \
+        BMI088_GYRO_NS_L();                     \
+        BMI088_read_single_reg((reg), &(data)); \
+        BMI088_GYRO_NS_H();                     \
+    }
+//#define BMI088_gyro_write_muli_reg( reg,  data, len) { BMI088_GYRO_NS_L(); BMI088_write_muli_reg( ( reg ), ( data ), ( len ) ); BMI088_GYRO_NS_H(); }
+#define BMI088_gyro_read_muli_reg(reg, data, len)   \
+    {                                               \
+        BMI088_GYRO_NS_L();                         \
+        BMI088_read_muli_reg((reg), (data), (len)); \
+        BMI088_GYRO_NS_H();                         \
+    }
 
-void BMI088::BMI088_ACC_Read_Single_Reg(std::uint8_t reg, std::uint8_t *return_data) {
-    BMI088_ACC_NS_L();
-    BMI088_Read_Single_Reg(reg, return_data);
-    BMI088_ACC_NS_H();
-}
+static void BMI088_write_single_reg(uint8_t reg, uint8_t data);
+static void BMI088_read_single_reg(uint8_t reg, uint8_t *return_data);
+//static void BMI088_write_muli_reg(uint8_t reg, uint8_t* buf, uint8_t len );
+static void BMI088_read_muli_reg(uint8_t reg, uint8_t *buf, uint8_t len);
 
-void BMI088::BMI088_ACC_Read_Multi_Reg(std::uint8_t reg, std::uint8_t *buf, std::uint8_t len) {
-    BMI088_ACC_NS_L();
-    BMI088_Read_Multi_Reg(reg, buf, len);
-    BMI088_ACC_NS_H();
-}
+#elif defined(BMI088_USE_IIC)
 
-void BMI088::BMI088_GYRO_Write_Single_Reg(std::uint8_t reg, std::uint8_t data) {
-    BMI088_GYRO_NS_L();
-    BMI088_Write_Single_Reg(reg, data);
-    BMI088_GYRO_NS_H();
-}
 
-void BMI088::BMI088_GYRO_Read_Single_Reg(std::uint8_t reg, std::uint8_t *return_data) {
-    BMI088_GYRO_NS_L();
-    BMI088_Read_Single_Reg(reg, return_data);
-    BMI088_GYRO_NS_H();
-}
+#endif
 
-void BMI088::BMI088_GYRO_Read_Multi_Reg(std::uint8_t reg, std::uint8_t *buf, std::uint8_t len) {
-    BMI088_GYRO_NS_L();
-    BMI088_Read_Multi_Reg(reg, buf, len);
-    BMI088_GYRO_NS_H();
-}
-
-uint8_t BMI088::BMI088_Read_Write_Byte(std::uint8_t txdata) {
-    uint8_t return_data = 0;
-    HAL_SPI_TransmitReceive(&hspi2, &txdata, &return_data, 1, 100);
-    return return_data;
-}
-
-void BMI088::BMI088_Delay_us(std::uint32_t us) {
-    uint32_t ticks = 0;
-    uint32_t told = 0;
-    uint32_t tnow = 0;
-    uint32_t tcnt = 0;
-    uint32_t reload = 0;
-    reload = SysTick->LOAD;
-    ticks = us * 168;
-    told = SysTick->VAL;
-    while (1)
-    {
-        tnow = SysTick->VAL;
-        if (tnow != told)
+static uint8_t write_BMI088_accel_reg_data_error[BMI088_WRITE_ACCEL_REG_NUM][3] =
         {
-            if (tnow < told)
-            {
-                tcnt += told - tnow;
-            }
-            else
-            {
-                tcnt += reload - tnow + told;
-            }
-            told = tnow;
-            if (tcnt >= ticks)
-            {
-                break;
-            }
-        }
-    }
+                {BMI088_ACC_PWR_CTRL, BMI088_ACC_ENABLE_ACC_ON, BMI088_ACC_PWR_CTRL_ERROR},
+                {BMI088_ACC_PWR_CONF, BMI088_ACC_PWR_ACTIVE_MODE, BMI088_ACC_PWR_CONF_ERROR},
+                {BMI088_ACC_CONF,  BMI088_ACC_NORMAL| BMI088_ACC_800_HZ | BMI088_ACC_CONF_MUST_Set, BMI088_ACC_CONF_ERROR},
+                {BMI088_ACC_RANGE, BMI088_ACC_RANGE_3G, BMI088_ACC_RANGE_ERROR},
+                {BMI088_INT1_IO_CTRL, BMI088_ACC_INT1_IO_ENABLE | BMI088_ACC_INT1_GPIO_PP | BMI088_ACC_INT1_GPIO_LOW, BMI088_INT1_IO_CTRL_ERROR},
+                {BMI088_INT_MAP_DATA, BMI088_ACC_INT1_DRDY_INTERRUPT, BMI088_INT_MAP_DATA_ERROR}
+
+        };
+
+static uint8_t write_BMI088_gyro_reg_data_error[BMI088_WRITE_GYRO_REG_NUM][3] =
+        {
+                {BMI088_GYRO_RANGE, BMI088_GYRO_2000, BMI088_GYRO_RANGE_ERROR},
+                {BMI088_GYRO_BANDWIDTH, BMI088_GYRO_1000_116_HZ | BMI088_GYRO_BANDWIDTH_MUST_Set, BMI088_GYRO_BANDWIDTH_ERROR},
+                {BMI088_GYRO_LPM1, BMI088_GYRO_NORMAL_MODE, BMI088_GYRO_LPM1_ERROR},
+                {BMI088_GYRO_CTRL, BMI088_DRDY_ON, BMI088_GYRO_CTRL_ERROR},
+                {BMI088_GYRO_INT3_INT4_IO_CONF, BMI088_GYRO_INT3_GPIO_PP | BMI088_GYRO_INT3_GPIO_LOW, BMI088_GYRO_INT3_INT4_IO_CONF_ERROR},
+                {BMI088_GYRO_INT3_INT4_IO_MAP, BMI088_GYRO_DRDY_IO_INT3, BMI088_GYRO_INT3_INT4_IO_MAP_ERROR}
+
+        };
+
+void BMI088_delay_ms(uint16_t ms)
+{
+    HAL_Delay(ms);
 }
 
-void BMI088::BMI088_Delay_ms(std::uint32_t ms) {
-    uint32_t i = 0;
-    for (i = 0; i < ms; i++)
+void BMI088_delay_us(uint16_t us)
+{
+    uint16_t i;
+    for (i = 0; i < us; i++ )
     {
-        BMI088_Delay_us(1000);
+        int a = 10;  //delay based on mian clock, 168Mhz
+        while (a-- );
     }
 }
 
-void BMI088::BMI088_ACC_NS_L(void) {
-    HAL_GPIO_WritePin(SPI2_Accel_CS_GPIO_Port , SPI2_Accel_CS_Pin, GPIO_PIN_RESET);
+
+
+
+void BMI088_ACCEL_NS_L(void)
+{
+    HAL_GPIO_WritePin(CS1_ACCEL_GPIO_Port, CS1_ACCEL_Pin, GPIO_PIN_RESET);
+}
+void BMI088_ACCEL_NS_H(void)
+{
+    HAL_GPIO_WritePin(CS1_ACCEL_GPIO_Port, CS1_ACCEL_Pin, GPIO_PIN_SET);
 }
 
-void BMI088::BMI088_ACC_NS_H(void) {
-    HAL_GPIO_WritePin(SPI2_Accel_CS_GPIO_Port , SPI2_Accel_CS_Pin, GPIO_PIN_SET);
+void BMI088_GYRO_NS_L(void)
+{
+    HAL_GPIO_WritePin(CS1_GYRO_GPIO_Port, CS1_GYRO_Pin, GPIO_PIN_RESET);
+}
+void BMI088_GYRO_NS_H(void)
+{
+    HAL_GPIO_WritePin(CS1_GYRO_GPIO_Port, CS1_GYRO_Pin, GPIO_PIN_SET);
+}
+uint8_t BMI088_read_write_byte(uint8_t txdata)
+{
+    uint8_t rx_data;
+    HAL_SPI_TransmitReceive(&hspi1, &txdata, &rx_data, 1, 1000);
+    return rx_data;
 }
 
-void BMI088::BMI088_GYRO_NS_L(void) {
-    HAL_GPIO_WritePin(SPI2_Gyro_CS_GPIO_Port , SPI2_Gyro_CS_Pin, GPIO_PIN_RESET);
-}
 
-void BMI088::BMI088_GYRO_NS_H(void) {
-    HAL_GPIO_WritePin(SPI2_Gyro_CS_GPIO_Port , SPI2_Gyro_CS_Pin, GPIO_PIN_SET);
-}
+uint8_t BMI088_init(void)
+{
+    uint8_t error = BMI088_NO_ERROR;
+    // GPIO and SPI  Init .
+    //BMI088_GPIO_init();
+    //BMI088_com_init();
 
-void BMI088::IMU_Init() {
-    Acc_Init();
-    Gyro_Init();
-}
-
-void BMI088::BMI088_Write_Single_Reg(std::uint8_t reg, std::uint8_t data) {
-    BMI088_Read_Write_Byte(reg);
-    BMI088_Read_Write_Byte(data);
-}
-
-void BMI088::BMI088_Read_Single_Reg(std::uint8_t reg, std::uint8_t *return_data) {
-    BMI088_Read_Write_Byte(reg | 0x80);
-    *return_data = BMI088_Read_Write_Byte(0x55);
-}
-
-void BMI088::BMI088_Read_Multi_Reg(std::uint8_t reg, std::uint8_t *buf, std::uint8_t len) {
-    uint8_t i = 0;
-    BMI088_Read_Write_Byte(reg | 0x80);
-    for (i = 0; i < len; i++)
+    // self test pass and init
+    if (bmi088_accel_self_test() != BMI088_NO_ERROR)
     {
-        buf[i] = BMI088_Read_Write_Byte(0x55);
+        error |= BMI088_SELF_TEST_ACCEL_ERROR;
     }
+    else
+    {
+        error |= bmi088_accel_init();
+    }
+
+    if (bmi088_gyro_self_test() != BMI088_NO_ERROR)
+    {
+        error |= BMI088_SELF_TEST_GYRO_ERROR;
+    }
+    else
+    {
+        error |= bmi088_gyro_init();
+    }
+
+    return error;
 }
 
-void BMI088::Acc_Init() {
-    uint8_t res = 0;
+uint8_t bmi088_accel_init(void)
+{
+    volatile uint8_t res = 0;
     uint8_t write_reg_num = 0;
 
-    //check communication
-    BMI088_ACC_Read_Single_Reg(BMI088_ACC_CHIP_ID, &res);
-    BMI088_Delay_us(BMI088_COM_WAIT_SENSOR_TIME);
-    BMI088_ACC_Read_Single_Reg(BMI088_ACC_CHIP_ID, &res);
-    BMI088_Delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    //check commiunication
+    BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
 
     //accel software reset
-    BMI088_ACC_Write_Single_Reg(BMI088_ACC_SOFTRESET, BMI088_ACC_SOFTRESET_VALUE);
-    BMI088_Delay_ms(BMI088_LONG_DELAY_TIME);
+    BMI088_accel_write_single_reg(BMI088_ACC_SOFTRESET, BMI088_ACC_SOFTRESET_VALUE);
+    BMI088_delay_ms(BMI088_LONG_DELAY_TIME);
 
-    //check communication is normal after reset
-    BMI088_ACC_Read_Single_Reg(BMI088_ACC_CHIP_ID, &res);
-    BMI088_Delay_us(BMI088_COM_WAIT_SENSOR_TIME);
-    BMI088_ACC_Read_Single_Reg(BMI088_ACC_CHIP_ID, &res);
-    BMI088_Delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    //check commiunication is normal after reset
+    BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
 
     // check the "who am I"
     if (res != BMI088_ACC_CHIP_ID_VALUE)
     {
-        errorStatus[0] = static_cast<BMI088_ERROR_E>(BMI088_NO_SENSOR);
+        return BMI088_NO_SENSOR;
     }
 
-    //set accel sensor config and check
+    //set accel sonsor config and check
     for (write_reg_num = 0; write_reg_num < BMI088_WRITE_ACCEL_REG_NUM; write_reg_num++)
     {
 
-        BMI088_ACC_Write_Single_Reg(Write_BMI088_ACC_Reg_Data_Error[write_reg_num][0], Write_BMI088_ACC_Reg_Data_Error[write_reg_num][1]);
-        BMI088_Delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+        BMI088_accel_write_single_reg(write_BMI088_accel_reg_data_error[write_reg_num][0], write_BMI088_accel_reg_data_error[write_reg_num][1]);
+        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
 
-        BMI088_ACC_Read_Single_Reg(Write_BMI088_ACC_Reg_Data_Error[write_reg_num][0], &res);
-        BMI088_Delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+        BMI088_accel_read_single_reg(write_BMI088_accel_reg_data_error[write_reg_num][0], res);
+        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
 
-        if (res != Write_BMI088_ACC_Reg_Data_Error[write_reg_num][1])
+        if (res != write_BMI088_accel_reg_data_error[write_reg_num][1])
         {
-            errorStatus[0] = static_cast<BMI088_ERROR_E>(Write_BMI088_ACC_Reg_Data_Error[write_reg_num][2]);
+            return write_BMI088_accel_reg_data_error[write_reg_num][2];
         }
     }
-    errorStatus[0] = BMI088_NO_ERROR;
+    return BMI088_NO_ERROR;
 }
 
-void BMI088::Gyro_Init() {
+uint8_t bmi088_gyro_init(void)
+{
     uint8_t write_reg_num = 0;
     uint8_t res = 0;
 
-    //check communication
-    BMI088_GYRO_Read_Single_Reg(BMI088_GYRO_CHIP_ID, &res);
-    BMI088_Delay_us(BMI088_COM_WAIT_SENSOR_TIME);
-    BMI088_GYRO_Read_Single_Reg(BMI088_GYRO_CHIP_ID, &res);
-    BMI088_Delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    //check commiunication
+    BMI088_gyro_read_single_reg(BMI088_GYRO_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_gyro_read_single_reg(BMI088_GYRO_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
 
     //reset the gyro sensor
-    BMI088_GYRO_Write_Single_Reg(BMI088_GYRO_SOFTRESET, BMI088_GYRO_SOFTRESET_VALUE);
-    BMI088_Delay_ms(BMI088_LONG_DELAY_TIME);
-    //check communication is normal after reset
-    BMI088_GYRO_Read_Single_Reg(BMI088_GYRO_CHIP_ID, &res);
-    BMI088_Delay_us(BMI088_COM_WAIT_SENSOR_TIME);
-    BMI088_GYRO_Read_Single_Reg(BMI088_GYRO_CHIP_ID, &res);
-    BMI088_Delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_gyro_write_single_reg(BMI088_GYRO_SOFTRESET, BMI088_GYRO_SOFTRESET_VALUE);
+    BMI088_delay_ms(BMI088_LONG_DELAY_TIME);
+    //check commiunication is normal after reset
+    BMI088_gyro_read_single_reg(BMI088_GYRO_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_gyro_read_single_reg(BMI088_GYRO_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
 
     // check the "who am I"
     if (res != BMI088_GYRO_CHIP_ID_VALUE)
     {
-        errorStatus[1] = BMI088_NO_SENSOR;
+        return BMI088_NO_SENSOR;
     }
 
-    //set gyro sensor config and check
+    //set gyro sonsor config and check
     for (write_reg_num = 0; write_reg_num < BMI088_WRITE_GYRO_REG_NUM; write_reg_num++)
     {
 
-        BMI088_GYRO_Write_Single_Reg(Write_BMI088_Gyro_Reg_Data_Error[write_reg_num][0], Write_BMI088_Gyro_Reg_Data_Error[write_reg_num][1]);
-        BMI088_Delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+        BMI088_gyro_write_single_reg(write_BMI088_gyro_reg_data_error[write_reg_num][0], write_BMI088_gyro_reg_data_error[write_reg_num][1]);
+        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
 
-        BMI088_GYRO_Read_Single_Reg(Write_BMI088_Gyro_Reg_Data_Error[write_reg_num][0], &res);
-        BMI088_Delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+        BMI088_gyro_read_single_reg(write_BMI088_gyro_reg_data_error[write_reg_num][0], res);
+        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
 
-        if (res != Write_BMI088_Gyro_Reg_Data_Error[write_reg_num][1])
+        if (res != write_BMI088_gyro_reg_data_error[write_reg_num][1])
         {
-            errorStatus[1] = static_cast<BMI088_ERROR_E>(Write_BMI088_Gyro_Reg_Data_Error[write_reg_num][2]);
+            return write_BMI088_gyro_reg_data_error[write_reg_num][2];
         }
     }
 
-    errorStatus[1] = BMI088_NO_ERROR;
+    return BMI088_NO_ERROR;
 }
 
-void BMI088::ProcessRaw() {
+uint8_t bmi088_accel_self_test(void)
+{
+
+    int16_t self_test_accel[2][3];
+
+    uint8_t buf[6] = {0, 0, 0, 0, 0, 0};
+    volatile uint8_t res = 0;
+
+    uint8_t write_reg_num = 0;
+
+    static const uint8_t write_BMI088_ACCEL_self_test_Reg_Data_Error[6][3] =
+            {
+                    {BMI088_ACC_CONF, BMI088_ACC_NORMAL | BMI088_ACC_1600_HZ | BMI088_ACC_CONF_MUST_Set, BMI088_ACC_CONF_ERROR},
+                    {BMI088_ACC_PWR_CTRL, BMI088_ACC_ENABLE_ACC_ON, BMI088_ACC_PWR_CTRL_ERROR},
+                    {BMI088_ACC_RANGE, BMI088_ACC_RANGE_24G, BMI088_ACC_RANGE_ERROR},
+                    {BMI088_ACC_PWR_CONF, BMI088_ACC_PWR_ACTIVE_MODE, BMI088_ACC_PWR_CONF_ERROR},
+                    {BMI088_ACC_SELF_TEST, BMI088_ACC_SELF_TEST_POSITIVE_SIGNAL, BMI088_ACC_PWR_CONF_ERROR},
+                    {BMI088_ACC_SELF_TEST, BMI088_ACC_SELF_TEST_NEGATIVE_SIGNAL, BMI088_ACC_PWR_CONF_ERROR}
+
+            };
+
+    //check commiunication is normal
+    BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+
+    // reset  bmi088 accel sensor and wait for > 50ms
+    BMI088_accel_write_single_reg(BMI088_ACC_SOFTRESET, BMI088_ACC_SOFTRESET_VALUE);
+    BMI088_delay_ms(BMI088_LONG_DELAY_TIME);
+
+    //check commiunication is normal
+    BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+
+    if (res != BMI088_ACC_CHIP_ID_VALUE)
+    {
+        return BMI088_NO_SENSOR;
+    }
+
+    // set the accel register
+    for (write_reg_num = 0; write_reg_num < 4; write_reg_num++)
+    {
+
+        BMI088_accel_write_single_reg(write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num][0], write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num][1]);
+        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+
+        BMI088_accel_read_single_reg(write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num][0], res);
+        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+
+        if (res != write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num][1])
+        {
+            return write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num][2];
+        }
+        // accel conf and accel range  . the two register set need wait for > 50ms
+        BMI088_delay_ms(BMI088_LONG_DELAY_TIME);
+    }
+
+    // self test include postive and negative
+    for (write_reg_num = 0; write_reg_num < 2; write_reg_num++)
+    {
+
+        BMI088_accel_write_single_reg(write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num + 4][0], write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num + 4][1]);
+        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+
+        BMI088_accel_read_single_reg(write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num + 4][0], res);
+        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+
+        if (res != write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num + 4][1])
+        {
+            return write_BMI088_ACCEL_self_test_Reg_Data_Error[write_reg_num + 4][2];
+        }
+        // accel conf and accel range  . the two register set need wait for > 50ms
+        BMI088_delay_ms(BMI088_LONG_DELAY_TIME);
+
+        // read response accel
+        BMI088_accel_read_muli_reg(BMI088_ACCEL_XOUT_L, buf, 6);
+
+        self_test_accel[write_reg_num][0] = (int16_t)((buf[1]) << 8) | buf[0];
+        self_test_accel[write_reg_num][1] = (int16_t)((buf[3]) << 8) | buf[2];
+        self_test_accel[write_reg_num][2] = (int16_t)((buf[5]) << 8) | buf[4];
+    }
+
+    //set self test off
+    BMI088_accel_write_single_reg(BMI088_ACC_SELF_TEST, BMI088_ACC_SELF_TEST_OFF);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_accel_read_single_reg(BMI088_ACC_SELF_TEST, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+
+    if (res != (BMI088_ACC_SELF_TEST_OFF))
+    {
+        return BMI088_ACC_SELF_TEST_ERROR;
+    }
+
+    //reset the accel sensor
+    BMI088_accel_write_single_reg(BMI088_ACC_SOFTRESET, BMI088_ACC_SOFTRESET_VALUE);
+    BMI088_delay_ms(BMI088_LONG_DELAY_TIME);
+
+    if ((self_test_accel[0][0] - self_test_accel[1][0] < 1365) || (self_test_accel[0][1] - self_test_accel[1][1] < 1365) || (self_test_accel[0][2] - self_test_accel[1][2] < 680))
+    {
+        return BMI088_SELF_TEST_ACCEL_ERROR;
+    }
+
+    BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+
+    return BMI088_NO_ERROR;
+}
+uint8_t bmi088_gyro_self_test(void)
+{
+    uint8_t res = 0;
+    uint8_t retry = 0;
+    //check commiunication is normal
+    BMI088_gyro_read_single_reg(BMI088_GYRO_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_gyro_read_single_reg(BMI088_GYRO_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    //reset the gyro sensor
+    BMI088_gyro_write_single_reg(BMI088_GYRO_SOFTRESET, BMI088_GYRO_SOFTRESET_VALUE);
+    BMI088_delay_ms(BMI088_LONG_DELAY_TIME);
+    //check commiunication is normal after reset
+    BMI088_gyro_read_single_reg(BMI088_GYRO_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+    BMI088_gyro_read_single_reg(BMI088_GYRO_CHIP_ID, res);
+    BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+
+    BMI088_gyro_write_single_reg(BMI088_GYRO_SELF_TEST, BMI088_GYRO_TRIG_BIST);
+    BMI088_delay_ms(BMI088_LONG_DELAY_TIME);
+
+    do
+    {
+
+        BMI088_gyro_read_single_reg(BMI088_GYRO_SELF_TEST, res);
+        BMI088_delay_us(BMI088_COM_WAIT_SENSOR_TIME);
+        retry++;
+    } while (!(res & BMI088_GYRO_BIST_RDY) && retry < 10);
+
+    if (retry == 10)
+    {
+        return BMI088_SELF_TEST_GYRO_ERROR;
+    }
+
+    if (res & BMI088_GYRO_BIST_FAIL)
+    {
+        return BMI088_SELF_TEST_GYRO_ERROR;
+    }
+
+    return BMI088_NO_ERROR;
+}
+
+void BMI088_read_gyro_who_am_i(void)
+{
+    uint8_t buf;
+    BMI088_gyro_read_single_reg(BMI088_GYRO_CHIP_ID, buf);
+}
+
+
+void BMI088_read_accel_who_am_i(void)
+{
+    volatile uint8_t buf;
+    BMI088_accel_read_single_reg(BMI088_ACC_CHIP_ID, buf);
+    buf = 0;
 
 }
 
-void BMI088::IMU_Read_Data(BMI088RawData_t *rawData) {
+
+
+
+
+void BMI088_temperature_read_over(uint8_t *rx_buf, float *temperate)
+{
+    int16_t bmi088_raw_temp;
+    bmi088_raw_temp = (int16_t)((rx_buf[0] << 3) | (rx_buf[1] >> 5));
+
+    if (bmi088_raw_temp > 1023)
+    {
+        bmi088_raw_temp -= 2048;
+    }
+    *temperate = bmi088_raw_temp * BMI088_TEMP_FACTOR + BMI088_TEMP_OFFSET;
+
+}
+
+void BMI088_accel_read_over(uint8_t *rx_buf, float accel[3], float *time)
+{
+    int16_t bmi088_raw_temp;
+    uint32_t sensor_time;
+    bmi088_raw_temp = (int16_t)((rx_buf[1]) << 8) | rx_buf[0];
+    accel[0] = bmi088_raw_temp * BMI088_ACCEL_SEN;
+    bmi088_raw_temp = (int16_t)((rx_buf[3]) << 8) | rx_buf[2];
+    accel[1] = bmi088_raw_temp * BMI088_ACCEL_SEN;
+    bmi088_raw_temp = (int16_t)((rx_buf[5]) << 8) | rx_buf[4];
+    accel[2] = bmi088_raw_temp * BMI088_ACCEL_SEN;
+    //sensor_time = (uint32_t)((rx_buf[8] << 16) | (rx_buf[7] << 8) | rx_buf[6]); //官方代码疑似超界
+    sensor_time = (uint32_t)( rx_buf[6]);
+    *time = sensor_time * 39.0625f;
+    if (abs(accel[0])+abs(accel[1])+abs(accel[2]) > 15 ){
+        volatile uint32_t tmp = HAL_GetTick();
+    }
+}
+
+void BMI088_gyro_read_over(uint8_t *rx_buf, float gyro[3])
+{
+    int16_t bmi088_raw_temp;
+    bmi088_raw_temp = (int16_t)((rx_buf[1]) << 8) | rx_buf[0];
+    gyro[0] = bmi088_raw_temp * BMI088_GYRO_SEN;
+    bmi088_raw_temp = (int16_t)((rx_buf[3]) << 8) | rx_buf[2];
+    gyro[1] = bmi088_raw_temp * BMI088_GYRO_SEN;
+    bmi088_raw_temp = (int16_t)((rx_buf[5]) << 8) | rx_buf[4];
+    gyro[2] = bmi088_raw_temp * BMI088_GYRO_SEN;
+}
+
+void BMI088_read(float gyro[3], float accel[3], float *temperate)
+{
     uint8_t buf[8] = {0, 0, 0, 0, 0, 0};
     int16_t bmi088_raw_temp;
 
-    BMI088_ACC_Read_Multi_Reg(BMI088_ACCEL_XOUT_L, buf, 6); // 0x12~0x17 为X轴低8位到Z轴高8位
+    BMI088_accel_read_muli_reg(BMI088_ACCEL_XOUT_L, buf, 6);
 
     bmi088_raw_temp = (int16_t)((buf[1]) << 8) | buf[0];
-    rawData->accel[0] = static_cast<float>(bmi088_raw_temp * BMI088_ACCEL_3G_SEN);
+    accel[0] = bmi088_raw_temp * BMI088_ACCEL_SEN;
     bmi088_raw_temp = (int16_t)((buf[3]) << 8) | buf[2];
-    rawData->accel[1] = static_cast<float>(bmi088_raw_temp * BMI088_ACCEL_3G_SEN);
+    accel[1] = bmi088_raw_temp * BMI088_ACCEL_SEN;
     bmi088_raw_temp = (int16_t)((buf[5]) << 8) | buf[4];
-    rawData->accel[2] = static_cast<float>(bmi088_raw_temp * BMI088_ACCEL_3G_SEN);
+    accel[2] = bmi088_raw_temp * BMI088_ACCEL_SEN;
 
-    BMI088_GYRO_Read_Multi_Reg(BMI088_GYRO_CHIP_ID, buf, 8); // 0x00~0x07 为CHIP_ID, Reserved, X轴低8位到Z轴高8位
+    BMI088_gyro_read_muli_reg(BMI088_GYRO_CHIP_ID, buf, 8);
     if(buf[0] == BMI088_GYRO_CHIP_ID_VALUE)
     {
         bmi088_raw_temp = (int16_t)((buf[3]) << 8) | buf[2];
-        rawData->gyro[0] = static_cast<float>(bmi088_raw_temp * BMI088_GYRO_2000_SEN);
+        gyro[0] = bmi088_raw_temp * BMI088_GYRO_SEN;
         bmi088_raw_temp = (int16_t)((buf[5]) << 8) | buf[4];
-        rawData->gyro[1] = static_cast<float>(bmi088_raw_temp * BMI088_GYRO_2000_SEN);
+        gyro[1] = bmi088_raw_temp * BMI088_GYRO_SEN;
         bmi088_raw_temp = (int16_t)((buf[7]) << 8) | buf[6];
-        rawData->gyro[2] = static_cast<float>(bmi088_raw_temp * BMI088_GYRO_2000_SEN);
+        gyro[2] = bmi088_raw_temp * BMI088_GYRO_SEN;
     }
-    BMI088_ACC_Read_Multi_Reg(BMI088_TEMP_M, buf, 2); // 0x22为temperature[10:3], 0x23为temperature[2:0]
+    BMI088_accel_read_muli_reg(BMI088_TEMP_M, buf, 2);
 
     bmi088_raw_temp = (int16_t)((buf[0] << 3) | (buf[1] >> 5));
 
@@ -263,31 +501,112 @@ void BMI088::IMU_Read_Data(BMI088RawData_t *rawData) {
         bmi088_raw_temp -= 2048;
     }
 
-    rawData->temp = static_cast<float>(bmi088_raw_temp * BMI088_TEMP_FACTOR + BMI088_TEMP_OFFSET);
+    *temperate = bmi088_raw_temp * BMI088_TEMP_FACTOR + BMI088_TEMP_OFFSET;
 }
 
-void BMI088::TempPid_calc(BMI088::TempPID_t *pid, float target, float measure) {
-//    if (TempPidTimer >= 200){ //pid计算周期为100ms
-    pid->err = target - measure; // 本次误差
-    pid->err_sum += pid->err; // 误差积分
-    pid->output = pid->kp * pid->err + pid->ki * pid->err_sum + pid->kd * (pid->err - pid->err_last);
-    pid->err_last = pid->err; // 保存误差
+uint32_t get_BMI088_sensor_time(void)
+{
+    uint32_t sensor_time = 0;
+    uint8_t buf[3];
+    BMI088_accel_read_muli_reg(BMI088_SENSORTIME_DATA_L, buf, 3);
+
+    sensor_time = (uint32_t)((buf[2] << 16) | (buf[1] << 8) | (buf[0]));
+
+    return sensor_time;
+}
+
+float get_BMI088_temperate(void)
+{
+    uint8_t buf[2];
+    float temperate;
+    int16_t temperate_raw_temp;
+
+    BMI088_accel_read_muli_reg(BMI088_TEMP_M, buf, 2);
+
+    temperate_raw_temp = (int16_t)((buf[0] << 3) | (buf[1] >> 5));
+
+    if (temperate_raw_temp > 1023)
+    {
+        temperate_raw_temp -= 2048;
+    }
+
+    temperate = temperate_raw_temp * BMI088_TEMP_FACTOR + BMI088_TEMP_OFFSET;
+
+    return temperate;
+}
+
+void get_BMI088_gyro(int16_t gyro[3])
+{
+    uint8_t buf[6] = {0, 0, 0, 0, 0, 0};
+    int16_t gyro_raw_temp;
+
+    BMI088_gyro_read_muli_reg(BMI088_GYRO_X_L, buf, 6);
+
+    gyro_raw_temp = (int16_t)((buf[1]) << 8) | buf[0];
+    gyro[0] = gyro_raw_temp ;
+    gyro_raw_temp = (int16_t)((buf[3]) << 8) | buf[2];
+    gyro[1] = gyro_raw_temp ;
+    gyro_raw_temp = (int16_t)((buf[5]) << 8) | buf[4];
+    gyro[2] = gyro_raw_temp ;
+}
+
+void get_BMI088_accel(float accel[3])
+{
+    uint8_t buf[6] = {0, 0, 0, 0, 0, 0};
+    int16_t accel_raw_temp;
+
+    BMI088_accel_read_muli_reg(BMI088_ACCEL_XOUT_L, buf, 6);
+
+    accel_raw_temp = (int16_t)((buf[1]) << 8) | buf[0];
+    accel[0] = accel_raw_temp * BMI088_ACCEL_SEN;
+    accel_raw_temp = (int16_t)((buf[3]) << 8) | buf[2];
+    accel[1] = accel_raw_temp * BMI088_ACCEL_SEN;
+    accel_raw_temp = (int16_t)((buf[5]) << 8) | buf[4];
+    accel[2] = accel_raw_temp * BMI088_ACCEL_SEN;
+}
+
+#if defined(BMI088_USE_SPI)
+
+static void BMI088_write_single_reg(uint8_t reg, uint8_t data)
+{
+    BMI088_read_write_byte(reg);
+    BMI088_read_write_byte(data);
+}
+
+static void BMI088_read_single_reg(uint8_t reg, uint8_t *return_data)
+{
+    BMI088_read_write_byte(reg | 0x80);
+    *return_data = BMI088_read_write_byte(0x55);
+}
+
+//static void BMI088_write_muli_reg(uint8_t reg, uint8_t* buf, uint8_t len )
+//{
+//    BMI088_read_write_byte( reg );
+//    while( len != 0 )
+//    {
+
+//        BMI088_read_write_byte( *buf );
+//        buf ++;
+//        len --;
 //    }
-}
 
-void BMI088::TempPid_output(BMI088::TempPID_t *pid) {
-    if (pid->output > 100) pid->output = 100;
-    if (pid->output < 0) pid->output = 0;
-    TIM3->CCR2 = static_cast<uint32_t>(499*(1-pid->output/100)); // 0%占空比对应499，100%占空比对应0
-//    TempPidTimer = 0;
-}
+//}
 
-void BMI088::Handle() {
-    IMU_Read_Data(&rawData);
-    ProcessRaw();
-    TempPid_calc(&tempPID, ExpectTemp, rawData.temp);
-    TempPid_output(&tempPID);
+static void BMI088_read_muli_reg(uint8_t reg, uint8_t *buf, uint8_t len)
+{
+    BMI088_read_write_byte(reg | 0x80);
+
+    while (len != 0)
+    {
+
+        *buf = BMI088_read_write_byte(0x55);
+        buf++;
+        len--;
+    }
 }
+#elif defined(BMI088_USE_IIC)
+
+#endif
 
 #endif
 
