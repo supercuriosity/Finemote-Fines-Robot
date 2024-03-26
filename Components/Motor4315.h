@@ -23,7 +23,7 @@ public:
         reductionRatio = motorInit.reductionRatio;
         ctrlType = motorInit.ctrlType;
         addr = motorInit.addr;
-
+        this ->SetDivisionFactor(10);
     }
 
     void Handle() override {
@@ -33,7 +33,7 @@ public:
 
     };
 
-    uint8_t rxbuf[20]{0};
+    uint8_t rxbuf[15]{0};
     uint8_t txbuf[11]{0};
     UART_Agent<busID> uartAgent;
 
@@ -53,11 +53,11 @@ private:
         txbuf[6] = txAngle >> 8u;
         txbuf[7] = txAngle >> 16u;
         txbuf[8] = txAngle >> 24u;
-        uint16_t crc16 = CRC16Calc(txbuf, 8);
+        uint16_t crc16 = CRC16Calc(txbuf, 9);
         txbuf[9] = crc16;
         txbuf[10] = crc16 >> 8u;
 
-       // uartAgent.Write(txbuf, 11 );
+        uartAgent.Write(txbuf, 11);
     }
 
     void AngleCalc() {

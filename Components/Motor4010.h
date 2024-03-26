@@ -30,7 +30,6 @@ public:
         if (motorInit.anglePID) anglePID.PIDInfo = *motorInit.anglePID;
         reductionRatio = motorInit.reductionRatio;
         ctrlType = motorInit.ctrlType;
-        this ->SetDivisionFactor(4);
     }
 
     void Handle() override {

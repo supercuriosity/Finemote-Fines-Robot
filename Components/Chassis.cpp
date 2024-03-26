@@ -84,7 +84,7 @@ CHASSIS_INIT_T chassiaInit={
         },
 };
 
-
+Chassis chassis(chassiaInit);
 void Chassis::ChassisSetVelocity(float _fbV, float _lrV, float _rtV) {
     ChassisStopFlag = false;
     FBVelocity = _fbV;

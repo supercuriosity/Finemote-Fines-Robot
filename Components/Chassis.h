@@ -42,9 +42,10 @@ public:
     float FBVelocity{}, LRVelocity{}, RTVelocity{};
 
     Motor4010<1> CFL,CFR,CBL,CBR;
-    Motor4315<2> SFL,SFR,SBL,SBR;
+    Motor4315<1> SFL,SFR,SBL,SBR;
 
 };
+extern Chassis chassis;
 
 
 #endif //FINEMOTE_CHASSIS_H

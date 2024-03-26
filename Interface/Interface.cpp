@@ -49,77 +49,13 @@ void Loop() {
 
 //I2C_test<2> i2CTest(0x70);
 
-PID_Regulator_t pidRegulator1 = {//此为储存pid参数的结构体
-        .kp = 0.3f,
-        .ki = 0.002f,
-        .kd = 0.3f,
-        .componentKpMax = 2000,
-        .componentKiMax = 0,
-        .componentKdMax = 0,
-        .outputMax = 2000
-};
-PID_Regulator_t pidRegulator2 = {//此为储存pid参数的结构体
-        .kp = 1.0f,
-        .ki = 0.0f,
-        .kd = 0.0f,
-        .componentKpMax = 2000,
-        .componentKiMax = 0,
-        .componentKdMax = 0,
-        .outputMax = 2000 //4010电机输出电流上限，可以调小，勿调大
-};
-
-MOTOR_INIT_t motorInit1 = {
-        .addr = 0x141,
-        .speedPID = &pidRegulator1,
-        .anglePID = &pidRegulator2,
-        .ctrlType = POSITION_Double,
-        .reductionRatio = 1
-};
-MOTOR_INIT_t motorInit2 = {
-        .addr = 0x142,
-        .speedPID = &pidRegulator1,
-        .anglePID = &pidRegulator2,
-        .ctrlType = POSITION_Double,
-        .reductionRatio = 1
-};
-MOTOR_INIT_t motorInit3 = {
-        .addr = 0x143,
-        .speedPID = &pidRegulator1,
-        .anglePID = &pidRegulator2,
-        .ctrlType = POSITION_Double,
-        .reductionRatio = 1
-};
-MOTOR_INIT_t motorInit4 = {
-        .addr = 0x144,
-        .speedPID = &pidRegulator1,
-        .anglePID = &pidRegulator2,
-        .ctrlType = POSITION_Double,
-        .reductionRatio = 1
-};
-MOTOR_INIT_t motorInit5 = {
-        .addr = 0x01,
-        .speedPID = nullptr,
-        .anglePID = nullptr,
-        .ctrlType = DIRECT,
-        .reductionRatio = 1
-};
-//实例化电机测试类
-Motor4010<1> motor4010_1(motorInit1);
-Motor4010<1> motor4010_2(motorInit2);
-Motor4010<1> motor4010_3(motorInit3);
-Motor4010<1> motor4010_4(motorInit4);
-Motor4315<2> motor4315_1(motorInit5);
-UART_Agent<2> uartTest;
-UART_Agent<1> uartTest1;
-UART_Agent<3> uartTest2;
-
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if(htim == &TIM_Control) {
         HAL_IWDG_Refresh(&hiwdg);
         DeviceBase::DevicesHandle();
         Task1();
         Task2();
-      //  data = zorro.GetInfo();
+        data = zorro.GetInfo();
 
         CAN_Bus<1>::TxLoader();
         CAN_Bus<2>::TxLoader();
@@ -136,28 +72,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 void Task1() {
     //BeepMusic::MusicChannels[0].BeepService();
 }
-static float Angle = 0;
-static uint8_t TxBuf[8]={0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08};
+static float Speed = 0;
+
 void Task2() {
     static int cnt = 0;
     cnt++;
     if(cnt > 1000) {
         cnt = 0;
         LED::Toggle();
-        if(Angle > 360) {
-            Angle = 0;
+        if(Speed > 5) {
+            Speed = 0;
         }
-        Angle += 80;
-        TxBuf[0] += 1;
-     //   auto Re = HAL_UART_Transmit(&huart2, TxBuf, 8, 10);
-        uartTest.Write(TxBuf, 8);
-        uartTest1.Write(TxBuf, 8);
-        uartTest2.Write(TxBuf, 8);
-       // uartTest.Write(TxBuf, 8);
+        Speed += 1;
     }
-    motor4010_1.SetTargetAngle(Angle);
-    motor4010_2.SetTargetAngle(Angle);
-    motor4010_3.SetTargetAngle(Angle);
-    motor4010_4.SetTargetAngle(Angle);
-    motor4315_1.SetTargetAngle(Angle);
+    chassis.ChassisSetVelocity(zorro.GetInfo().rightCol, zorro.GetInfo().rightRol, zorro.GetInfo().leftRol * 2 * PI * 2);
+
 }
