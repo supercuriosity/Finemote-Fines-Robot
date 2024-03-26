@@ -20,7 +20,6 @@
 #include "stm32f4xx_it.h"
 
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -31,11 +30,11 @@ extern void SystemClock_PostConfig();
 };
 #endif
 
-class HALInit{
+class HALInit {
 /**
  *  @attention 此函数需要与cube生成的保持一致
  */
-    HALInit(){
+    HALInit() {
 
         HAL_Init();
         SystemClock_PreConfig();
@@ -69,8 +68,10 @@ class HALInit{
 
 public:
     HALInit(const HALInit &) = delete;
-    HALInit& operator=(const HALInit&) = delete;
-    static HALInit& GetInstance(){
+
+    HALInit &operator=(const HALInit &) = delete;
+
+    static HALInit &GetInstance() {
         static HALInit instance;
         return instance;
     }
@@ -79,11 +80,12 @@ public:
 #define HAL_INIT_HANDLE
 
 
-extern UART_HandleTypeDef* uartHandleList[4];
+extern UART_HandleTypeDef *uartHandleList[4];
+extern GPIO_TypeDef *uartTxPortList[4];
+extern uint16_t uartTxPinList[4];
 #define DMA_SBUS hdma_usart3_rx
 #define Serial_RC huart3
 #define UART_PERIPHERAL
-
 
 
 #define TIM_Buzzer htim2

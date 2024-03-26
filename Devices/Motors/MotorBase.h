@@ -36,7 +36,9 @@ typedef struct {
 
 class MotorBase : public DeviceBase {
 public:
-    MotorBase() = default;
+    MotorBase(){
+        this ->SetDivisionFactor(4);
+    }
 
     void Stop() {
         stopflag = true;

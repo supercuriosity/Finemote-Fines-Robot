@@ -29,6 +29,7 @@ typedef enum : uint8_t {
     WRITE_VECTOR,
     READ_FIXED_LENGTH,
     DELAY,
+    ERROR_CALLBACK
 } UART_Task_e;
 
 typedef struct UART_Task_t{
@@ -63,6 +64,10 @@ public:
             case Callback_e::WRITE:
                 break;
             case Callback_e::ERROR_CALL:
+                resourceList.front().task = ERROR_CALLBACK;
+                if (resourceList.front().callbackFuncPtr != nullptr) {
+                    resourceList.front().callbackFuncPtr(resourceList.front());
+                }
                 break;
         }
         if(!resourceList.empty() ) resourceList.pop_front();
@@ -110,22 +115,20 @@ public:
 
         switch (resourceList.front().task) {
             static_assert(busID<(sizeof (uartHandleList)/sizeof (uartHandleList[0])));
-            case READ: 
-                HAL_UARTEx_ReceiveToIdle_IT(uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
+            case READ:
+                UARTEx_ReceiveToIdle_IT(uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
                 break;
             case WRITE:
-                uint8_t tmp[8];
-                memcpy(tmp,resourceList.front().bufPtr,8);
-                HAL_UART_Transmit_IT(uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
+                UART_Transmit_IT(uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
                 break;
             case READ_VECTOR:
-                HAL_UART_Receive_IT(uartHandleList[busID], resourceList.front().data.data(), resourceList.front().data.size());
+                UART_Receive_IT(uartHandleList[busID], resourceList.front().data.data(), resourceList.front().data.size());
                 break;
             case WRITE_VECTOR:
-                HAL_UART_Transmit_IT(uartHandleList[busID], resourceList.front().data.data(),resourceList.front().data.size());
+                UART_Transmit_IT(uartHandleList[busID], resourceList.front().data.data(),resourceList.front().data.size());
                 break;
             case READ_FIXED_LENGTH:
-                HAL_UART_Receive_IT(uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
+                UART_Receive_IT(uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
                 break;
             case DELAY:
                 if (handleStateE == Handle_State_e::READY) {
@@ -156,6 +159,22 @@ private:
         HALInit::GetInstance();
         GetUartHandle_BusMap()[uartHandleList[busID]]=this;
     }
+    void UART_Receive_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size) {
+        if(uartTxPortList[busID] != nullptr && uartTxPinList[busID] != NULL)
+            HAL_GPIO_WritePin(uartTxPortList[busID], uartTxPinList[busID], GPIO_PIN_RESET);
+        HAL_UART_Receive_IT(huart, pData, Size);
+    }
+    void UART_Transmit_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size) {
+        if (uartTxPortList[busID] != nullptr && uartTxPinList[busID] != NULL)
+            HAL_GPIO_WritePin(uartTxPortList[busID], uartTxPinList[busID], GPIO_PIN_SET);
+        HAL_UART_Transmit_IT(huart, pData, Size);
+    }
+    void UARTEx_ReceiveToIdle_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size) {
+        if (uartTxPortList[busID] != nullptr && uartTxPinList[busID] != NULL)
+            HAL_GPIO_WritePin(uartTxPortList[busID], uartTxPinList[busID], GPIO_PIN_RESET);
+        HAL_UARTEx_ReceiveToIdle_IT(huart, pData, Size);
+    }
+
 };
 
 
