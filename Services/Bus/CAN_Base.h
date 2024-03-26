@@ -19,6 +19,7 @@ constexpr CAN_HandleTypeDef* qwq[] = {&hcan1, &hcan2};
 
 typedef struct {
     uint32_t addr;
+    uint8_t IDE;
     uint8_t DLC;
     uint8_t message[8];
 } CAN_Package_t;
@@ -39,7 +40,10 @@ public:
         uint8_t tempBuf[8];
         CAN_RxHeaderTypeDef Header;
         HAL_CAN_GetRxMessage(qwq[busID - 1], CAN_RX_FIFO0, &Header, tempBuf);
-        memcpy(Getmap()[Header.StdId], tempBuf, sizeof(tempBuf));//TODO 未被执行
+        if(Header.IDE == CAN_ID_STD)
+            memcpy(Getmap()[Header.StdId], tempBuf, sizeof(tempBuf));
+        else if(Header.IDE == CAN_ID_EXT)
+            memcpy(Getmap()[Header.ExtId], tempBuf, sizeof(tempBuf));
 
     }
 
@@ -51,7 +55,7 @@ public:
             uint32_t TxMailbox;
             Header.StdId = dataQueue.front().addr;
             Header.DLC = dataQueue.front().DLC;
-            Header.IDE = CAN_ID_STD;
+            Header.IDE = dataQueue.front().IDE;
             Header.RTR = CAN_RTR_DATA;
             Header.TransmitGlobalTime = DISABLE;
 
@@ -106,6 +110,7 @@ public:
         CAN_Package_t temp;
         temp.addr = addr;
         temp.DLC = DLC;
+        temp.IDE = IDE;
         memcpy(temp.message, txbuf, DLC);
         if (CANBusRef.GetInstance().dataQueue.size() < CAN_AGNET_TASK_MAX_NUM) {
             CANBusRef.GetInstance().dataQueue.push(temp);
@@ -117,7 +122,7 @@ public:
     uint8_t txbuf[8] = {0};
     uint8_t DLC{};
     uint32_t addr;
-
+    uint8_t IDE = CAN_ID_STD;
 private:
     CAN_Bus<busID> &CANBusRef;
 
