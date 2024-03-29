@@ -114,7 +114,6 @@ public:
         }
 
         switch (resourceList.front().task) {
-            static_assert(busID<(sizeof (uartHandleList)/sizeof (uartHandleList[0])));
             case READ:
                 UARTEx_ReceiveToIdle_IT(uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
                 break;
@@ -156,6 +155,7 @@ public:
 
 private:
     UART_Bus() {
+        static_assert(busID<(sizeof (uartHandleList)/sizeof (uartHandleList[0])));
         HALInit::GetInstance();
         GetUartHandle_BusMap()[uartHandleList[busID]]=this;
     }
