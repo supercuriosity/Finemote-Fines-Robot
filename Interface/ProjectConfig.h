@@ -62,6 +62,7 @@ static_assert(false);
  */
 #if defined(CAN_PERIPHERAL)
 #define CAN_BASE_MODULE
+#define CAN_AGNET_TASK_MAX_NUM 16
 #endif
 
 

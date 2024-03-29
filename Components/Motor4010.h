@@ -8,24 +8,26 @@
 // Created by 25396 on 2024/2/19.
 //
 
-#ifndef FINEMOTE_MOTORTEST_H
-#define FINEMOTE_MOTORTEST_H
+#ifndef FINEMOTE_MOTOR4010_H
+#define FINEMOTE_MOTOR4010_H
+
 #include "ProjectConfig.h"
 
 
 #ifdef MOTOR_COMPONENTS
+
 #include "DeviceBase.h"
 #include "Bus/CAN_Base.h"
 #include "Motors/MotorBase.h"
 
 
 template<int busID>
-class MotorTest : public MotorBase {
+class Motor4010 : public MotorBase {
 public:
-    explicit MotorTest(MOTOR_INIT_t &motorInit) :canAgent(motorInit.addr, CAN_Bus<busID>::GetInstance()) {
-        HAL_GPIO_WritePin(LED_G_GPIO_Port, LED_G_Pin, GPIO_PIN_SET);
-        speedPID.PIDInfo = *motorInit.speedPID;
-        anglePID.PIDInfo = *motorInit.anglePID;
+    explicit Motor4010(MOTOR_INIT_t &motorInit) : canAgent(motorInit.addr, CAN_Bus<busID>::GetInstance()) {
+
+        if (motorInit.speedPID) speedPID.PIDInfo = *motorInit.speedPID;
+        if (motorInit.anglePID) anglePID.PIDInfo = *motorInit.anglePID;
         reductionRatio = motorInit.reductionRatio;
         ctrlType = motorInit.ctrlType;
     }
@@ -38,16 +40,16 @@ public:
 
     };
 
-    CAN_Agent <busID> canAgent;
+    CAN_Agent<busID> canAgent;
 private:
-    void CANMessageGet(){
+    void CANMessageGet() {
         // txSpeed = (uint16_t)targetSpeed;
         txSpeed = 0x300;
         txAngle = (uint32_t) (targetAngle * 100.0f);
 
         switch (ctrlType) {
             case SPEED_Single :
-            case POSITION_Double:{
+            case POSITION_Double: {
                 canAgent.DLC = 8;
                 canAgent.txbuf[0] = 0xA1;
                 canAgent.txbuf[1] = 0x00;
@@ -72,13 +74,9 @@ private:
                 break;
             }
         }
-        static int num = 0;
-        num++;
-        if (num >= 4) {
-            canAgent.Send();
-            num = 0;
-        }
+        canAgent.Send();
     }
+
     void MotorStateUpdate() {
         feedback.angle = canAgent.rxbuf[6] | (canAgent.rxbuf[7] << 8u);
         feedback.speed = canAgent.rxbuf[4] | (canAgent.rxbuf[5] << 8u);
@@ -146,4 +144,4 @@ private:
 };
 
 #endif
-#endif //FINEMOTE_MOTORTEST_H
+#endif //FINEMOTE_MOTOR4010_H

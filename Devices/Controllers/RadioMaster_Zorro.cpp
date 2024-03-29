@@ -31,7 +31,10 @@ void RadioMaster_Zorro::Decode(UART_Task_t _data) {
 //    channel[13] = ((rxBuff[18] >> 7) | (rxBuff[19] << 1) | (rxBuff[20] << 9)) & 0x07FF;
 //    channel[14] = ((rxBuff[20] >> 2) | (rxBuff[21] << 6)) & 0x07FF;
 //    channel[15] = ((rxBuff[21] >> 5) | (rxBuff[22] << 3)) & 0x07FF;
-
+    if (_data.task != UART_Task_e::READ) {
+        remoteUart.Read(rxBuff, [this](UART_Task_t a) { this->Decode(a); });
+        return;
+    }
     info.rightRol = (((rxBuff[1] | (rxBuff[2] << 8)) & 0x07FF) - 1000) / 810.0f;
     info.rightCol = ((((rxBuff[2] >> 3) | (rxBuff[3] << 5)) & 0x07FF) - 1000) / 810.0f;
     info.leftCol = (((rxBuff[3] >> 6) | (rxBuff[4] << 2) | (rxBuff[5] << 10) & 0x07FF) - 1000) / 810.0f;

@@ -695,6 +695,26 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Devices/Controllers</GroupName>
+          <Files>
+            <File>
+              <FileName>DJI_DT7.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Devices\Controllers\DJI_DT7.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>RadioMaster_Zorro.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Devices\Controllers\RadioMaster_Zorro.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>RemoteControl.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Devices\Controllers\RemoteControl.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
