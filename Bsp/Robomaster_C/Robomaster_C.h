@@ -105,4 +105,16 @@ extern PWM_UNIT_t pwmList[7];
 #define PWM_PERIPHERAL
 
 
+typedef struct {
+    SPI_HandleTypeDef* spiHandle;
+    DMA_HandleTypeDef* rxDMAHandle;
+    DMA_HandleTypeDef* txDMAHandle;
+    TIM_HandleTypeDef* timHandleForHeat;
+    uint32_t timChannelForHeat;
+}SPI_WITH_DMA_t;
+extern SPI_WITH_DMA_t spiWithDMA;
+
+#define IMU_PERIPHERAL
+
+
 #endif //FINEMOTE_ROBOMASTER_C_H
