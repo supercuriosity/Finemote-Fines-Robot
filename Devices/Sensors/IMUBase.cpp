@@ -31,7 +31,8 @@ IMUBase::IMUBase(){
     quat[0] = 1.0f,quat[1] = 0,quat[2] = 0,quat[3] = 0;
 
     if(HAL_SPI_Init(&hspi1) != HAL_OK) Error_Handler();
-    SPI1_DMA_init((uint32_t)buf.gyro_dma_tx_buf, (uint32_t)buf.gyro_dma_rx_buf, SPI_DMA_GYRO_LENGHT);
+    SPI_DMA_init(spiWithDMA, (uint32_t) buf.gyro_dma_tx_buf, (uint32_t) buf.gyro_dma_rx_buf,
+                 SPI_DMA_GYRO_LENGHT);
 
     state.imu_start_dma_flag = 1;
 
@@ -122,7 +123,8 @@ void IMUBase::imu_cmd_spi_dma(void)
         state.gyro_update_flag |= (1u << IMU_SPI_SHFITS);
 
         HAL_GPIO_WritePin(CS1_GYRO_GPIO_Port, CS1_GYRO_Pin, GPIO_PIN_RESET);
-        SPI1_DMA_enable((uint32_t)buf.gyro_dma_tx_buf, (uint32_t)buf.gyro_dma_rx_buf, SPI_DMA_GYRO_LENGHT);
+        SPI_DMA_enable(spiWithDMA, (uint32_t) buf.gyro_dma_tx_buf, (uint32_t) buf.gyro_dma_rx_buf,
+                       SPI_DMA_GYRO_LENGHT);
         return;
     }
     //开启加速度计的DMA传输
@@ -133,7 +135,8 @@ void IMUBase::imu_cmd_spi_dma(void)
         state.accel_update_flag |= (1u << IMU_SPI_SHFITS);
 
         HAL_GPIO_WritePin(CS1_ACCEL_GPIO_Port, CS1_ACCEL_Pin, GPIO_PIN_RESET);
-        SPI1_DMA_enable((uint32_t)buf.accel_dma_tx_buf, (uint32_t)buf.accel_dma_rx_buf, SPI_DMA_ACCEL_LENGHT);
+        SPI_DMA_enable(spiWithDMA, (uint32_t) buf.accel_dma_tx_buf, (uint32_t) buf.accel_dma_rx_buf,
+                       SPI_DMA_ACCEL_LENGHT);
         return;
     }
 
@@ -145,21 +148,28 @@ void IMUBase::imu_cmd_spi_dma(void)
         state.accel_temp_update_flag |= (1u << IMU_SPI_SHFITS);
 
         HAL_GPIO_WritePin(CS1_ACCEL_GPIO_Port, CS1_ACCEL_Pin, GPIO_PIN_RESET);
-        SPI1_DMA_enable((uint32_t)buf.accel_temp_dma_tx_buf, (uint32_t)buf.accel_temp_dma_rx_buf, SPI_DMA_ACCEL_TEMP_LENGHT);
+        SPI_DMA_enable(spiWithDMA, (uint32_t) buf.accel_temp_dma_tx_buf, (uint32_t) buf.accel_temp_dma_rx_buf,
+                       SPI_DMA_ACCEL_TEMP_LENGHT);
         return;
     }
 
 }
 
-
+//TODO 想办法处理下
+#ifdef __ROBOMASTER_C
 void DMA2_Stream0_IRQHandler(void) {
     imu.ITHandle();
 }
+#elif __MC_BOARD
+void DMA1_Stream3_IRQHandler(void) {
+    imu.ITHandle();
+}
+#endif
 void IMUBase::ITHandle() {
-
-    if(__HAL_DMA_GET_FLAG(hspi1.hdmarx, __HAL_DMA_GET_TC_FLAG_INDEX(hspi1.hdmarx)) != RESET)
+    auto hspi = spiWithDMA.spiHandle;
+    if(__HAL_DMA_GET_FLAG(hspi->hdmarx, __HAL_DMA_GET_TC_FLAG_INDEX(hspi->hdmarx)) != RESET)
     {
-        __HAL_DMA_CLEAR_FLAG(hspi1.hdmarx, __HAL_DMA_GET_TC_FLAG_INDEX(hspi1.hdmarx));
+        __HAL_DMA_CLEAR_FLAG(hspi->hdmarx, __HAL_DMA_GET_TC_FLAG_INDEX(hspi->hdmarx));
 
         //gyro read over
         //陀螺仪读取完毕
@@ -271,6 +281,6 @@ void IMUBase::imu_temp_control(float temp)
 }
 
 void IMUBase::IMU_temp_PWM(float pwm) {
-    __HAL_TIM_SetCompare(&htim10, TIM_CHANNEL_1, pwm);
+    __HAL_TIM_SetCompare(spiWithDMA.timHandleForHeat, spiWithDMA.timChannelForHeat, pwm);
 }
 

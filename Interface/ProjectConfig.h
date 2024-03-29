@@ -111,6 +111,20 @@ extern PWM_UNIT_t pwmList[7];
 #define RADIOMASTER_ZORRO_MODULE
 #endif
 
+/**
+ * IMU_PERIPHERAL 惯性测量单元
+ * @variable 使用SPI的处理句柄，包括SPI本身和收发的DMA
+typedef struct {
+    SPI_HandleTypeDef* spiHandle;
+    DMA_HandleTypeDef* rxDMAHandle;
+    DMA_HandleTypeDef* txDMAHandle;
+    TIM_HandleTypeDef* timHandleForHeat;
+    uint32_t timChannelForHeat;
+}SPI_WITH_DMA_t;
+ *  @defs
+ *
+ */
+
 /******************************************************************************************************
 3.处理各组件对模块的依赖，以及是否被用户启用
  测试组件应该默认保持关闭状态

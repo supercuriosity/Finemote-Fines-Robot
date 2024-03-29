@@ -15,6 +15,7 @@
 #include "MahonyAHRS.h"
 #include "Bus/bsp_spi.h"
 #include <cmath>
+#include "ProjectConfig.h"
 
 //#define IMU_USE_MAG
 
@@ -111,7 +112,13 @@ public:
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+//TODO 想办法处理下
+#ifdef __ROBOMASTER_C
 extern void DMA2_Stream0_IRQHandler(void);
+#elif __MC_BOARD
+extern void DMA1_Stream3_IRQHandler(void);
+#endif
 #ifdef __cplusplus
 }
 #endif

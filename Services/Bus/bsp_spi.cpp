@@ -3,98 +3,106 @@
 
 
 
-void SPI1_DMA_init(uint32_t tx_buf, uint32_t rx_buf, uint16_t num)
+void SPI_DMA_init(SPI_WITH_DMA_t spi_t, uint32_t tx_buf, uint32_t rx_buf, uint16_t num)
 {
-    SET_BIT(hspi1.Instance->CR2, SPI_CR2_TXDMAEN);
-    SET_BIT(hspi1.Instance->CR2, SPI_CR2_RXDMAEN);
+    auto spi_h = spi_t.spiHandle;
+    auto dma_rx = spi_t.rxDMAHandle;
+    auto dma_tx = spi_t.txDMAHandle;
 
-    __HAL_SPI_ENABLE(&hspi1);
+    SET_BIT(spi_h->Instance->CR2, SPI_CR2_TXDMAEN);
+    SET_BIT(spi_h->Instance->CR2, SPI_CR2_RXDMAEN);
 
-
-    //disable DMA
-    //失效DMA
-    __HAL_DMA_DISABLE(&hdma_spi1_rx);
-    
-    while(hdma_spi1_rx.Instance->CR & DMA_SxCR_EN)
-    {
-        __HAL_DMA_DISABLE(&hdma_spi1_rx);
-    }
-
-    __HAL_DMA_CLEAR_FLAG(&hdma_spi1_rx, DMA_LISR_TCIF2);
-
-    hdma_spi1_rx.Instance->PAR = (uint32_t) & (SPI1->DR);
-    //memory buffer 1
-    //内存缓冲区1
-    hdma_spi1_rx.Instance->M0AR = (uint32_t)(rx_buf);
-    //data length
-    //数据长度
-    __HAL_DMA_SET_COUNTER(&hdma_spi1_rx, num);
-
-    __HAL_DMA_ENABLE_IT(&hdma_spi1_rx, DMA_IT_TC);
+    __HAL_SPI_ENABLE(spi_h);
 
 
     //disable DMA
     //失效DMA
-    __HAL_DMA_DISABLE(&hdma_spi1_tx);
+    __HAL_DMA_DISABLE(dma_rx);
     
-    while(hdma_spi1_tx.Instance->CR & DMA_SxCR_EN)
+    while(dma_rx->Instance->CR & DMA_SxCR_EN)
     {
-        __HAL_DMA_DISABLE(&hdma_spi1_tx);
+        __HAL_DMA_DISABLE(dma_rx);
+    }
+
+    __HAL_DMA_CLEAR_FLAG(dma_rx, DMA_LISR_TCIF2);
+
+    dma_rx->Instance->PAR = (uint32_t) & (SPI1->DR);
+    //memory buffer 1
+    //内存缓冲区1
+    dma_rx->Instance->M0AR = (uint32_t)(rx_buf);
+    //data length
+    //数据长度
+    __HAL_DMA_SET_COUNTER(dma_rx, num);
+
+    __HAL_DMA_ENABLE_IT(dma_rx, DMA_IT_TC);
+
+
+    //disable DMA
+    //失效DMA
+    __HAL_DMA_DISABLE(dma_tx);
+    
+    while(dma_tx->Instance->CR & DMA_SxCR_EN)
+    {
+        __HAL_DMA_DISABLE(dma_tx);
     }
 
 
-    __HAL_DMA_CLEAR_FLAG(&hdma_spi1_tx, DMA_LISR_TCIF3);
+    __HAL_DMA_CLEAR_FLAG(dma_tx, DMA_LISR_TCIF3);
 
-    hdma_spi1_tx.Instance->PAR = (uint32_t) & (SPI1->DR);
+    dma_tx->Instance->PAR = (uint32_t) & (SPI1->DR);
     //memory buffer 1
     //内存缓冲区1
-    hdma_spi1_tx.Instance->M0AR = (uint32_t)(tx_buf);
+    dma_tx->Instance->M0AR = (uint32_t)(tx_buf);
     //data length
     //数据长度
-    __HAL_DMA_SET_COUNTER(&hdma_spi1_tx, num);
+    __HAL_DMA_SET_COUNTER(dma_tx, num);
 
 
 }
 
-void SPI1_DMA_enable(uint32_t tx_buf, uint32_t rx_buf, uint16_t ndtr)
+void SPI_DMA_enable(SPI_WITH_DMA_t spi_t, uint32_t tx_buf, uint32_t rx_buf, uint16_t ndtr)
 {
+    auto spi_h = spi_t.spiHandle;
+    auto dma_rx = spi_t.rxDMAHandle;
+    auto dma_tx = spi_t.txDMAHandle;
+
     //disable DMA
     //失效DMA
-    __HAL_DMA_DISABLE(&hdma_spi1_rx);
-    __HAL_DMA_DISABLE(&hdma_spi1_tx);
-    while(hdma_spi1_rx.Instance->CR & DMA_SxCR_EN)
+    __HAL_DMA_DISABLE(dma_rx);
+    __HAL_DMA_DISABLE(dma_tx);
+    while(dma_rx->Instance->CR & DMA_SxCR_EN)
     {
-        __HAL_DMA_DISABLE(&hdma_spi1_rx);
+        __HAL_DMA_DISABLE(dma_rx);
     }
-    while(hdma_spi1_tx.Instance->CR & DMA_SxCR_EN)
+    while(dma_tx->Instance->CR & DMA_SxCR_EN)
     {
-        __HAL_DMA_DISABLE(&hdma_spi1_tx);
+        __HAL_DMA_DISABLE(dma_tx);
     }
     //clear flag
     //清除标志位
-    __HAL_DMA_CLEAR_FLAG (hspi1.hdmarx, __HAL_DMA_GET_TC_FLAG_INDEX(hspi1.hdmarx));
-    __HAL_DMA_CLEAR_FLAG (hspi1.hdmarx, __HAL_DMA_GET_HT_FLAG_INDEX(hspi1.hdmarx));
-    __HAL_DMA_CLEAR_FLAG (hspi1.hdmarx, __HAL_DMA_GET_TE_FLAG_INDEX(hspi1.hdmarx));
-    __HAL_DMA_CLEAR_FLAG (hspi1.hdmarx, __HAL_DMA_GET_DME_FLAG_INDEX(hspi1.hdmarx));
-    __HAL_DMA_CLEAR_FLAG (hspi1.hdmarx, __HAL_DMA_GET_FE_FLAG_INDEX(hspi1.hdmarx));
+    __HAL_DMA_CLEAR_FLAG (spi_h->hdmarx, __HAL_DMA_GET_TC_FLAG_INDEX(spi_h->hdmarx));
+    __HAL_DMA_CLEAR_FLAG (spi_h->hdmarx, __HAL_DMA_GET_HT_FLAG_INDEX(spi_h->hdmarx));
+    __HAL_DMA_CLEAR_FLAG (spi_h->hdmarx, __HAL_DMA_GET_TE_FLAG_INDEX(spi_h->hdmarx));
+    __HAL_DMA_CLEAR_FLAG (spi_h->hdmarx, __HAL_DMA_GET_DME_FLAG_INDEX(spi_h->hdmarx));
+    __HAL_DMA_CLEAR_FLAG (spi_h->hdmarx, __HAL_DMA_GET_FE_FLAG_INDEX(spi_h->hdmarx));
 
-    __HAL_DMA_CLEAR_FLAG (hspi1.hdmatx, __HAL_DMA_GET_TC_FLAG_INDEX(hspi1.hdmatx));
-    __HAL_DMA_CLEAR_FLAG (hspi1.hdmatx, __HAL_DMA_GET_HT_FLAG_INDEX(hspi1.hdmatx));
-    __HAL_DMA_CLEAR_FLAG (hspi1.hdmatx, __HAL_DMA_GET_TE_FLAG_INDEX(hspi1.hdmatx));
-    __HAL_DMA_CLEAR_FLAG (hspi1.hdmatx, __HAL_DMA_GET_DME_FLAG_INDEX(hspi1.hdmatx));
-    __HAL_DMA_CLEAR_FLAG (hspi1.hdmatx, __HAL_DMA_GET_FE_FLAG_INDEX(hspi1.hdmatx));
+    __HAL_DMA_CLEAR_FLAG (spi_h->hdmatx, __HAL_DMA_GET_TC_FLAG_INDEX(spi_h->hdmatx));
+    __HAL_DMA_CLEAR_FLAG (spi_h->hdmatx, __HAL_DMA_GET_HT_FLAG_INDEX(spi_h->hdmatx));
+    __HAL_DMA_CLEAR_FLAG (spi_h->hdmatx, __HAL_DMA_GET_TE_FLAG_INDEX(spi_h->hdmatx));
+    __HAL_DMA_CLEAR_FLAG (spi_h->hdmatx, __HAL_DMA_GET_DME_FLAG_INDEX(spi_h->hdmatx));
+    __HAL_DMA_CLEAR_FLAG (spi_h->hdmatx, __HAL_DMA_GET_FE_FLAG_INDEX(spi_h->hdmatx));
     //set memory address
     //设置数据地址
-    hdma_spi1_rx.Instance->M0AR = rx_buf;
-    hdma_spi1_tx.Instance->M0AR = tx_buf;
+    dma_rx->Instance->M0AR = rx_buf;
+    dma_tx->Instance->M0AR = tx_buf;
     //set data length
     //设置数据长度
-    __HAL_DMA_SET_COUNTER(&hdma_spi1_rx, ndtr);
-    __HAL_DMA_SET_COUNTER(&hdma_spi1_tx, ndtr);
+    __HAL_DMA_SET_COUNTER(dma_rx, ndtr);
+    __HAL_DMA_SET_COUNTER(dma_tx, ndtr);
     //enable DMA
     //使能DMA
-    __HAL_DMA_ENABLE(&hdma_spi1_rx);
-    __HAL_DMA_ENABLE(&hdma_spi1_tx);
+    __HAL_DMA_ENABLE(dma_rx);
+    __HAL_DMA_ENABLE(dma_tx);
 }
 
 
