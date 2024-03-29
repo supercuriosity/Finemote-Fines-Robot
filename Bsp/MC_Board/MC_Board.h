@@ -83,8 +83,6 @@ public:
 extern UART_HandleTypeDef *uartHandleList[4];
 extern GPIO_TypeDef *uartTxPortList[4];
 extern uint16_t uartTxPinList[4];
-#define DMA_SBUS hdma_usart3_rx
-#define Serial_RC huart3
 #define UART_PERIPHERAL
 
 
