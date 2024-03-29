@@ -5,7 +5,7 @@
  ******************************************************************************/
 
 #include "Chassis.h"
-
+#include <cmath>
 
 PID_Regulator_t pidRegulator3 = {//此为储存pid参数的结构体
         .kp = 0.3f,
