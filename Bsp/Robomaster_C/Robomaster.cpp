@@ -15,9 +15,10 @@ PWM_UNIT_t pwmList[7] = {
 {&htim8,TIM_CHANNEL_2},
 {&htim8,TIM_CHANNEL_3}
 };
-UART_HandleTypeDef uartHandleList[3]={huart3,
-                                      huart1,
-                                      huart6};
+
+UART_HandleTypeDef *uartHandleList[3] = {&huart3, &huart1, &huart6};
+GPIO_TypeDef *uartTxPortList[3] = {nullptr, nullptr, nullptr};
+uint16_t uartTxPinList[3] = {NULL, NULL, NULL};
 
 extern SPI_HandleTypeDef hspi1;
 extern DMA_HandleTypeDef hdma_spi1_rx;
