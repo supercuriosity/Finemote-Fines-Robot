@@ -42,6 +42,7 @@ class Chassis : public DeviceBase {
     SFR(*SFRPtr),
     SBL(*SBLPtr),
     SBR(*SBRPtr){}
+
 public:
     void ChassisSetVelocity(float _fbV, float _lrV, float _rtV);
     void ChassisStop();
@@ -50,8 +51,10 @@ public:
     bool ChassisStopFlag = true;
     float FBVelocity{}, LRVelocity{}, RTVelocity{};
 
+
     Motor4010<1> &CFL,&CFR,&CBL,&CBR;
     Motor4315<1> &SFL,&SFR,&SBL,&SBR;
+
 
     static ChassisBuilder Build();
 };

@@ -35,6 +35,7 @@ Motor4315<1> SFRMotor(MOTOR_INIT_t{0x04,nullptr,nullptr,DIRECT,1});
 Motor4315<1> SBLMotor(MOTOR_INIT_t{0x01,nullptr,nullptr,DIRECT,1});
 Motor4315<1> SBRMotor(MOTOR_INIT_t{0x02,nullptr,nullptr,DIRECT,1});
 
+
 //建造者模式按步骤构造的底盘对象
 Chassis& chassis = *Chassis::Build().
         AddCFLMotor(CFLMotor).
@@ -45,8 +46,6 @@ Chassis& chassis = *Chassis::Build().
         AddSFRMotor(SFRMotor).
         AddSBLMotor(SBLMotor).
         AddSBRMotor(SBRMotor).Build();
-
-
 
 void Chassis::ChassisSetVelocity(float _fbV, float _lrV, float _rtV) {
     ChassisStopFlag = false;
