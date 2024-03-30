@@ -20,6 +20,7 @@
 extern RadioMaster_Zorro zorro;
 
 RemoteControl::RemoteControlData_t data;
+extern Chassis chassis;
 
 void Task1();
 void Task2();

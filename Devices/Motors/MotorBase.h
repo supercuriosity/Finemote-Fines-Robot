@@ -34,6 +34,7 @@ typedef struct {
     float reductionRatio;//减速比
 } MOTOR_INIT_t;
 
+//TODO 电机基类的抽象程度不够，派生类冗余内容太多
 class MotorBase : public DeviceBase {
 public:
     MotorBase(){
