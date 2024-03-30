@@ -17,6 +17,15 @@
 template<int busID>
 class Motor4315 : public MotorBase {
 public:
+    //右值引用的重载，虽然不涉及资源的接管，但是为方便构建对象
+    explicit Motor4315(MOTOR_INIT_t &&motorInit) {
+        if (motorInit.speedPID) speedPID.PIDInfo = *motorInit.speedPID;
+        if (motorInit.anglePID) anglePID.PIDInfo = *motorInit.anglePID;
+        reductionRatio = motorInit.reductionRatio;
+        ctrlType = motorInit.ctrlType;
+        addr = motorInit.addr;
+        this ->SetDivisionFactor(10);
+    }
     explicit Motor4315(MOTOR_INIT_t &motorInit) {
         if (motorInit.speedPID) speedPID.PIDInfo = *motorInit.speedPID;
         if (motorInit.anglePID) anglePID.PIDInfo = *motorInit.anglePID;
