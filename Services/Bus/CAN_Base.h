@@ -101,9 +101,9 @@ private:
 template <int busID>
 class CAN_Agent {
 public:
-    CAN_Agent(uint32_t addr, CAN_Bus<busID> &CANBusInstance) : addr(addr), CANBusRef(CANBusInstance) {
-        static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT));
-        CANBusRef.GetInstance().Getmap()[addr] = rxbuf;
+    explicit CAN_Agent(uint32_t addr) : addr(addr), CANBusRef(CAN_Bus<busID>::GetInstance()) {
+        static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT),"Using illegal CAN BUS");
+        CANBusRef.Getmap()[addr] = rxbuf;
     }
 
     void Send() {
@@ -112,8 +112,8 @@ public:
         temp.DLC = DLC;
         temp.IDE = IDE;
         memcpy(temp.message, txbuf, DLC);
-        if (CANBusRef.GetInstance().dataQueue.size() < CAN_AGNET_TASK_MAX_NUM) {
-            CANBusRef.GetInstance().dataQueue.push(temp);
+        if (CANBusRef.dataQueue.size() < CAN_AGNET_TASK_MAX_NUM) {
+            CANBusRef.dataQueue.push(temp);
         }
 
     }

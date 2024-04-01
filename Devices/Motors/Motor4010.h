@@ -26,14 +26,14 @@ class Motor4010 : public MotorBase {
 public:
     //TODO 这里不觉得很奇怪吗，两个不同电机的初始化结构体是相同的，显然是可以归并到基类的行为，具体通讯方式可以由派生类管理
     //右值引用的重载，虽然不涉及资源的接管，但是为方便构建对象
-    explicit Motor4010(MOTOR_INIT_t &&motorInit) : canAgent(motorInit.addr, CAN_Bus<busID>::GetInstance()) {
+    explicit Motor4010(MOTOR_INIT_t &&motorInit) : canAgent(motorInit.addr) {
 
         if (motorInit.speedPID) speedPID.PIDInfo = *motorInit.speedPID;
         if (motorInit.anglePID) anglePID.PIDInfo = *motorInit.anglePID;
         reductionRatio = motorInit.reductionRatio;
         ctrlType = motorInit.ctrlType;
     }
-    explicit Motor4010(MOTOR_INIT_t &motorInit) : canAgent(motorInit.addr, CAN_Bus<busID>::GetInstance()) {
+    explicit Motor4010(MOTOR_INIT_t &motorInit) : canAgent(motorInit.addr) {
 
         if (motorInit.speedPID) speedPID.PIDInfo = *motorInit.speedPID;
         if (motorInit.anglePID) anglePID.PIDInfo = *motorInit.anglePID;
