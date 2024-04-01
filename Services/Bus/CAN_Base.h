@@ -35,7 +35,7 @@ public:
     CAN_Bus& operator=(const CAN_Bus&) = delete;
 
     static void RxHandle() {
-        static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT));
+        static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT),"Using Illegal CAN BUS");
 
         uint8_t tempBuf[8];
         CAN_RxHeaderTypeDef Header;
@@ -48,7 +48,7 @@ public:
     }
 
     static void TxLoader() {
-        static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT));
+        static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT),"Using Illegal CAN BUS");
      
         if (!dataQueue.empty()) {
             CAN_TxHeaderTypeDef Header;

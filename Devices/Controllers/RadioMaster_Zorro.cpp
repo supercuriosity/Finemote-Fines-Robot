@@ -37,7 +37,7 @@ void RadioMaster_Zorro::Decode(UART_Task_t _data) {
     }
     info.rightRol = (((rxBuff[1] | (rxBuff[2] << 8)) & 0x07FF) - 1000) / 810.0f;
     info.rightCol = ((((rxBuff[2] >> 3) | (rxBuff[3] << 5)) & 0x07FF) - 1000) / 810.0f;
-    info.leftCol = (((rxBuff[3] >> 6) | (rxBuff[4] << 2) | (rxBuff[5] << 10) & 0x07FF) - 1000) / 810.0f;
+    info.leftCol = ((((rxBuff[3] >> 6) | (rxBuff[4] << 2) | (rxBuff[5] << 10)) & 0x07FF) - 1000) / 810.0f;
     info.leftRol = ((((rxBuff[5] >> 1) | (rxBuff[6] << 7)) & 0x07FF) - 1000) / 810.0f;
     info.sE = ((((rxBuff[6] >> 4) | (rxBuff[7] << 4)) & 0x07FF) == 191) ? static_cast <SWITCH_STATE_E> (1)
                                                                         : static_cast <SWITCH_STATE_E> (2);

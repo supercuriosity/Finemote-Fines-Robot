@@ -66,7 +66,7 @@ typedef struct{
 
     uint8_t accel_temp_dma_rx_buf[SPI_DMA_ACCEL_TEMP_LENGHT];
     uint8_t accel_temp_dma_tx_buf[SPI_DMA_ACCEL_TEMP_LENGHT] = {0xA2,0xFF,0xFF,0xFF};
-}IMU_buffer_t __packed;
+}IMU_buffer_t;
 
 /*类型定义----------------------------------------------------------------*/
 
