@@ -22,23 +22,23 @@
 
 using ByteVector = std::vector<uint8_t>;
 
-typedef enum : uint8_t {
+typedef enum : uint32_t {
     READ = 0,
     WRITE,
-    READ_VECTOR,
-    WRITE_VECTOR,
+    //READ_VECTOR,
+    //WRITE_VECTOR,
     READ_FIXED_LENGTH,
-    DELAY,
+    //DELAY,
     ERROR_CALLBACK
 } UART_Task_e;
 
 typedef struct UART_Task_t{
-    uint8_t taskID;
+    //uint8_t taskID;
     UART_Task_e task;
     uint8_t * bufPtr;
     uint32_t size;
-    ByteVector data;
-    std::function<void(UART_Task_t)> callbackFuncPtr = nullptr;
+    //ByteVector data;
+    std::function<void(UART_Task_t)> callbackFuncPtr;
 } UART_Task_t;
 
 using CallbackFuncPtr = std::function<void(UART_Task_t)>;
@@ -57,7 +57,7 @@ public:
     void CallbackHandle(Callback_e callbackE) {
         switch (callbackE) {
             case Callback_e::READ:
-                if (resourceList.front().callbackFuncPtr != nullptr) {
+                if (resourceList.front().callbackFuncPtr) {
                     resourceList.front().callbackFuncPtr(resourceList.front());
                 }
                 break;
@@ -65,7 +65,7 @@ public:
                 break;
             case Callback_e::ERROR_CALL:
                 resourceList.front().task = ERROR_CALLBACK;
-                if (resourceList.front().callbackFuncPtr != nullptr) {
+                if (resourceList.front().callbackFuncPtr) {
                     resourceList.front().callbackFuncPtr(resourceList.front());
                 }
                 break;
@@ -81,6 +81,8 @@ extern std::map<UART_HandleTypeDef*,UART_Base*>& GetUartHandle_BusMap();
 
 template <uint8_t busID>
 class UART_Bus: public DeviceBase,public UART_Base{
+    uint32_t taskSize;
+    uint32_t resourceSize;
 public:
     static UART_Bus& GetInstance() { // 单例模式，提供实例获取方法
         static UART_Bus<busID> instance;
@@ -99,8 +101,8 @@ public:
             RETRYING,
         };
         static Handle_State_e handleStateE = Handle_State_e::READY;
-        uint32_t taskSize = taskQueue.size();
-        uint32_t resourceSize = resourceList.size();
+        taskSize = taskQueue.size();
+        resourceSize = resourceList.size();
 
         // 处理，涉及三个状态量：两个容器是否为空，以及上次发送是否成功
         // 对应到三种处理：直接重发，资源入队后发送，直接退出
@@ -109,8 +111,8 @@ public:
 
         HAL_StatusTypeDef status = HAL_OK;
         if (handleStateE == Handle_State_e::READY) { //上一次发送成功且任务列表非空，进行资源入队
-            UART_Task_t tmpTask = taskQueue.front();
-            resourceList.push_back(std::move(tmpTask));
+            //UART_Task_t tmpTask = ;
+            resourceList.emplace_back(taskQueue.front());
         }
 
         switch (resourceList.front().task) {
@@ -120,16 +122,16 @@ public:
             case WRITE:
                 UART_Transmit_IT(uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
                 break;
-            case READ_VECTOR:
+/*            case READ_VECTOR:
                 UART_Receive_IT(uartHandleList[busID], resourceList.front().data.data(), resourceList.front().data.size());
                 break;
             case WRITE_VECTOR:
                 UART_Transmit_IT(uartHandleList[busID], resourceList.front().data.data(),resourceList.front().data.size());
-                break;
+                break;*/
             case READ_FIXED_LENGTH:
                 UART_Receive_IT(uartHandleList[busID], resourceList.front().bufPtr, resourceList.front().size);
                 break;
-            case DELAY:
+/*            case DELAY:
                 if (handleStateE == Handle_State_e::READY) {
                     status = HAL_BUSY;
                     resourceList.front().size = resourceList.front().size + HAL_GetTick();
@@ -141,7 +143,9 @@ public:
                         status = HAL_BUSY;
                     }
                 }
-                break;
+                break;*/
+			case ERROR_CALLBACK:
+				break;
         }
         if (status != HAL_OK) {
             handleStateE = Handle_State_e::RETRYING;
@@ -149,13 +153,14 @@ public:
             taskQueue.pop();
             handleStateE = Handle_State_e::READY;
         }
+
     }
 
     uint8_t taskID = 0;
 
 private:
     UART_Bus() {
-        static_assert(busID<(sizeof (uartHandleList)/sizeof (uartHandleList[0])));
+        static_assert(busID<(sizeof (uartHandleList)/sizeof (uartHandleList[0])),"Using Illegal UART BUS");
         HALInit::GetInstance();
         GetUartHandle_BusMap()[uartHandleList[busID]]=this;
     }
@@ -187,9 +192,9 @@ public:
 
     // 不定长接收
     void Read(uint8_t* _bufPtr, CallbackFuncPtr callPtr = nullptr) {
-        if (uartBusRef.taskQueue.size() >= UART_AGNET_TASK_MAX_NUM) return;
+        if ((uartBusRef.taskQueue.size() + uartBusRef.resourceList.size()) >= UART_AGNET_TASK_MAX_NUM) return;
         UART_Task_t tmpTask;
-        tmpTask.taskID = ++uartBusRef.taskID;
+        //tmpTask.taskID = ++uartBusRef.taskID;
         tmpTask.task = READ;
         tmpTask.bufPtr = _bufPtr;
         tmpTask.size = UNFIXED_READ_MAX_LENGTH;
@@ -199,9 +204,9 @@ public:
 
     // 定长接收
     void Read(uint8_t* _bufPtr, uint8_t _size, CallbackFuncPtr callPtr = nullptr) {
-        if (uartBusRef.taskQueue.size() >= UART_AGNET_TASK_MAX_NUM) return;
+        if ((uartBusRef.taskQueue.size() + uartBusRef.resourceList.size()) >= UART_AGNET_TASK_MAX_NUM) return;
         UART_Task_t tmpTask;
-        tmpTask.taskID = ++uartBusRef.taskID;
+        //tmpTask.taskID = ++uartBusRef.taskID;
         tmpTask.task = READ_FIXED_LENGTH;
         tmpTask.bufPtr = _bufPtr;
         tmpTask.size = _size;
@@ -209,22 +214,22 @@ public:
         uartBusRef.taskQueue.push(std::move(tmpTask));
     }
 
-    // 定长接收(ByteVector)
-    void Read(ByteVector dataVector, CallbackFuncPtr callPtr = nullptr) {
-        if (uartBusRef.taskQueue.size() >= UART_AGNET_TASK_MAX_NUM) return;
-        UART_Task_t tmpTask;
-        tmpTask.taskID = ++uartBusRef.taskID;
-        tmpTask.task = READ_VECTOR;
-        tmpTask.data = std::move(dataVector);
-        tmpTask.callbackFuncPtr = std::move(callPtr);
-        uartBusRef.taskQueue.push(std::move(tmpTask));
-    }
+//    // 定长接收(ByteVector)
+//    void Read(ByteVector dataVector, CallbackFuncPtr callPtr = nullptr) {
+//        if (uartBusRef.taskQueue.size() >= UART_AGNET_TASK_MAX_NUM) return;
+//        UART_Task_t tmpTask;
+//        tmpTask.taskID = ++uartBusRef.taskID;
+//        tmpTask.task = READ_VECTOR;
+//        tmpTask.data = std::move(dataVector);
+//        tmpTask.callbackFuncPtr = std::move(callPtr);
+//        uartBusRef.taskQueue.push(std::move(tmpTask));
+//    }
 
     // 串口发送
     void Write(uint8_t* _bufPtr, uint8_t _size, CallbackFuncPtr callPtr = nullptr) {
-        if (uartBusRef.taskQueue.size() >= UART_AGNET_TASK_MAX_NUM) return;
+        if ((uartBusRef.taskQueue.size() + uartBusRef.resourceList.size()) >= UART_AGNET_TASK_MAX_NUM) return;
         UART_Task_t tmpTask;
-        tmpTask.taskID = ++uartBusRef.taskID;
+        //tmpTask.taskID = ++uartBusRef.taskID;
         tmpTask.task = WRITE;
         tmpTask.bufPtr = _bufPtr;
         tmpTask.size = _size;
@@ -232,7 +237,7 @@ public:
         uartBusRef.taskQueue.push(std::move(tmpTask));
     }
 
-    // 小批量发送(ByteVector)
+/*    // 小批量发送(ByteVector)
     void Write(ByteVector dataVector, CallbackFuncPtr callPtr = nullptr) {
         if (uartBusRef.taskQueue.size() >= UART_AGNET_TASK_MAX_NUM) return;
         UART_Task_t tmpTask;
@@ -241,17 +246,17 @@ public:
         tmpTask.data = std::move(dataVector);
         tmpTask.callbackFuncPtr = std::move(callPtr);
         uartBusRef.taskQueue.push(std::move(tmpTask));
-    }
+    }*/
 
-    void Delay(uint32_t _ms) {
-        if (uartBusRef.taskQueue.size() >= UART_AGNET_TASK_MAX_NUM) return;
-        UART_Task_t tmpTask;
-        tmpTask.taskID = ++uartBusRef.taskID;
-        tmpTask.task = DELAY;
-        tmpTask.size = _ms;
-        uartBusRef.taskQueue.push(std::move(tmpTask));
-    }
-    
+//    void Delay(uint32_t _ms) {
+//        if (uartBusRef.taskQueue.size() >= UART_AGNET_TASK_MAX_NUM) return;
+//        UART_Task_t tmpTask;
+//        //tmpTask.taskID = ++uartBusRef.taskID;
+//        tmpTask.task = DELAY;
+//        tmpTask.size = _ms;
+//        uartBusRef.taskQueue.push(std::move(tmpTask));
+//    }
+//
 private:
     UART_Bus<busID>& uartBusRef;
 };

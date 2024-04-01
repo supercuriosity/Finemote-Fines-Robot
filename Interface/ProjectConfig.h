@@ -40,7 +40,7 @@ static_assert(false);
  */
 #if defined(UART_PERIPHERAL)
 #define UART_BASE_MODULE
-#define UART_AGNET_TASK_MAX_NUM 200
+#define UART_AGNET_TASK_MAX_NUM 20
 #define UNFIXED_READ_MAX_LENGTH 100
 #endif
 

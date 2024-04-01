@@ -14,7 +14,7 @@
 #include "Motors/Motor4010.h"
 #include "Motors/Motor4315.h"
 #include "Chassis.h"
-#include "../Services/Bus/UART_Base.h"
+#include "Bus/UART_Base.h"
 #include "Sensors/IMUBase.h"
 
 extern RadioMaster_Zorro zorro;

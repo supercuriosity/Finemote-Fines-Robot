@@ -29,6 +29,7 @@ private:
     uint8_t rxBuff[SBUS_RX_BUF_NUM];
     int32_t channel[16];
     UART_Agent<0> remoteUart;
+    uint32_t last_stamp;
 };
 
 #endif
