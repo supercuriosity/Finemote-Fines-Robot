@@ -798,19 +798,19 @@
               <FilePath>..\..\..\Devices\Motors\MotorBase.cpp</FilePath>
             </File>
             <File>
-              <FileName>Motor4010.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Components\Motor4010.cpp</FilePath>
-            </File>
-            <File>
               <FileName>Chassis.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\Components\Chassis.cpp</FilePath>
             </File>
             <File>
+              <FileName>Motor4010.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Devices\Motors\Motor4010.cpp</FilePath>
+            </File>
+            <File>
               <FileName>Motor4315.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Components\Motor4315.cpp</FilePath>
+              <FilePath>..\..\..\Devices\Motors\Motor4315.cpp</FilePath>
             </File>
           </Files>
         </Group>

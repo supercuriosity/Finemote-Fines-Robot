@@ -198,7 +198,7 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\..\Interface\..\Services\Bus\UART_Base.h</Filename>
+          <Filename>..\..\..\Services\Bus\UART_Base.h</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
         </Bp>
@@ -214,7 +214,7 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>0</BreakIfRCount>
-          <Filename>..\..\..\Interface\..\Services\Bus\UART_Base.h</Filename>
+          <Filename>..\..\..\Services\Bus\UART_Base.h</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
         </Bp>
@@ -932,8 +932,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\Components\Motor4010.cpp</PathWithFileName>
-      <FilenameWithoutPath>Motor4010.cpp</FilenameWithoutPath>
+      <PathWithFileName>..\..\..\Components\Chassis.cpp</PathWithFileName>
+      <FilenameWithoutPath>Chassis.cpp</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -944,8 +944,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\Components\Chassis.cpp</PathWithFileName>
-      <FilenameWithoutPath>Chassis.cpp</FilenameWithoutPath>
+      <PathWithFileName>..\..\..\Devices\Motors\Motor4010.cpp</PathWithFileName>
+      <FilenameWithoutPath>Motor4010.cpp</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -956,7 +956,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\Components\Motor4315.cpp</PathWithFileName>
+      <PathWithFileName>..\..\..\Devices\Motors\Motor4315.cpp</PathWithFileName>
       <FilenameWithoutPath>Motor4315.cpp</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
