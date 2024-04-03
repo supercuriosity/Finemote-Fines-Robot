@@ -38,7 +38,7 @@ set(CMAKE_CXX_LINK_EXECUTABLE armlink.exe)
 # 获取当前 MCU 的 section 描述，及存储空间和起始地址的描述（注意：需要先用 keil 打开编译一下当前项目才能生成）
 # 设置Sections脚本路径,CubeMX生成 MDK 后先编译一下，就会在MDK-ARM 目录下生成工程名命名的文件夹
 # 在那个目录里会生成以项目名命名的sct文件。 由于在本地调用，不需要加 global 全局变量标记，更简洁
-# set(SECTIONS_SCRIPT_PATH ${CMAKE_HOME_DIRECTORY}/Bsp/${BOARD_NAME}/MDK-ARM/${BOARD_NAME}/${BOARD_NAME}.sct)
+# set(SECTIONS_SCRIPT_PATH ${CMAKE_HOME_DIRECTORY}/BSP/${BOARD_NAME}/MDK-ARM/${BOARD_NAME}/${BOARD_NAME}.sct)
 
 
 #********************************************************************************************#
@@ -125,5 +125,5 @@ file(GLOB_RECURSE COMMON_SOURCE_FILES
         "Tests/*.*"
         )
 
-add_subdirectory(Bsp/MC_Board)
-add_subdirectory(Bsp/Robomaster_C)
+add_subdirectory(BSP/MC_Board)
+add_subdirectory(BSP/Robomaster_C)
