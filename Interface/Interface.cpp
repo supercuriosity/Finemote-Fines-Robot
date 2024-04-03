@@ -37,7 +37,7 @@ void Setup() {
 
     uint8_t ss[7] = "Hello\n";
 //    HAL_UART_Transmit_IT(&Serial_Host, ss, 7);
-//    BeepMusic::MusicChannels[0].Play(3);
+    BeepMusic::MusicChannels[0].Play(5);
 }
 
 void Loop() {
@@ -66,14 +66,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
         if(GPIO_PIN_RESET == HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15)) {
             static int index = 1;
-            //BeepMusic::MusicChannels[0].Play(index++);
+            BeepMusic::MusicChannels[0].Play(index++);
             index %= 3;
         }
     }
 }
 
 void Task1() {
-    //BeepMusic::MusicChannels[0].BeepService();
+    BeepMusic::MusicChannels[0].BeepService();
 }
 static float Speed = 0;
 

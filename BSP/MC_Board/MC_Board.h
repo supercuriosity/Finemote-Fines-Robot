@@ -97,6 +97,10 @@ extern uint16_t uartTxPinList[4];
 #define TIM_Heater htim3
 #define TIM_Heater_Channel TIM_CHANNEL_2
 
+#define TIM_Buzzer htim2
+#define TIM_Buzzer_Channel TIM_CHANNEL_4
+#define BUZZER_PERIPHERAL
+
 #define TIM_Control htim7
 
 #define CAN_BUS_MAXIMUM_COUNT 2
