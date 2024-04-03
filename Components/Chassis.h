@@ -79,12 +79,12 @@ public:
     ChassisBuilder& AddSBLMotor(Motor4315<1> &sblMotor){SBLPtr = &sblMotor;return *this;};
     ChassisBuilder& AddSBRMotor(Motor4315<1> &sbrMotor){SBRPtr = &sbrMotor;return *this;};
 
-    Chassis* Build(){
-        if (CFLPtr && CFRPtr && CBLPtr && CBRPtr && SFLPtr && SFRPtr && SBLPtr && SBRPtr){
-            return new Chassis{CFLPtr,CFRPtr,CBLPtr,CBRPtr,SFLPtr,SFRPtr,SBLPtr,SBRPtr};
-        }else{
-            return nullptr;
+    Chassis Build(){
+        if (!(CFLPtr && CFRPtr && CBLPtr && CBRPtr && SFLPtr && SFRPtr && SBLPtr && SBRPtr)){
+            Error_Handler();
         }
+        return Chassis{CFLPtr,CFRPtr,CBLPtr,CBRPtr,SFLPtr,SFRPtr,SBLPtr,SBRPtr};
+        
     }
 };
 

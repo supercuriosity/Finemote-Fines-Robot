@@ -5,22 +5,19 @@
  ******************************************************************************/
 
 #include "ProjectConfig.h"
-
 #include "MultiMedia/BeepMusic.h"
 #include "DeviceBase.h"
 #include "MultiMedia/LED.h"
 #include "Controllers/RadioMaster_Zorro.h"
 #include "Controllers/RemoteControl.h"
 #include "Motors/Motor4010.h"
-#include "Motors/Motor4315.h"
-#include "Chassis.h"
-#include "Bus/UART_Base.h"
-#include "Sensors/IMUBase.h"
+
+
+#include "InstanceManager.h"
 
 extern RadioMaster_Zorro zorro;
 
 RemoteControl::RemoteControlData_t data;
-extern Chassis chassis;
 
 void Task1();
 void Task2();
@@ -28,7 +25,6 @@ void Task2();
 #ifdef __cplusplus
 extern "C" {
 #endif
-//TODO Setup 应该尽可能减少使用而使用构造函数替代，loop应该通过继承Devicebase并重写handle函数来替代
 
 
 void Setup() {
@@ -62,7 +58,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
         CAN_Bus<1>::TxLoader();
         CAN_Bus<2>::TxLoader();
-
 
         if(GPIO_PIN_RESET == HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15)) {
             static int index = 1;
