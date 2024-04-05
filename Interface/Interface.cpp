@@ -5,12 +5,12 @@
  ******************************************************************************/
 
 #include "ProjectConfig.h"
-#include "MultiMedia/BeepMusic.h"
+#include "BeepMusic.h"
 #include "DeviceBase.h"
-#include "MultiMedia/LED.h"
-#include "Controllers/RadioMaster_Zorro.h"
-#include "Controllers/RemoteControl.h"
-#include "Motors/Motor4010.h"
+#include "LED.h"
+#include "RadioMaster_Zorro.h"
+#include "RemoteControl.h"
+#include "Motor4010.h"
 
 
 #include "InstanceManager.h"

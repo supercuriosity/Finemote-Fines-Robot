@@ -105,14 +105,37 @@ add_compile_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
 #Uncomment for software floating point
 #add_compile_options(-mfloat-abi=soft)
 
-include_directories(
-        Interface
-        Devices
-        Algorithms
-        Services
-        Components
-        Tests
-)
+function(INCLUDE_SUB_DIR_INC root_dir)
+        if(IS_DIRECTORY ${root_dir})
+                #找含有.h文件或含有.hpp文件，但该目录不一定是Inc或include目录,则将当前目录添加到头文件搜索路径
+                file(GLOB_RECURSE head_files ${root_dir}/*.h ${root_dir}/*.hpp)
+                if(head_files)
+                include_directories(${root_dir})
+                message(STATUS "Add head file search path: ${root_dir}")
+                endif()
+                #递归寻找子目录
+                file(GLOB sub_directories RELATIVE ${root_dir} ${root_dir}/*)
+                foreach(sub_dir ${sub_directories})
+                        INCLUDE_SUB_DIR_INC(${root_dir}/${sub_dir})
+                endforeach()
+        endif()
+endfunction()
+
+INCLUDE_SUB_DIR_INC(${PROJECT_SOURCE_DIR}/Interface)
+INCLUDE_SUB_DIR_INC(${PROJECT_SOURCE_DIR}/Devices)
+INCLUDE_SUB_DIR_INC(${PROJECT_SOURCE_DIR}/Algorithms)
+INCLUDE_SUB_DIR_INC(${PROJECT_SOURCE_DIR}/Services)
+INCLUDE_SUB_DIR_INC(${PROJECT_SOURCE_DIR}/Components)
+INCLUDE_SUB_DIR_INC(${PROJECT_SOURCE_DIR}/Tests)
+
+#include_directories(
+#        Interface
+#        Devices
+#        Algorithms
+#        Services
+#        Components
+#        Tests
+#)
 
 # 对于混合兼容的环境，需要屏蔽各种编译环境引起的文件“干扰”,通过 list(REMOVE_ITEM) 命令移除不同编译环境下的干扰文件
 # 获取不同芯片的公共代码，于子模块中调用此变量
