@@ -13,21 +13,21 @@ void DeviceBase::DevicesHandle() {
     //auto tmp = getDeviceList().size()
     static uint32_t stamp = HAL_GetTick();
     static uint32_t cnt = 0;
-    uint32_t diff = HAL_GetTick()-stamp;
+    uint32_t diff = HAL_GetTick() - stamp;
     cnt++;
-    if (diff>=1000){
+    if (diff >= 1000) {
         baseFre = cnt;
         stamp = HAL_GetTick();
         cnt = 0;
     }
-    for (DeviceBase* devicePtr :getDeviceList()){
-        if (++(devicePtr->cnt)>= devicePtr->divisionFactor) {
+    for (auto rit = getDeviceList().rbegin(); rit != getDeviceList().rend(); ++rit) {//反向遍历
+        auto devicePtr = *rit;
+        if (++(devicePtr->cnt) >= devicePtr->divisionFactor) {
             devicePtr->Handle();
             devicePtr->cnt = 0;
         }
     }
 }
-
 DeviceBase::DeviceBase() {
     getDeviceList().push_back(this);
 	auto tmp = getDeviceList().size();
