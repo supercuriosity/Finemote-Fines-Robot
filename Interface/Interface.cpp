@@ -15,9 +15,6 @@
 
 #include "InstanceManager.h"
 
-extern RadioMaster_Zorro zorro;
-
-RemoteControl::RemoteControlData_t data;
 
 void Task1();
 void Task2();
@@ -30,7 +27,6 @@ extern "C" {
 void Setup() {
     HAL_TIM_Base_Start_IT(&TIM_Control);
     HAL_TIM_PWM_Start(&TIM_Buzzer,TIM_Buzzer_Channel);
-
     uint8_t ss[7] = "Hello\n";
 //    HAL_UART_Transmit_IT(&Serial_Host, ss, 7);
     BeepMusic::MusicChannels[0].Play(5);
@@ -54,7 +50,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
         DeviceBase::DevicesHandle();
         Task1();
         Task2();
-        data = zorro.GetInfo();
+        auto &data = zorro.GetInfo();
 
         CAN_Bus<1>::TxLoader();
         CAN_Bus<2>::TxLoader();

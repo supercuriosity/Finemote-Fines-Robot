@@ -8,7 +8,6 @@
 
 #ifdef RADIOMASTER_ZORRO_MODULE
 
-RadioMaster_Zorro zorro;
 
 RadioMaster_Zorro::~RadioMaster_Zorro() {
 

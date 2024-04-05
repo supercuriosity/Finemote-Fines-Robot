@@ -47,3 +47,5 @@ Chassis chassis = Chassis::Build().
         AddSFRMotor(SFRMotor).
         AddSBLMotor(SBLMotor).
         AddSBRMotor(SBRMotor).Build();
+
+RadioMaster_Zorro zorro;

@@ -7,8 +7,11 @@
 
 #ifndef FINEMOTE_INSTANCEMANAGER_H
 #define FINEMOTE_INSTANCEMANAGER_H
+
 #include "Chassis.h"
+#include "RadioMaster_Zorro.h"
 
 extern Chassis chassis;
+extern RadioMaster_Zorro zorro;
 
 #endif //FINEMOTE_INSTANCEMANAGER_H
