@@ -53,7 +53,10 @@ public:
         if (!dataQueue.empty()) {
             CAN_TxHeaderTypeDef Header;
             uint32_t TxMailbox;
-            Header.StdId = dataQueue.front().addr;
+            if(dataQueue.front().IDE == CAN_ID_STD)
+                Header.StdId = dataQueue.front().addr;
+            else if(dataQueue.front().IDE == CAN_ID_EXT)
+                Header.ExtId = dataQueue.front().addr;
             Header.DLC = dataQueue.front().DLC;
             Header.IDE = dataQueue.front().IDE;
             Header.RTR = CAN_RTR_DATA;
