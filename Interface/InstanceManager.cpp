@@ -31,10 +31,10 @@ Motor4010<1> CFRMotor(MOTOR_INIT_t{0x144,&adminSpeedPID,&adminAnglePID,POSITION_
 Motor4010<1> CBLMotor(MOTOR_INIT_t{0x143,&adminSpeedPID,&adminAnglePID,POSITION_Double,1});
 Motor4010<1> CBRMotor(MOTOR_INIT_t{0x142,&adminSpeedPID,&adminAnglePID,POSITION_Double,1});
 
-Motor4315<1> SFLMotor(MOTOR_INIT_t{0x03,nullptr,nullptr,DIRECT,1});
-Motor4315<1> SFRMotor(MOTOR_INIT_t{0x04,nullptr,nullptr,DIRECT,1});
-Motor4315<1> SBLMotor(MOTOR_INIT_t{0x01,nullptr,nullptr,DIRECT,1});
-Motor4315<1> SBRMotor(MOTOR_INIT_t{0x02,nullptr,nullptr,DIRECT,1});
+Motor4315<0> SFLMotor(MOTOR_INIT_t{0x03,nullptr,nullptr,DIRECT,1});
+Motor4315<0> SFRMotor(MOTOR_INIT_t{0x04,nullptr,nullptr,DIRECT,1});
+Motor4315<0> SBLMotor(MOTOR_INIT_t{0x01,nullptr,nullptr,DIRECT,1});
+Motor4315<0> SBRMotor(MOTOR_INIT_t{0x02,nullptr,nullptr,DIRECT,1});
 
 
 //首先调取底盘类的构建器，然后使用提供的电机添加函数，将上文构建的电机指针传入构建器，最后由构建器返回构建好的底盘类对象

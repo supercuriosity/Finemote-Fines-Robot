@@ -11,7 +11,7 @@
 #ifdef MOTOR_COMPONENTS
 
 #include "DeviceBase.h"
-#include "Bus/UART_Base.h"
+#include "Bus/RS485_Base.h"
 #include "Motors/MotorBase.h"
 
 template<int busID>
@@ -44,7 +44,7 @@ public:
 
     uint8_t rxbuf[15]{0};
     uint8_t txbuf[11]{0};
-    UART_Agent<busID> uartAgent;
+    RS485_Agent<busID> rs485Agent;
 
     float nowAngle{};
     float zeroAngle{};
@@ -66,7 +66,7 @@ private:
         txbuf[9] = crc16;
         txbuf[10] = crc16 >> 8u;
 
-        uartAgent.Write(txbuf, 11);
+        rs485Agent.Write(txbuf, 11);
     }
 
     void AngleCalc() {

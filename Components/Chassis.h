@@ -30,10 +30,10 @@ class Chassis : public DeviceBase {
     Motor4010<1>* CFRPtr,
     Motor4010<1>* CBLPtr,
     Motor4010<1>* CBRPtr,
-    Motor4315<1>* SFLPtr,
-    Motor4315<1>* SFRPtr,
-    Motor4315<1>* SBLPtr,
-    Motor4315<1>* SBRPtr):
+    Motor4315<0>* SFLPtr,
+    Motor4315<0>* SFRPtr,
+    Motor4315<0>* SBLPtr,
+    Motor4315<0>* SBRPtr):
     CFL(*CFLPtr),
     CFR(*CFRPtr),
     CBL(*CBLPtr),
@@ -53,7 +53,7 @@ public:
 
 
     Motor4010<1> &CFL,&CFR,&CBL,&CBR;
-    Motor4315<1> &SFL,&SFR,&SBL,&SBR;
+    Motor4315<0> &SFL,&SFR,&SBL,&SBR;
 
 
     static ChassisBuilder Build();
@@ -65,19 +65,19 @@ private:
     Motor4010<1>* CFRPtr{nullptr};
     Motor4010<1>* CBLPtr{nullptr};
     Motor4010<1>* CBRPtr{nullptr};
-    Motor4315<1>* SFLPtr{nullptr};
-    Motor4315<1>* SFRPtr{nullptr};
-    Motor4315<1>* SBLPtr{nullptr};
-    Motor4315<1>* SBRPtr{nullptr};
+    Motor4315<0>* SFLPtr{nullptr};
+    Motor4315<0>* SFRPtr{nullptr};
+    Motor4315<0>* SBLPtr{nullptr};
+    Motor4315<0>* SBRPtr{nullptr};
 public:
     ChassisBuilder& AddCFLMotor(Motor4010<1> &cflMotor){CFLPtr = &cflMotor;return *this;};
     ChassisBuilder& AddCFRMotor(Motor4010<1> &cfrMotor){CFRPtr = &cfrMotor;return *this;};
     ChassisBuilder& AddCBLMotor(Motor4010<1> &cblMotor){CBLPtr = &cblMotor;return *this;};
     ChassisBuilder& AddCBRMotor(Motor4010<1> &cbrMotor){CBRPtr = &cbrMotor;return *this;};
-    ChassisBuilder& AddSFLMotor(Motor4315<1> &sflMotor){SFLPtr = &sflMotor;return *this;};
-    ChassisBuilder& AddSFRMotor(Motor4315<1> &sfrMotor){SFRPtr = &sfrMotor;return *this;};
-    ChassisBuilder& AddSBLMotor(Motor4315<1> &sblMotor){SBLPtr = &sblMotor;return *this;};
-    ChassisBuilder& AddSBRMotor(Motor4315<1> &sbrMotor){SBRPtr = &sbrMotor;return *this;};
+    ChassisBuilder& AddSFLMotor(Motor4315<0> &sflMotor){SFLPtr = &sflMotor;return *this;};
+    ChassisBuilder& AddSFRMotor(Motor4315<0> &sfrMotor){SFRPtr = &sfrMotor;return *this;};
+    ChassisBuilder& AddSBLMotor(Motor4315<0> &sblMotor){SBLPtr = &sblMotor;return *this;};
+    ChassisBuilder& AddSBRMotor(Motor4315<0> &sbrMotor){SBRPtr = &sbrMotor;return *this;};
 
     Chassis Build(){
         if (!(CFLPtr && CFRPtr && CBLPtr && CBRPtr && SFLPtr && SFRPtr && SBLPtr && SBRPtr)){

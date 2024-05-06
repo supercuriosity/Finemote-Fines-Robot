@@ -80,9 +80,10 @@ public:
 #define HAL_INIT_HANDLE
 
 
-extern UART_HandleTypeDef *uartHandleList[4];
-extern GPIO_TypeDef *uartTxPortList[4];
-extern uint16_t uartTxPinList[4];
+extern UART_HandleTypeDef *uartHandleList[2];
+extern UART_HandleTypeDef *rs485HandleList[2];
+extern GPIO_TypeDef *rs485TxPortList[2];
+extern uint16_t rs485TxPinList[2];
 #define UART_PERIPHERAL
 
 
@@ -101,6 +102,8 @@ extern uint16_t uartTxPinList[4];
 
 #define CAN_BUS_MAXIMUM_COUNT 2
 #define CAN_PERIPHERAL
+
+#define RS485_PERIPHERAL
 
 typedef struct {
     SPI_HandleTypeDef* spiHandle;

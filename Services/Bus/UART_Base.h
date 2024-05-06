@@ -165,18 +165,12 @@ private:
         GetUartHandle_BusMap()[uartHandleList[busID]]=this;
     }
     void UART_Receive_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size) {
-        if(uartTxPortList[busID] != nullptr && uartTxPinList[busID] != NULL)
-            HAL_GPIO_WritePin(uartTxPortList[busID], uartTxPinList[busID], GPIO_PIN_RESET);
         HAL_UART_Receive_IT(huart, pData, Size);
     }
     void UART_Transmit_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size) {
-        if (uartTxPortList[busID] != nullptr && uartTxPinList[busID] != NULL)
-            HAL_GPIO_WritePin(uartTxPortList[busID], uartTxPinList[busID], GPIO_PIN_SET);
         HAL_UART_Transmit_IT(huart, pData, Size);
     }
     void UARTEx_ReceiveToIdle_IT(UART_HandleTypeDef *huart, uint8_t *pData, uint16_t Size) {
-        if (uartTxPortList[busID] != nullptr && uartTxPinList[busID] != NULL)
-            HAL_GPIO_WritePin(uartTxPortList[busID], uartTxPinList[busID], GPIO_PIN_RESET);
         HAL_UARTEx_ReceiveToIdle_IT(huart, pData, Size);
     }
 
@@ -188,7 +182,6 @@ template <uint8_t busID>
 class UART_Agent {
 public:
     explicit UART_Agent() : uartBusRef(UART_Bus<busID>::GetInstance()) {}
-
 
     // 不定长接收
     void Read(uint8_t* _bufPtr, CallbackFuncPtr callPtr = nullptr) {

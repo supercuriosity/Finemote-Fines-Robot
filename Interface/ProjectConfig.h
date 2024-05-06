@@ -45,6 +45,20 @@ static_assert(false);
 #endif
 
 /**
+ * RS485_PERIPHERAL 模块所需的RS485外设依赖条件
+ *
+ */
+#if defined(RS485_PERIPHERAL)&& defined(UART_BASE_MODULE)
+#define RS485_BASE_MODULE
+#define RS485_AGNET_TASK_MAX_NUM 20
+#define RS485_UNFIXED_READ_MAX_LENGTH 100
+
+
+#endif
+
+
+
+/**
  * I2C_PERIPHERAL 模块所需的I2C外设依赖条件
  * @def USER_I2C 配置的I2C外设
  */
