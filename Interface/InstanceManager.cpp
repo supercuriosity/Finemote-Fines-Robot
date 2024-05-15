@@ -26,10 +26,10 @@ PID_Regulator_t adminAnglePID = {//此为储存pid参数的结构体
         .outputMax = 2000 //4010电机输出电流上限，可以调小，勿调大
 };
 //构建组成底盘的各个电机
-Motor4010<1> CFLMotor(MOTOR_INIT_t{0x141,&adminSpeedPID,&adminAnglePID,POSITION_Double,1});
-Motor4010<1> CFRMotor(MOTOR_INIT_t{0x144,&adminSpeedPID,&adminAnglePID,POSITION_Double,1});
-Motor4010<1> CBLMotor(MOTOR_INIT_t{0x143,&adminSpeedPID,&adminAnglePID,POSITION_Double,1});
-Motor4010<1> CBRMotor(MOTOR_INIT_t{0x142,&adminSpeedPID,&adminAnglePID,POSITION_Double,1});
+Motor4010<1> CBRMotor(MOTOR_INIT_t{0x144,&adminSpeedPID,&adminAnglePID,SPEED_Single,1});
+Motor4010<1> CBLMotor(MOTOR_INIT_t{0x143,&adminSpeedPID,&adminAnglePID,SPEED_Single,1});
+Motor4010<1> CFLMotor(MOTOR_INIT_t{0x142,&adminSpeedPID,&adminAnglePID,SPEED_Single,1});
+Motor4010<1> CFRMotor(MOTOR_INIT_t{0x141,&adminSpeedPID,&adminAnglePID,SPEED_Single,1});
 
 Motor4315<0> SFLMotor(MOTOR_INIT_t{0x03,nullptr,nullptr,DIRECT,1});
 Motor4315<0> SFRMotor(MOTOR_INIT_t{0x04,nullptr,nullptr,DIRECT,1});
