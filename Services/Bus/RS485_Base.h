@@ -107,7 +107,7 @@ template <uint8_t busID>
 class RS485_Agent {
 public:
     explicit RS485_Agent() : rs485BusRef(RS485_Bus<busID>::GetInstance()) {
-        rs485BusRef.SetDivisionFactor(4);
+        rs485BusRef.SetDivisionFactor(2);
     }
 
     // 不定长接收
