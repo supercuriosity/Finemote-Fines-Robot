@@ -5,6 +5,7 @@
  ******************************************************************************/
 
 #include "RadioMaster_Zorro.h"
+#include <cmath>
 
 #ifdef RADIOMASTER_ZORRO_MODULE
 
@@ -34,10 +35,27 @@ void RadioMaster_Zorro::Decode(UART_Task_t _data) {
         remoteUart.Read(rxBuff, [this](UART_Task_t a) { this->Decode(a); });
         return;
     }
-    info.rightRol = (((rxBuff[1] | (rxBuff[2] << 8)) & 0x07FF) - 1000) / 810.0f;
-    info.rightCol = ((((rxBuff[2] >> 3) | (rxBuff[3] << 5)) & 0x07FF) - 1000) / 810.0f;
-    info.leftCol = ((((rxBuff[3] >> 6) | (rxBuff[4] << 2) | (rxBuff[5] << 10)) & 0x07FF) - 1000) / 810.0f;
-    info.leftRol = ((((rxBuff[5] >> 1) | (rxBuff[6] << 7)) & 0x07FF) - 1000) / 810.0f;
+    info.rR = (((rxBuff[1] | (rxBuff[2] << 8)) & 0x07FF) - 1000) / 810.0f;
+    info.rC = ((((rxBuff[2] >> 3) | (rxBuff[3] << 5)) & 0x07FF) - 1000) / 810.0f;
+    info.lC = ((((rxBuff[3] >> 6) | (rxBuff[4] << 2) | (rxBuff[5] << 10)) & 0x07FF) - 1000) / 810.0f;
+    info.lR = ((((rxBuff[5] >> 1) | (rxBuff[6] << 7)) & 0x07FF) - 1000) / 810.0f;
+    //设置死区
+    if(abs(info.rR) > 0.1)
+        info.rightRol = info.rR;
+    else
+        info.rightRol = 0;
+    if(abs(info.rC) > 0.1)
+        info.rightCol = info.rC;
+    else
+        info.rightCol = 0;
+    if(abs(info.lC) > 0.1)
+        info.leftCol = info.lC;
+    else
+        info.leftCol = 0;
+    if(abs(info.lR) > 0.1)
+        info.leftRol = info.lR;
+    else
+        info.leftRol = 0;
     info.sE = ((((rxBuff[6] >> 4) | (rxBuff[7] << 4)) & 0x07FF) == 191) ? static_cast <SWITCH_STATE_E> (1)
                                                                         : static_cast <SWITCH_STATE_E> (2);
     info.sB = ((((rxBuff[7] >> 7) | (rxBuff[8] << 1) | (rxBuff[8] << 9)) & 0x07FF) == 256)

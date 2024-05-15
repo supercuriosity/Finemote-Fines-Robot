@@ -26,8 +26,8 @@ public:
         uint32_t v;
     };
     struct RemoteControlData_t {
-        float leftCol, leftRol;
-        float rightCol, rightRol;
+        float leftCol, leftRol,lC,lR;
+        float rightCol, rightRol,rC,rR;
         float dialWheel;
         uint32_t pat;
         uint32_t sRight, sLeft;
