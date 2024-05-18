@@ -6,12 +6,14 @@
 #include "Bus/CAN_Base.h"
 #include "Control/PID.h"
 
+/** 名字完全不能体现控制特点 */
 typedef enum {
     DIRECT = 0,
     SPEED_Single,
     POSITION_Double
 } MOTOR_CTRL_TYPE_e;
 
+/** 不是电机通用特征，应该由具体电机进行协议解包 */
 typedef struct {
     uint16_t angle;
     int16_t speed;
@@ -27,6 +29,7 @@ typedef struct {
 } MOTOR_STATE_t;
 
 typedef struct {
+    /** 内容根据下方批注调整 */
     uint32_t addr;
     PID_Regulator_t *speedPID;//速度环pid参数结构体指针
     PID_Regulator_t *anglePID;//角度环pid参数结构体指针
@@ -41,10 +44,12 @@ public:
         this ->SetDivisionFactor(4);
     }
 
+    /** 基类当中这个东西的用途是什么，stop和disable的区别是什么 */
     void Stop() {
         stopflag = true;
     };
 
+    /** Todo: 筛查电机控制类型，不合理调用的Set需要警告 */
     void SetTargetSpeed(float _targetSpeed) {
         targetSpeed = _targetSpeed;
     };
@@ -53,6 +58,7 @@ public:
         targetAngle = _targetAngle;
     };
 
+    /** 这是个通用算法，扔到其他地方 */
     static uint16_t CRC16Calc(uint8_t *data, uint16_t length){
         uint16_t crc = 0xffff;        // Initial value
         while (length--) {
@@ -67,10 +73,15 @@ public:
         return crc;
     }
 
+    /** 根本不是基类的东西 */
     uint32_t addr;
+    /** 初值是0？ */
     float reductionRatio{};
+    /** 算法用通用接口，函数指针找控制算法 */
     PID speedPID, anglePID;
+    /** 用来干啥，查清楚 */
     bool stopflag{};
+    /** 滥用初始化列表赋值 */
     float targetSpeed{};
     float targetAngle{};
     MOTOR_CTRL_TYPE_e ctrlType{};

@@ -50,6 +50,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
         DeviceBase::DevicesHandle();
         Task1();
         Task2();
+        /** 核对控制周期内部顺序是否正确 */
         auto &data = zorro.GetInfo();
 
         CAN_Bus<1>::TxLoader();

@@ -6,7 +6,7 @@
 
 #include "InstanceManager.h"
 
-
+/** 算法类配合宏定义进行批量赋值 */
 PID_Regulator_t adminSpeedPID = {//此为储存pid参数的结构体
         .kp = 0.3f,
         .ki = 0.002f,
@@ -31,6 +31,7 @@ Motor4010<1> CBLMotor(MOTOR_INIT_t{0x143,&adminSpeedPID,&adminAnglePID,SPEED_Sin
 Motor4010<1> CFLMotor(MOTOR_INIT_t{0x142,&adminSpeedPID,&adminAnglePID,SPEED_Single,1});
 Motor4010<1> CFRMotor(MOTOR_INIT_t{0x141,&adminSpeedPID,&adminAnglePID,SPEED_Single,1});
 
+/** 不存在总线0 */
 Motor4315<0> SFLMotor(MOTOR_INIT_t{0x03,nullptr,nullptr,DIRECT,1});
 Motor4315<0> SFRMotor(MOTOR_INIT_t{0x04,nullptr,nullptr,DIRECT,1});
 Motor4315<0> SBLMotor(MOTOR_INIT_t{0x01,nullptr,nullptr,DIRECT,1});
@@ -46,6 +47,8 @@ Chassis chassis = Chassis::Build().
         AddSFLMotor(SFLMotor).
         AddSFRMotor(SFRMotor).
         AddSBLMotor(SBLMotor).
-        AddSBRMotor(SBRMotor).Build();
+        AddSBRMotor(SBRMotor).
+        Build();
 
+/** 类名称提供设备信息，对象名称通用 */
 RadioMaster_Zorro zorro;

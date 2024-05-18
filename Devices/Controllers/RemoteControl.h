@@ -41,7 +41,7 @@ protected:
 public:
     RemoteControl();
     ~RemoteControl();
-    void Handle(void) override;
+    void Handle() override;
     virtual void Decode(UART_Task_t _data) = 0;
     inline const RemoteControlData_t& GetInfo() {
         return info;

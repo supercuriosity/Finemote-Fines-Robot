@@ -12,7 +12,6 @@ UART_HandleTypeDef *rs485HandleList[2] = {&huart1, &huart2};
 GPIO_TypeDef *rs485TxPortList[2] = {GPIOC, GPIOB};
 uint16_t rs485TxPinList[2] = {GPIO_PIN_15, GPIO_PIN_3};
 
-extern SPI_HandleTypeDef hspi2;
 extern DMA_HandleTypeDef hdma_spi2_rx;
 extern DMA_HandleTypeDef hdma_spi2_tx;
 
