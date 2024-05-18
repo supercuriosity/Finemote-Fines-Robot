@@ -79,11 +79,11 @@ public:
 
 #define HAL_INIT_HANDLE
 
+extern UART_HandleTypeDef *uartHandleList[5];
+extern GPIO_TypeDef *rs485TxPortList[3];
+extern uint16_t rs485TxPinList[3];
 
-extern UART_HandleTypeDef *uartHandleList[2];
-extern UART_HandleTypeDef *rs485HandleList[2];
-extern GPIO_TypeDef *rs485TxPortList[2];
-extern uint16_t rs485TxPinList[2];
+
 #define UART_PERIPHERAL
 
 
@@ -106,12 +106,12 @@ extern uint16_t rs485TxPinList[2];
 #define RS485_PERIPHERAL
 
 typedef struct {
-    SPI_HandleTypeDef* spiHandle;
-    DMA_HandleTypeDef* rxDMAHandle;
-    DMA_HandleTypeDef* txDMAHandle;
-    TIM_HandleTypeDef* timHandleForHeat;
+    SPI_HandleTypeDef *spiHandle;
+    DMA_HandleTypeDef *rxDMAHandle;
+    DMA_HandleTypeDef *txDMAHandle;
+    TIM_HandleTypeDef *timHandleForHeat;
     uint32_t timChannelForHeat;
-}SPI_WITH_DMA_t;
+} SPI_WITH_DMA_t;
 extern SPI_WITH_DMA_t spiWithDMA;
 #define IMU_PERIPHERAL
 

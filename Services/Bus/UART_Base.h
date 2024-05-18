@@ -17,7 +17,6 @@
 #include <utility>
 #include <vector>
 #include <list>
-#include <utility>
 #include <map>
 
 using ByteVector = std::vector<uint8_t>;
@@ -62,6 +61,9 @@ public:
                 }
                 break;
             case Callback_e::WRITE:
+                if (resourceList.front().callbackFuncPtr) {
+                    resourceList.front().callbackFuncPtr(resourceList.front());
+                }
                 break;
             case Callback_e::ERROR_CALL:
                 resourceList.front().task = ERROR_CALLBACK;
@@ -218,6 +220,7 @@ public:
 //        uartBusRef.taskQueue.push(std::move(tmpTask));
 //    }
 
+
     // 串口发送
     void Write(uint8_t* _bufPtr, uint8_t _size, CallbackFuncPtr callPtr = nullptr) {
         if ((uartBusRef.taskQueue.size() + uartBusRef.resourceList.size()) >= UART_AGNET_TASK_MAX_NUM) return;
@@ -250,7 +253,7 @@ public:
 //        uartBusRef.taskQueue.push(std::move(tmpTask));
 //    }
 //
-private:
+protected:
     UART_Bus<busID>& uartBusRef;
 };
 

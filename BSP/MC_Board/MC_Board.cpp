@@ -7,10 +7,10 @@
 
 #include "MC_Board.h"
 
-UART_HandleTypeDef *uartHandleList[2] = {&huart3, &huart5};
-UART_HandleTypeDef *rs485HandleList[2] = {&huart1, &huart2};
-GPIO_TypeDef *rs485TxPortList[2] = {GPIOC, GPIOB};
-uint16_t rs485TxPinList[2] = {GPIO_PIN_15, GPIO_PIN_3};
+UART_HandleTypeDef *uartHandleList[5] = {nullptr, &huart1, &huart2, &huart3, &huart5};
+GPIO_TypeDef *rs485TxPortList[3] = {nullptr, GPIOC, GPIOB};
+uint16_t rs485TxPinList[3] = {NULL, GPIO_PIN_15, GPIO_PIN_3};
+
 
 extern DMA_HandleTypeDef hdma_spi2_rx;
 extern DMA_HandleTypeDef hdma_spi2_tx;
