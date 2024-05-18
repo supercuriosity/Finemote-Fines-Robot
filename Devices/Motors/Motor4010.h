@@ -120,6 +120,10 @@ private:
     }
 
     void IntensityCalc() {
+        if(stopflag) {
+            intensity = 0;
+            return;
+        }
         switch (ctrlType) {
             case Internal:
                 intensity = (int16_t) targetAngle;

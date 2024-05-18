@@ -34,7 +34,7 @@ typedef struct {
 class MotorBase : public DeviceBase {
 public:
     MotorBase(){
-        this ->SetDivisionFactor(4);
+        //this ->SetDivisionFactor(4);
     }
 
     /** 基类当中这个东西的用途是什么，stop和disable的区别是什么 */
@@ -44,10 +44,12 @@ public:
 
     /** Todo: 筛查电机控制类型，不合理调用的Set需要警告 */
     void SetTargetSpeed(float _targetSpeed) {
+        stopflag = false;
         targetSpeed = _targetSpeed;
     };
 
     void SetTargetAngle(float _targetAngle) {
+        stopflag = false;
         targetAngle = _targetAngle;
     };
 
@@ -55,8 +57,9 @@ public:
 
     /** 算法用通用接口，函数指针找控制算法 */
     PID speedPID, anglePID;
+
     /** 用来干啥，查清楚 */
-    bool stopflag{};
+    bool stopflag = false;
 
     float targetSpeed;
     float targetAngle;
