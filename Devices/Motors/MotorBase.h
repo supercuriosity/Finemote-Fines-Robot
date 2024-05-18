@@ -6,20 +6,12 @@
 #include "Bus/CAN_Base.h"
 #include "Control/PID.h"
 
-/** 名字完全不能体现控制特点 */
-typedef enum {
-    DIRECT = 0,
-    SPEED_Single,
-    POSITION_Double
-} MOTOR_CTRL_TYPE_e;
 
-/** 不是电机通用特征，应该由具体电机进行协议解包 */
-typedef struct {
-    uint16_t angle;
-    int16_t speed;
-    int16_t moment;
-    int8_t temp;
-} MOTOR_FEEDBACK_t;
+typedef enum {
+    Internal = 0,
+    External_Speed,
+    External_Position,
+} MOTOR_CTRL_TYPE_e;
 
 typedef struct {
     float speed;//最终电机输出轴的转速，单位为RPM
@@ -73,20 +65,27 @@ public:
         return crc;
     }
 
-    /** 根本不是基类的东西 */
-    uint32_t addr;
-    /** 初值是0？ */
-    float reductionRatio{};
+    float reductionRatio{1};
+
     /** 算法用通用接口，函数指针找控制算法 */
     PID speedPID, anglePID;
     /** 用来干啥，查清楚 */
     bool stopflag{};
-    /** 滥用初始化列表赋值 */
-    float targetSpeed{};
-    float targetAngle{};
-    MOTOR_CTRL_TYPE_e ctrlType{};
-    MOTOR_FEEDBACK_t feedback{};
-    MOTOR_STATE_t state{};
+
+    float targetSpeed;
+    float targetAngle;
+
+    int16_t intensity;
+    uint16_t txSpeed = 0;
+    int32_t txAngle = 0;
+
+    float realAngle;
+    float lastAngle;
+    float zeroAngle;
+
+    MOTOR_CTRL_TYPE_e ctrlType;
+    MOTOR_STATE_t state;
+
 };
 
 

@@ -18,58 +18,52 @@ template<int busID>
 class Motor4315 : public MotorBase {
 public:
     //右值引用的重载，虽然不涉及资源的接管，但是为方便构建对象
-    explicit Motor4315(MOTOR_INIT_t &&motorInit) {
+    explicit Motor4315(MOTOR_INIT_t &&motorInit) :rs485Agent(motorInit.addr) {
         if (motorInit.speedPID) speedPID.PIDInfo = *motorInit.speedPID;
         if (motorInit.anglePID) anglePID.PIDInfo = *motorInit.anglePID;
         reductionRatio = motorInit.reductionRatio;
         ctrlType = motorInit.ctrlType;
-        addr = motorInit.addr;
-        this ->SetDivisionFactor(10);
+        this->SetDivisionFactor(16);
     }
-    explicit Motor4315(MOTOR_INIT_t &motorInit) {
+    explicit Motor4315(MOTOR_INIT_t &motorInit):rs485Agent(motorInit.addr) {
         if (motorInit.speedPID) speedPID.PIDInfo = *motorInit.speedPID;
         if (motorInit.anglePID) anglePID.PIDInfo = *motorInit.anglePID;
         reductionRatio = motorInit.reductionRatio;
         ctrlType = motorInit.ctrlType;
-        addr = motorInit.addr;
-        this ->SetDivisionFactor(10);
+        this->SetDivisionFactor(16);
     }
 
     void Handle() override {
-
         AngleCalc();
         CANMessageGet();
-
     };
 
-    uint8_t rxbuf[15]{0};
-    uint8_t txbuf[11]{0};
-    RS485_Agent<busID> rs485Agent;
 
-    float nowAngle{};
-    float zeroAngle{};
+    RS485_Agent<busID> rs485Agent;
 private:
     void CANMessageGet() {
-        auto receivedCallbackPack = [this](UART_Task_t uartTask) { this->receivedCallback(uartTask); };
         AngleCalc();
 
-        txbuf[0] = 0x3E;//协议头
-        txbuf[1] = 0x00;//包序号
-        txbuf[2] = addr; //ID
-        txbuf[3] = 0x55;//相对位置闭环控制命令码
-        txbuf[4] = 0x04;//数据包长度
-        txbuf[5] = txAngle;
-        txbuf[6] = txAngle >> 8u;
-        txbuf[7] = txAngle >> 16u;
-        txbuf[8] = txAngle >> 24u;
-        uint16_t crc16 = CRC16Calc(txbuf, 9);
-        txbuf[9] = crc16;
-        txbuf[10] = crc16 >> 8u;
+        rs485Agent.txbuf[0] = 0x3E;//协议头
+        rs485Agent.txbuf[1] = 0x00;//包序号
+        rs485Agent.txbuf[2] = rs485Agent.addr; //ID
+        rs485Agent.txbuf[3] = 0x55;//相对位置闭环控制命令码
+        rs485Agent.txbuf[4] = 0x04;//数据包长度
+        rs485Agent.txbuf[5] = txAngle;
+        rs485Agent.txbuf[6] = txAngle >> 8u;
+        rs485Agent.txbuf[7] = txAngle >> 16u;
+        rs485Agent.txbuf[8] = txAngle >> 24u;
+        uint16_t crc16 = CRC16Calc(rs485Agent.txbuf, 9);
+        rs485Agent.txbuf[9] = crc16;
+        rs485Agent.txbuf[10] = crc16 >> 8u;
 
-        rs485Agent.Write(txbuf, 11);
+        rs485Agent.rs485Write(rs485Agent.txbuf, 11);
     }
 
+
     void AngleCalc() {
+        state.angle = (float) (rs485Agent.rxbuf[7] | (rs485Agent.rxbuf[8] << 8u) | (rs485Agent.rxbuf[9] << 16u) |
+                            (rs485Agent.rxbuf[10] << 24u)) / 16384.0f * 360.0f;
         if (targetAngle - lastAngle > 180) {
             zeroAngle -= 360;
         }
@@ -84,19 +78,6 @@ private:
             txAngle = (int32_t) (realAngle * 16384.0f / 360.0f);
         }
     }
-
-    void receivedCallback(const UART_Task_t &_data) {
-        memcpy(rxbuf, _data.bufPtr, _data.size);
-        nowAngle = (float) (rxbuf[7] | (rxbuf[8] << 8u) | (rxbuf[9] << 16u) | (rxbuf[10] << 24u)) / 16384.0f * 360.0f;
-    }
-
-    uint16_t txSpeed = 0;
-    int32_t txAngle = 0;
-
-
-    float realAngle{0};
-    float thisAngle{};
-    float lastAngle{};
 
 
 };

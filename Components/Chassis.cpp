@@ -54,8 +54,8 @@ void Chassis::WheelsSpeedCalc(float fbVelocity, float lrVelocity, float rtVeloci
     ClassisSpeed[2] = sqrt(A * A + D * D) / (WHEEL_DIAMETER * PI) * 360;//左后轮3
     ClassisSpeed[3] = -sqrt(A * A + C * C) / (WHEEL_DIAMETER * PI) * 360;//右后轮4
 
-    float nowAngle[4] = {SFR.nowAngle - SFR.zeroAngle, SFL.nowAngle - SFL.zeroAngle,
-                         SBL.nowAngle - SBL.zeroAngle, SBR.nowAngle - SBR.zeroAngle};
+    float nowAngle[4] = {SFR.state.angle - SFR.zeroAngle, SFL.state.angle - SFL.zeroAngle,
+                         SBL.state.angle - SBL.zeroAngle, SBR.state.angle - SBR.zeroAngle};
 
     //设置底盘电机角度
     SFL.SetTargetAngle(RFLAngle);
