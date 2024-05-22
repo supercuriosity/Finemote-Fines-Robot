@@ -4,10 +4,6 @@
  * All rights reserved.
  ******************************************************************************/
 
-//
-// Created by 25396 on 2024/5/18.
-//
-
 #include "Verify.h"
 
 uint16_t CRC16Calc(uint8_t *data, uint16_t length){

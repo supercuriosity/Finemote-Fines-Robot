@@ -4,10 +4,6 @@
  * All rights reserved.
  ******************************************************************************/
 
-//
-// Created by 25396 on 2024/5/18.
-//
-
 #ifndef FINEMOTE_VERIFY_H
 #define FINEMOTE_VERIFY_H
 
