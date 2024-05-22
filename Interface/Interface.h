@@ -17,13 +17,7 @@ extern "C" {
 #endif
 
 #define INRANGE(NUM, MIN, MAX) \
-{\
-    if(NUM<MIN){\
-        NUM=MIN;\
-    }else if(NUM>MAX){\
-        NUM=MAX;\
-    }\
-}
-
+    NUM = ((NUM > (MIN) ? NUM : (MIN)) \
+          < (MAX) ? NUM : (MAX))
 
 #endif //FINEMOTE_INTERFACE_H
