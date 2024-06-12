@@ -6,36 +6,24 @@
 
 #include "InstanceManager.h"
 
-/** 算法类配合宏定义进行批量赋值 */
-PID_Regulator_t adminSpeedPID = {//此为储存pid参数的结构体
-        .kp = 0.3f,
-        .ki = 0.002f,
-        .kd = 0.3f,
-        .componentKpMax = 2000,
-        .componentKiMax = 0,
-        .componentKdMax = 0,
-        .outputMax = 2000
-};
-PID_Regulator_t adminAnglePID = {//此为储存pid参数的结构体
-        .kp = 1.0f,
-        .ki = 0.0f,
-        .kd = 0.0f,
-        .componentKpMax = 2000,
-        .componentKiMax = 0,
-        .componentKdMax = 0,
-        .outputMax = 2000 //4010电机输出电流上限，可以调小，勿调大
-};
+constexpr PID_Param_t speedPID = {0.3f, 0.002f, 0.3f, 2000, 2000};
+constexpr PID_Param_t anglePID = {1.0f, 0.0f, 0.0f, 2000, 2000};
+
+auto wheelControllers = CreateControllers<PID, 4>(speedPID);
+auto swerveControllers = CreateControllers<Amplifier<1>, 4>();
+
 //构建组成底盘的各个电机
-Motor4010<1> CBRMotor(MOTOR_INIT_t{0x144, &adminSpeedPID, &adminAnglePID, External_Speed, 1});
-Motor4010<1> CBLMotor(MOTOR_INIT_t{0x143, &adminSpeedPID, &adminAnglePID, External_Speed, 1});
-Motor4010<1> CFLMotor(MOTOR_INIT_t{0x142, &adminSpeedPID, &adminAnglePID, External_Speed, 1});
-Motor4010<1> CFRMotor(MOTOR_INIT_t{0x141, &adminSpeedPID, &adminAnglePID, External_Speed, 1});
+#define TORQUE_2_SPEED {Motor_Ctrl_Type_e::Torque, Motor_Ctrl_Type_e::Speed}
+Motor4010<1> CBRMotor(TORQUE_2_SPEED, wheelControllers[0], 0x144);
+Motor4010<1> CBLMotor(TORQUE_2_SPEED, wheelControllers[1], 0x143);
+Motor4010<1> CFLMotor(TORQUE_2_SPEED, wheelControllers[2], 0x142);
+Motor4010<1> CFRMotor(TORQUE_2_SPEED, wheelControllers[3], 0x141);
 
-Motor4315<1> SBLMotor(MOTOR_INIT_t{0x01, nullptr, nullptr, Internal, 1});
-Motor4315<1> SBRMotor(MOTOR_INIT_t{0x02, nullptr, nullptr, Internal, 1});
-Motor4315<1> SFLMotor(MOTOR_INIT_t{0x03, nullptr, nullptr, Internal, 1});
-Motor4315<1> SFRMotor(MOTOR_INIT_t{0x04, nullptr, nullptr, Internal, 1});
-
+#define DIRECT_POSITION {Motor_Ctrl_Type_e::Position, Motor_Ctrl_Type_e::Position}
+Motor4315<1> SBLMotor(DIRECT_POSITION, swerveControllers[0], 0x01);
+Motor4315<1> SBRMotor(DIRECT_POSITION, swerveControllers[1], 0x02);
+Motor4315<1> SFLMotor(DIRECT_POSITION, swerveControllers[2], 0x03);
+Motor4315<1> SFRMotor(DIRECT_POSITION, swerveControllers[3], 0x04);
 
 //首先调取底盘类的构建器，然后使用提供的电机添加函数，将上文构建的电机指针传入构建器，最后由构建器返回构建好的底盘类对象
 Chassis chassis = Chassis::Build().
