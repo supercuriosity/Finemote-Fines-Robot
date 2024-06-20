@@ -48,8 +48,8 @@ private:
 
     void MessageGenerate() {
         switch (params.targetType) {
-            case Motor_Ctrl_Type_e::Torque:{
-                uint16_t txTorque = target;
+            case Motor_Ctrl_Type_e::Torque: {
+                uint16_t txTorque = controller->GetOutput();
 
                 canAgent.DLC = 8;
                 canAgent.txbuf[0] = 0xA1;
@@ -64,7 +64,7 @@ private:
             }
             case Motor_Ctrl_Type_e::Position: {
                 constexpr uint16_t txSpeed = 0x300;
-                uint32_t txAngle = 100.0f * target;
+                uint32_t txAngle = 100 * controller->GetOutput();
 
                 canAgent.DLC = 8;
                 canAgent.txbuf[0] = 0xA4;
