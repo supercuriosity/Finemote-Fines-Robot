@@ -10,7 +10,7 @@
       <TargetName>MC_Board</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
+      <pCCUsed>6120000::V6.12::.\ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -185,8 +185,6 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
-            <RvdsCdeCp>0</RvdsCdeCp>
-            <nBranchProt>0</nBranchProt>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -330,7 +328,7 @@
             <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>3</v6Lang>
-            <v6LangP>6</v6LangP>
+            <v6LangP>8</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
@@ -340,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F446xx,__MC_BOARD</Define>
               <Undefine></Undefine>
-              <IncludePath>../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..;../../../Interface;../../../Services;../../../Devices;../Core/Inc;../../../Components;../../../Algorithms;..\..\..\Devices\Controllers;..\..\..\Services\MultiMedia;..\..\..\Devices\Motors</IncludePath>
+              <IncludePath>../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..;../../../Interface;../../../Services;../../../Devices;../Core/Inc;../../../Components;../../../Algorithms;..\..\..\Devices\Controllers;..\..\..\Services\MultiMedia;..\..\..\Devices\Motors;..\..\..\Devices;..\..\..\Algorithms\Communication</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -353,7 +351,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <ClangAsOpt>4</ClangAsOpt>
+            <uClangAs>0</uClangAs>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -856,6 +854,21 @@
               <FileName>MC_Board.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\MC_Board.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Algorithm/Communication</GroupName>
+          <Files>
+            <File>
+              <FileName>Verify.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Algorithms\Communication\Verify.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Verify.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Algorithms\Communication\Verify.h</FilePath>
             </File>
           </Files>
         </Group>
