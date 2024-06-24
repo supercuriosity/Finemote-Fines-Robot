@@ -21,6 +21,7 @@
 template<int busID>
 class Motor4010 : public MotorBase {
 public:
+
     template<typename T>
     Motor4010(const Motor_Param_t&& params, T& _controller, uint32_t addr) : MotorBase(std::forward<const Motor_Param_t>(params)), canAgent(addr) {
         ResetController(_controller);
@@ -47,17 +48,19 @@ private:
     }
 
     void MessageGenerate() {
-        switch (params.targetType) {
+        switch (params.ctrlType) {
             case Motor_Ctrl_Type_e::Torque: {
-                uint16_t txTorque = controller->GetOutput();
-
+                volatile int16_t txTorque = controller->GetOutput();
+                INRANGE(txTorque,-2000,2000);
+                volatile uint8_t txTorqueL = txTorque;
+                volatile uint8_t txTorqueH = txTorque >> 8;
                 canAgent.DLC = 8;
                 canAgent.txbuf[0] = 0xA1;
                 canAgent.txbuf[1] = 0x00;
                 canAgent.txbuf[2] = 0x00;
                 canAgent.txbuf[3] = 0x00;
-                canAgent.txbuf[4] = txTorque;
-                canAgent.txbuf[5] = txTorque >> 8;
+                canAgent.txbuf[4] = txTorqueL;
+                canAgent.txbuf[5] = txTorqueH;
                 canAgent.txbuf[6] = 0x00;
                 canAgent.txbuf[7] = 0x00;
                 break;
@@ -83,8 +86,8 @@ private:
 
     void Update() {
         state.position = (canAgent.rxbuf[6] | (canAgent.rxbuf[7] << 8u)) * 360.0f / 16384.0f;
-        state.speed = canAgent.rxbuf[4] | (canAgent.rxbuf[5] << 8u);
-        state.torque = canAgent.rxbuf[2] | (canAgent.rxbuf[3] << 8u);
+        state.speed = (int16_t)(canAgent.rxbuf[4] | (canAgent.rxbuf[5] << 8u));
+        state.torque = (int16_t)(canAgent.rxbuf[2] | (canAgent.rxbuf[3] << 8u));
         state.temperature = canAgent.rxbuf[1];
     }
 };
