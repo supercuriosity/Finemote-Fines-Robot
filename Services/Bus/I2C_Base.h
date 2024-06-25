@@ -176,7 +176,7 @@ public:
     }
 
     void Read(uint8_t * _bufPtr,uint8_t _size,CallbackFuncPtr callPtr = nullptr){
-        if (i2CBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        if (i2CBusRef.taskQueue.size() >= I2C_AGNET_TASK_MAX_NUM) return;
         I2C_Task_t tmpTask;
         tmpTask.taskID = ++i2CBusRef.taskID;
         tmpTask.addr = addr;
@@ -189,7 +189,7 @@ public:
 
 
     void Read(ByteVector dataVector,CallbackFuncPtr callPtr = nullptr){
-        if (i2CBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        if (i2CBusRef.taskQueue.size() >= I2C_AGNET_TASK_MAX_NUM) return;
         I2C_Task_t tmpTask;
         tmpTask.taskID = ++i2CBusRef.taskID;
         tmpTask.addr = addr;
@@ -200,7 +200,7 @@ public:
     }
 
     void Write(uint8_t * _bufPtr,uint8_t _size,CallbackFuncPtr callPtr = nullptr){
-        if (i2CBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        if (i2CBusRef.taskQueue.size() >= I2C_AGNET_TASK_MAX_NUM) return;
         I2C_Task_t tmpTask;
         tmpTask.taskID = ++i2CBusRef.taskID;
         tmpTask.addr = addr;
@@ -212,7 +212,7 @@ public:
     }
 
     void Write(ByteVector dataVector){
-        if (i2CBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        if (i2CBusRef.taskQueue.size() >= I2C_AGNET_TASK_MAX_NUM) return;
         I2C_Task_t tmpTask;
         tmpTask.taskID = ++i2CBusRef.taskID;
         tmpTask.addr = addr;
@@ -222,7 +222,7 @@ public:
     }
 
     void WriteRead(uint8_t _reg,uint8_t * _bufPtr,uint8_t _size,CallbackFuncPtr callPtr = nullptr){
-        if (i2CBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        if (i2CBusRef.taskQueue.size() >= I2C_AGNET_TASK_MAX_NUM) return;
         I2C_Task_t tmpTask;
         tmpTask.taskID = ++i2CBusRef.taskID;
         tmpTask.addr = addr;
@@ -235,7 +235,7 @@ public:
     }
 
     void WriteRead(uint8_t reg,ByteVector dataVector,CallbackFuncPtr callPtr = nullptr){
-        if (i2CBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        if (i2CBusRef.taskQueue.size() >= I2C_AGNET_TASK_MAX_NUM) return;
         I2C_Task_t tmpTask;
         tmpTask.taskID = ++i2CBusRef.taskID;
         tmpTask.addr = addr;
@@ -250,7 +250,7 @@ public:
  * @param _ms
  */
     void Delay(uint32_t _ms){
-        if (i2CBusRef.taskQueue.size() >= AGNET_TASK_MAX_NUM) return;
+        if (i2CBusRef.taskQueue.size() >= I2C_AGNET_TASK_MAX_NUM) return;
         I2C_Task_t tmpTask;
         tmpTask.taskID = ++i2CBusRef.taskID;
         tmpTask.addr = addr;

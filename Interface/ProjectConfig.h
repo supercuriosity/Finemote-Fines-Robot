@@ -33,6 +33,30 @@
 static_assert(false);
 #endif
 
+/**
+ * UART_PERIPHERAL 模块所需的UART外设依赖条件
+ * @variable UART_HandleTypeDef uartHandleList[size] 所有可用的串口句柄列表，其定义和声明应该分离。使用时，
+ *           传入的模板参数busID与此列表中串口的顺序相对应。
+ */
+#if defined(UART_PERIPHERAL)
+#define UART_BASE_MODULE
+#define UART_AGNET_TASK_MAX_NUM 20
+#define UNFIXED_READ_MAX_LENGTH 100
+#endif
+
+/**
+ * RS485_PERIPHERAL 模块所需的RS485外设依赖条件
+ *
+ */
+#if defined(RS485_PERIPHERAL)&& defined(UART_BASE_MODULE)
+#define RS485_BASE_MODULE
+#define RS485_AGNET_TASK_MAX_NUM 20
+#define RS485_UNFIXED_READ_MAX_LENGTH 100
+
+
+#endif
+
+
 
 /**
  * I2C_PERIPHERAL 模块所需的I2C外设依赖条件
@@ -40,7 +64,7 @@ static_assert(false);
  */
 #if defined(I2C_PERIPHERAL) //TODO 当不同BSP支持不同数目的I2C总线时，应该将每一条总线都作为依赖条件
 #define I2C_BASE_MODULE
-#define AGNET_TASK_MAX_NUM 200
+#define I2C_AGNET_TASK_MAX_NUM 200
 #endif
 
 
@@ -52,6 +76,7 @@ static_assert(false);
  */
 #if defined(CAN_PERIPHERAL)
 #define CAN_BASE_MODULE
+#define CAN_AGNET_TASK_MAX_NUM 16
 #endif
 
 
@@ -88,6 +113,33 @@ extern PWM_UNIT_t pwmList[7];
 #define LED_MODULE
 #endif
 
+/**
+ * UART_PERIPHERAL 遥控器
+ * @def Serial_RC 遥控器对应串口
+ * @def DMA_SBUS 遥控器对应DMA
+ */
+#if defined(UART_PERIPHERAL)
+#define DBUS_MODULE
+#define SBUS_MODULE
+#define REMOTECONTROL_MODULE
+#define DJI_DT7_MODULE
+#define RADIOMASTER_ZORRO_MODULE
+#endif
+
+/**
+ * IMU_PERIPHERAL 惯性测量单元
+ * @variable 使用SPI的处理句柄，包括SPI本身和收发的DMA
+typedef struct {
+    SPI_HandleTypeDef* spiHandle;
+    DMA_HandleTypeDef* rxDMAHandle;
+    DMA_HandleTypeDef* txDMAHandle;
+    TIM_HandleTypeDef* timHandleForHeat;
+    uint32_t timChannelForHeat;
+}SPI_WITH_DMA_t;
+ *  @defs
+ *
+ */
+
 /******************************************************************************************************
 3.处理各组件对模块的依赖，以及是否被用户启用
  测试组件应该默认保持关闭状态
@@ -96,6 +148,15 @@ extern PWM_UNIT_t pwmList[7];
 //#define I2CTEST_ENABLED
 #if defined(I2CTEST_ENABLED)&& defined(I2C_BASE_MODULE)
 #define I2CTEST_COMPONENTS
+#endif
+
+#if defined(UART_TEST_ENABLED) && defined(UART_BASE_MODULE)
+#define UART_TEST_COMPONENTS
+#endif
+
+#define MOTOR_ENABLED
+#if defined(MOTOR_ENABLED)&& defined(CAN_BASE_MODULE)
+#define MOTOR_COMPONENTS
 #endif
 
 

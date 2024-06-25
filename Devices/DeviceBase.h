@@ -11,6 +11,7 @@
 
 class DeviceBase {
 public:
+    static uint32_t baseFre;
     virtual void Handle() = 0;
     static void DevicesHandle();
 
@@ -32,7 +33,6 @@ public:
 private:
     uint32_t cnt{0};
     uint32_t divisionFactor{1};
-
 
 };
 

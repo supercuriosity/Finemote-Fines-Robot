@@ -38,7 +38,7 @@ set(CMAKE_CXX_LINK_EXECUTABLE armlink.exe)
 # 获取当前 MCU 的 section 描述，及存储空间和起始地址的描述（注意：需要先用 keil 打开编译一下当前项目才能生成）
 # 设置Sections脚本路径,CubeMX生成 MDK 后先编译一下，就会在MDK-ARM 目录下生成工程名命名的文件夹
 # 在那个目录里会生成以项目名命名的sct文件。 由于在本地调用，不需要加 global 全局变量标记，更简洁
-# set(SECTIONS_SCRIPT_PATH ${CMAKE_HOME_DIRECTORY}/Bsp/${BOARD_NAME}/MDK-ARM/${BOARD_NAME}/${BOARD_NAME}.sct)
+# set(SECTIONS_SCRIPT_PATH ${CMAKE_HOME_DIRECTORY}/BSP/${BOARD_NAME}/MDK-ARM/${BOARD_NAME}/${BOARD_NAME}.sct)
 
 
 #********************************************************************************************#
@@ -89,7 +89,7 @@ set(CMAKE_ASM_FLAGS_INIT "${ASM_TARGET_FLAG} ${COMPILE_RULE_FLAG} \
 
 # project settings
 project(${PROJECT_NAME} C CXX ASM)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 99)
 
 # 设置可执行文件和库文件的输出目录
@@ -105,14 +105,37 @@ add_compile_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
 #Uncomment for software floating point
 #add_compile_options(-mfloat-abi=soft)
 
-include_directories(
-        Interface
-        Devices
-        Algorithms
-        Services
-        Components
-        Tests
-)
+function(INCLUDE_SUB_DIR_INC root_dir)
+        if(IS_DIRECTORY ${root_dir})
+                #找含有.h文件或含有.hpp文件，但该目录不一定是Inc或include目录,则将当前目录添加到头文件搜索路径
+                file(GLOB_RECURSE head_files ${root_dir}/*.h ${root_dir}/*.hpp)
+                if(head_files)
+                include_directories(${root_dir})
+                message(STATUS "Add head file search path: ${root_dir}")
+                endif()
+                #递归寻找子目录
+                file(GLOB sub_directories RELATIVE ${root_dir} ${root_dir}/*)
+                foreach(sub_dir ${sub_directories})
+                        INCLUDE_SUB_DIR_INC(${root_dir}/${sub_dir})
+                endforeach()
+        endif()
+endfunction()
+
+INCLUDE_SUB_DIR_INC(${PROJECT_SOURCE_DIR}/Interface)
+INCLUDE_SUB_DIR_INC(${PROJECT_SOURCE_DIR}/Devices)
+INCLUDE_SUB_DIR_INC(${PROJECT_SOURCE_DIR}/Algorithms)
+INCLUDE_SUB_DIR_INC(${PROJECT_SOURCE_DIR}/Services)
+INCLUDE_SUB_DIR_INC(${PROJECT_SOURCE_DIR}/Components)
+INCLUDE_SUB_DIR_INC(${PROJECT_SOURCE_DIR}/Tests)
+
+#include_directories(
+#        Interface
+#        Devices
+#        Algorithms
+#        Services
+#        Components
+#        Tests
+#)
 
 # 对于混合兼容的环境，需要屏蔽各种编译环境引起的文件“干扰”,通过 list(REMOVE_ITEM) 命令移除不同编译环境下的干扰文件
 # 获取不同芯片的公共代码，于子模块中调用此变量
@@ -125,5 +148,5 @@ file(GLOB_RECURSE COMMON_SOURCE_FILES
         "Tests/*.*"
         )
 
-add_subdirectory(Bsp/MC_Board)
-add_subdirectory(Bsp/Robomaster_C)
+add_subdirectory(BSP/MC_Board)
+add_subdirectory(BSP/Robomaster_C)

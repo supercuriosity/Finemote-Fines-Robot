@@ -15,6 +15,7 @@
 #include "Music_Senbonzakura.h"
 #include "Music_SuperMario.h"
 #include "Music_Windmill.h"
+#include "Music_LiuSha.h"
 
 Song_t BeepMusic::songs[] = {
     SONG_INIT(Astronomia),
@@ -22,6 +23,7 @@ Song_t BeepMusic::songs[] = {
     SONG_INIT(Senbonzakura),
     SONG_INIT(SuperMario),
     SONG_INIT(Windmill),
+    SONG_INIT(LiuSha),
 };
 
 BeepMusic::BeepMusic(void (*handle)(uint32_t freq)) {

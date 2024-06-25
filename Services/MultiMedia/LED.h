@@ -14,7 +14,7 @@ public:
     static void Toggle(){
         HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
     }
-
+    LED(){HALInit::GetInstance();}
 };
 #endif
 
