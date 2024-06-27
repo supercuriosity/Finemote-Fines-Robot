@@ -89,14 +89,14 @@ public:
 #define CAN_BUS_MAXIMUM_COUNT 2
 
 extern UART_HandleTypeDef *uartHandleList[3];
-extern GPIO_TypeDef *uartTxPortList[3];
-extern uint16_t uartTxPinList[3];
+extern GPIO_TypeDef *rs485TxPortList[3];
+extern uint16_t rs485TxPinList[3];
 #define UART_PERIPHERAL
 
 #define USER_I2C hi2c2
 #define I2C_PERIPHERAL
 #define CAN_PERIPHERAL
-
+#define RS485_PERIPHERAL
 
 typedef struct {
     TIM_HandleTypeDef* timerPtr; // 定时器HAL对象指针

@@ -19,8 +19,8 @@ PWM_UNIT_t pwmList[7] = {
 };
 
 UART_HandleTypeDef *uartHandleList[3] = {&huart3, &huart1, &huart6};
-GPIO_TypeDef *uartTxPortList[3] = {nullptr, nullptr, nullptr};
-uint16_t uartTxPinList[3] = {NULL, NULL, NULL};
+GPIO_TypeDef *rs485TxPortList[3] = {nullptr, nullptr, nullptr};
+uint16_t rs485TxPinList[3] = {NULL, NULL, NULL};
 
 extern SPI_HandleTypeDef hspi1;
 extern DMA_HandleTypeDef hdma_spi1_rx;
