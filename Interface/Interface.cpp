@@ -18,9 +18,7 @@ extern "C" {
  * @brief 用户初始化
  */
 void Setup() {
-    HAL_TIM_Base_Start_IT(&TIM_Control);
-    HAL_TIM_PWM_Start(&TIM_Buzzer,TIM_Buzzer_Channel);
-    BeepMusic::MusicChannels[0].Play(5);
+
 }
 
 /**

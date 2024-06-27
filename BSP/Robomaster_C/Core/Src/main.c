@@ -57,7 +57,7 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void BSP_Setup();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -72,7 +72,7 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-goto usercode;
+  goto usercode;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -114,7 +114,8 @@ goto usercode;
   MX_TIM7_Init();
   MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
-    usercode:
+usercode:
+  BSP_Setup();
   Setup();
   /* USER CODE END 2 */
 

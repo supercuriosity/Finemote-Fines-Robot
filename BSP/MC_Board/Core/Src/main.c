@@ -59,6 +59,8 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 void SystemClock_PreConfig(void);
 void SystemClock_PostConfig(void);
+
+void BSP_Setup();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -73,7 +75,7 @@ void SystemClock_PostConfig(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-goto usercode;
+  goto usercode;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -112,7 +114,8 @@ goto usercode;
   MX_USART3_UART_Init();
   MX_IWDG_Init();
   /* USER CODE BEGIN 2 */
-  usercode:
+usercode:
+  BSP_Setup();
   Setup();
   /* USER CODE END 2 */
 
