@@ -30,7 +30,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "Interface.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,6 +58,8 @@
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 void BSP_Setup();
+void Setup();
+void Loop();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/

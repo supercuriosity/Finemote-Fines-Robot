@@ -4,10 +4,10 @@
  * All rights reserved.
  ******************************************************************************/
 
-#include "InstanceManager.h"
+#include "Chassis.h"
+#include "RadioMaster_Zorro.h"
 
 constexpr PID_Param_t speedPID = {0.3f, 0.002f, 0.3f, 2000, 2000};
-constexpr PID_Param_t anglePID = {1.0f, 0.0f, 0.0f, 2000, 2000};
 
 auto wheelControllers = CreateControllers<PID, 4>(speedPID);
 auto swerveControllers = CreateControllers<Amplifier<1>, 4>();
@@ -37,5 +37,4 @@ Chassis chassis = Chassis::Build().
         AddSBRMotor(SBRMotor).
         Build();
 
-/** 类名称提供设备信息，对象名称通用 */
 RadioMaster_Zorro remote;
