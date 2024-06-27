@@ -38,4 +38,4 @@ Chassis chassis = Chassis::Build().
         Build();
 
 /** 类名称提供设备信息，对象名称通用 */
-RadioMaster_Zorro zorro;
+RadioMaster_Zorro remote;
