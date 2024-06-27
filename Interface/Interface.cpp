@@ -8,41 +8,75 @@
 #include "BeepMusic.h"
 #include "DeviceBase.h"
 #include "LED.h"
-#include "RadioMaster_Zorro.h"
-#include "RemoteControl.h"
 #include "Motor4010.h"
-
-
-#include "InstanceManager.h"
-
-
-void Task1();
-void Task2();
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
+/**
+ * @brief 用户初始化
+ */
 void Setup() {
-    HAL_TIM_Base_Start_IT(&TIM_Control);
-    HAL_TIM_PWM_Start(&TIM_Buzzer,TIM_Buzzer_Channel);
-    uint8_t ss[7] = "Hello\n";
-//    HAL_UART_Transmit_IT(&Serial_Host, ss, 7);
-    BeepMusic::MusicChannels[0].Play(5);
+
 }
 
+/**
+ * @brief 主循环，优先级低于定时器中断，不确定执行频率
+ */
 void Loop() {
-   // uint8_t ss[7] = "Hello\n";
-    //HAL_UART_Transmit_IT(&Serial_Host, ss, 7);
-    //HAL_Delay(1000);
+
 }
 
 #ifdef __cplusplus
 };
 #endif
 
-//I2C_test<2> i2CTest(0x70);
+/*****  示例1 *****/
+/**
+ * @brief LED闪烁
+ */
+void Task1() {
+    static int cnt = 0;
+    cnt++;
+    if(cnt > 1000) {
+        cnt = 0;
+        LED::Toggle();
+    }
+}
+
+/*****  示例2 *****/
+/**
+ * @brief 音乐播放与切换
+ */
+void Task2() {
+    if(GPIO_PIN_RESET == HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15)) {
+        static int index = 1;
+        BeepMusic::MusicChannels[0].Play(index++);
+        index %= 3;
+    }
+    BeepMusic::MusicChannels[0].BeepService();
+}
+
+/*****  示例3 *****/
+#include "Chassis.h"
+#include "RadioMaster_Zorro.h"
+
+extern Chassis chassis;
+extern RadioMaster_Zorro remote;
+
+/**
+ * @brief 底盘根据遥控器数据运动
+ */
+void Task3() {
+    chassis.ChassisSetVelocity(remote.GetInfo().rightCol, remote.GetInfo().rightRol, remote.GetInfo().leftRol * 2 * PI * 2);
+}
+
+/*****  不要修改以下代码 *****/
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if(htim == &TIM_Control) {
@@ -50,36 +84,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
         DeviceBase::DevicesHandle();
         Task1();
         Task2();
-        /** 核对控制周期内部顺序是否正确 */
-        auto &data = zorro.GetInfo();
+        Task3();
 
         CAN_Bus<1>::TxLoader();
         CAN_Bus<2>::TxLoader();
-
-        if(GPIO_PIN_RESET == HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15)) {
-            static int index = 1;
-            BeepMusic::MusicChannels[0].Play(index++);
-            index %= 3;
-        }
     }
 }
 
-void Task1() {
-    BeepMusic::MusicChannels[0].BeepService();
-}
-static float Speed = 0;
-
-void Task2() {
-    static int cnt = 0;
-    cnt++;
-    if(cnt > 1000) {
-        cnt = 0;
-        LED::Toggle();
-        if(Speed > 5) {
-            Speed = 0;
-        }
-        Speed += 1;
-    }
-    chassis.ChassisSetVelocity(zorro.GetInfo().rightCol, zorro.GetInfo().rightRol, zorro.GetInfo().leftRol * 2 * PI * 2);
-
-}
+#ifdef __cplusplus
+};
+#endif
