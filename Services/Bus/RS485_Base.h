@@ -16,7 +16,7 @@ template <uint8_t busID>
 class RS485_Agent :public UART_Agent<busID>{
 public:
     explicit RS485_Agent(uint32_t _addr) : addr(_addr){
-        //UART_Agent<busID>::uartBusRef.SetDivisionFactor();
+        UART_Agent<busID>::uartBusRef.SetDivisionFactor(2);
     }
 
     // 不定长接收
