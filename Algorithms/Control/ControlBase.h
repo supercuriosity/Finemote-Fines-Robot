@@ -8,6 +8,7 @@
 #define FINEMOTE_CONTROLBASE_H
 
 #include <utility>
+#include <array>
 #include <vector>
 
 /**
