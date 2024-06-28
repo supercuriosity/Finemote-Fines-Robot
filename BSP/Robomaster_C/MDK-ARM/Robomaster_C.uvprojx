@@ -10,7 +10,7 @@
       <TargetName>Robomaster_C</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6120000::V6.12::.\ARMCLANG</pCCUsed>
+      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -185,6 +185,8 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
+            <RvdsCdeCp>0</RvdsCdeCp>
+            <nBranchProt>0</nBranchProt>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -312,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>3</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -338,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx,__ROBOMASTER_C</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../../../Interface;..;../../../Services;../../../Devices;../../../Algorithms/Control;../../../Algorithms;../../../Components/Examples;../../../Components</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../../../Interface;..;../../../Services;../../../Devices;../../../Algorithms/Control;../../../Algorithms;../../../Components/Examples;../../../Components;..\..\..\Services\MultiMedia;..\..\..\Components;..\..\..\Devices\Motors;..\..\..\Devices\Controllers;..\..\..\Algorithms\Communication</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -351,7 +353,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
+            <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -451,6 +453,11 @@
               <FileName>stm32f4xx_hal_msp.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f4xx_hal_msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>Robomaster.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\Robomaster.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -598,9 +605,9 @@
               <FilePath>..\..\..\Interface\Interface.cpp</FilePath>
             </File>
             <File>
-              <FileName>Robomaster.cpp</FileName>
+              <FileName>InstanceManager.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\Robomaster.cpp</FilePath>
+              <FilePath>..\..\..\Interface\InstanceManager.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -643,34 +650,9 @@
               <FilePath>..\..\..\Devices\Motors\MotorBase.cpp</FilePath>
             </File>
             <File>
-              <FileName>MotorTest.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Components\Examples\MotorTest.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>IMUBase.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Devices\Sensors\IMUBase.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>BMI088.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Devices\Sensors\BMI088.cpp</FilePath>
-            </File>
-            <File>
               <FileName>bsp_spi.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\Services\Bus\bsp_spi.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>RadioMaster_Zorro.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Devices\Controllers\RadioMaster_Zorro.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>RemoteControl.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Devices\Controllers\RemoteControl.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -715,6 +697,36 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Communication</GroupName>
+          <Files>
+            <File>
+              <FileName>Verify.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Algorithms\Communication\Verify.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Verify.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Algorithms\Communication\Verify.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Components</GroupName>
+          <Files>
+            <File>
+              <FileName>Chassis.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Components\Chassis.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Chassis.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Components\Chassis.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
@@ -733,5 +745,14 @@
     </components>
     <files/>
   </RTE>
+
+  <LayerInfo>
+    <Layers>
+      <Layer>
+        <LayName>Robomaster_C</LayName>
+        <LayPrjMark>1</LayPrjMark>
+      </Layer>
+    </Layers>
+  </LayerInfo>
 
 </Project>
