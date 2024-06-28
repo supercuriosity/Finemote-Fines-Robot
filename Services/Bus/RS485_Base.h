@@ -16,33 +16,36 @@ template <uint8_t busID>
 class RS485_Agent :public UART_Agent<busID>{
 public:
     explicit RS485_Agent(uint32_t _addr) : addr(_addr){
-        //UART_Agent<busID>::uartBusRef.SetDivisionFactor();
     }
 
     // 不定长接收
     void rs485Read(uint8_t* _bufPtr, CallbackFuncPtr callPtr = nullptr)  {
+#ifndef RS485_NO_FLOW_CTRL
         HAL_GPIO_WritePin(rs485TxPortList[busID], rs485TxPinList[busID], GPIO_PIN_RESET);
+#endif
         UART_Agent<busID>::Read(_bufPtr, std::move(callPtr));
     }
 
     // 定长接收
     void rs485Read(uint8_t* _bufPtr, uint8_t _size, CallbackFuncPtr callPtr = nullptr) {
+#ifndef RS485_NO_FLOW_CTRL
         HAL_GPIO_WritePin(rs485TxPortList[busID], rs485TxPinList[busID], GPIO_PIN_RESET);
+#endif
         UART_Agent<busID>::Read(_bufPtr, _size, std::move(callPtr));
     }
 
     void rs485Write(uint8_t* _bufPtr, uint8_t _size, CallbackFuncPtr callPtr = nullptr) {
        // callPtr = [this](const UART_Task_t& uartTask) {};
+#ifndef RS485_NO_FLOW_CTRL
         HAL_GPIO_WritePin(rs485TxPortList[busID], rs485TxPinList[busID], GPIO_PIN_SET);
+#endif
         UART_Agent<busID>::Write(_bufPtr, _size, callPtr);
     }
 
     uint8_t rxbuf[30]{0};
     uint8_t txbuf[11]{0};
     uint32_t addr;
-
 };
-
 
 #endif //RS485_BASE_MODULE
 
