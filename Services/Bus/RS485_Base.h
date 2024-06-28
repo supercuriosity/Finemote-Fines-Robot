@@ -21,19 +21,25 @@ public:
 
     // 不定长接收
     void rs485Read(uint8_t* _bufPtr, CallbackFuncPtr callPtr = nullptr)  {
+#ifndef RS485_NO_XXX
         HAL_GPIO_WritePin(rs485TxPortList[busID], rs485TxPinList[busID], GPIO_PIN_RESET);
+#endif
         UART_Agent<busID>::Read(_bufPtr, std::move(callPtr));
     }
 
     // 定长接收
     void rs485Read(uint8_t* _bufPtr, uint8_t _size, CallbackFuncPtr callPtr = nullptr) {
+#ifndef RS485_NO_XXX
         HAL_GPIO_WritePin(rs485TxPortList[busID], rs485TxPinList[busID], GPIO_PIN_RESET);
+#endif
         UART_Agent<busID>::Read(_bufPtr, _size, std::move(callPtr));
     }
 
     void rs485Write(uint8_t* _bufPtr, uint8_t _size, CallbackFuncPtr callPtr = nullptr) {
        // callPtr = [this](const UART_Task_t& uartTask) {};
-        HAL_GPIO_WritePin(rs485TxPortList[busID], rs485TxPinList[busID], GPIO_PIN_SET);
+#ifndef RS485_NO_XXX
+        HAL_GPIO_WritePin(rs485TxPortList[busID], rs485TxPinList[busID], GPIO_PIN_RESET);
+#endif
         UART_Agent<busID>::Write(_bufPtr, _size, callPtr);
     }
 
