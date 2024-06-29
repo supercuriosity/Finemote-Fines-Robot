@@ -22,6 +22,7 @@ public:
     template<typename T>
     Motor4315(const Motor_Param_t&& params, T &_controller, uint32_t addr) : MotorBase(std::forward<const Motor_Param_t>(params)), rs485Agent(addr) {
         ResetController(_controller);
+        this->SetDivisionFactor(20);
     }
 
     void Handle() override {
@@ -66,11 +67,11 @@ private:
     }
 
     void Update() {
-        /**
-         * Todo: 查手册，把状态更新了
-         */
+        state.position = (float) ((rs485Agent.rxbuf[7] | (rs485Agent.rxbuf[8] << 8u)) * 360.0f / 16384.0f);//单圈编码值
+        state.speed = (int16_t)(rs485Agent.rxbuf[11] | (rs485Agent.rxbuf[12] << 8u));
+        state.torque = 0;//电机应答不返回电流值
+        state.temperature = 0;//电机应答不返回温度参数
     }
-
 /*    void AngleCalc() {
         state.position = (float) (rs485Agent.rxbuf[7] | (rs485Agent.rxbuf[8] << 8u) | (rs485Agent.rxbuf[9] << 16u) |
                                   (rs485Agent.rxbuf[10] << 24u)) / 16384.0f * 360.0f;
