@@ -726,6 +726,36 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Divice/Sensors</GroupName>
+          <Files>
+            <File>
+              <FileName>BMI088.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\AlllnOne0329\Devices\Sensors\BMI088.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>BMI088.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\..\..\AlllnOne0329\Devices\Sensors\BMI088.h</FilePath>
+            </File>
+            <File>
+              <FileName>BMI088reg.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\..\..\AlllnOne0329\Devices\Sensors\BMI088reg.h</FilePath>
+            </File>
+            <File>
+              <FileName>IMUBase.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\..\..\..\AlllnOne0329\Devices\Sensors\IMUBase.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>IMUBase.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\..\..\..\AlllnOne0329\Devices\Sensors\IMUBase.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
