@@ -52,36 +52,33 @@ private:
             case Motor_Ctrl_Type_e::Torque: {
                 volatile int16_t txTorque = controller->GetOutput();
                 INRANGE(txTorque,-2000,2000);
-                volatile uint8_t txTorqueL = txTorque;
-                volatile uint8_t txTorqueH = txTorque >> 8;
-                canAgent.DLC = 8;
-                canAgent.txbuf[0] = 0xA1;
-                canAgent.txbuf[1] = 0x00;
-                canAgent.txbuf[2] = 0x00;
-                canAgent.txbuf[3] = 0x00;
-                canAgent.txbuf[4] = txTorqueL;
-                canAgent.txbuf[5] = txTorqueH;
-                canAgent.txbuf[6] = 0x00;
-                canAgent.txbuf[7] = 0x00;
+
+                canAgent[0] = 0xA1;
+                canAgent[1] = 0x00;
+                canAgent[2] = 0x00;
+                canAgent[3] = 0x00;
+                canAgent[4] = txTorque;
+                canAgent[5] = txTorque >> 8;
+                canAgent[6] = 0x00;
+                canAgent[7] = 0x00;
                 break;
             }
             case Motor_Ctrl_Type_e::Position: {
                 constexpr uint16_t txSpeed = 0x300;
                 uint32_t txAngle = 100 * controller->GetOutput();
 
-                canAgent.DLC = 8;
-                canAgent.txbuf[0] = 0xA4;
-                canAgent.txbuf[1] = 0x00;
-                canAgent.txbuf[2] = txSpeed;
-                canAgent.txbuf[3] = txSpeed >> 8;
-                canAgent.txbuf[4] = txAngle;
-                canAgent.txbuf[5] = txAngle >> 8;
-                canAgent.txbuf[6] = txAngle >> 16;
-                canAgent.txbuf[7] = txAngle >> 24;
+                canAgent[0] = 0xA4;
+                canAgent[1] = 0x00;
+                canAgent[2] = txSpeed;
+                canAgent[3] = txSpeed >> 8;
+                canAgent[4] = txAngle;
+                canAgent[5] = txAngle >> 8;
+                canAgent[6] = txAngle >> 16;
+                canAgent[7] = txAngle >> 24;
                 break;
             }
         }
-        canAgent.Send();
+        canAgent.Send(canAgent.addr);
     }
 
     void Update() {
