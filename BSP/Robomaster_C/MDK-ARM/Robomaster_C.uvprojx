@@ -10,7 +10,6 @@
       <TargetName>Robomaster_C</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pArmCC>6120000::V6.12::.\ARMCLANG</pArmCC>
       <pCCUsed>6120000::V6.12::.\ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
@@ -186,6 +185,8 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
+            <RvdsCdeCp>0</RvdsCdeCp>
+            <nBranchProt>0</nBranchProt>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -352,7 +353,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
+            <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -727,33 +728,6 @@
         </Group>
         <Group>
           <GroupName>Divice/Sensors</GroupName>
-          <Files>
-            <File>
-              <FileName>BMI088.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\..\..\..\AlllnOne0329\Devices\Sensors\BMI088.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>BMI088.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\..\..\AlllnOne0329\Devices\Sensors\BMI088.h</FilePath>
-            </File>
-            <File>
-              <FileName>BMI088reg.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\..\..\AlllnOne0329\Devices\Sensors\BMI088reg.h</FilePath>
-            </File>
-            <File>
-              <FileName>IMUBase.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\..\..\..\AlllnOne0329\Devices\Sensors\IMUBase.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>IMUBase.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\..\..\..\AlllnOne0329\Devices\Sensors\IMUBase.h</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>::CMSIS</GroupName>
@@ -774,5 +748,14 @@
     </components>
     <files/>
   </RTE>
+
+  <LayerInfo>
+    <Layers>
+      <Layer>
+        <LayName>Robomaster_C</LayName>
+        <LayPrjMark>1</LayPrjMark>
+      </Layer>
+    </Layers>
+  </LayerInfo>
 
 </Project>
