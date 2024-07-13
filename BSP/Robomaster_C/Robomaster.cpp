@@ -40,5 +40,5 @@ void BSP_Setup() {
 }
 
 #ifdef __cplusplus
-};
+}
 #endif
