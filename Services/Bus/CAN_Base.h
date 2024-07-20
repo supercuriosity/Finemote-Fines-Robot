@@ -136,9 +136,7 @@ public:
     }
 
     uint8_t& operator[](std::size_t index) {
-        if (index < 8) {
             return txbuf.message[index];
-        }
     }
 
     uint32_t addr;
