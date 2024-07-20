@@ -11,7 +11,6 @@
 
 #include "UART_Base.h"
 
-
 template <uint8_t busID>
 class RS485_Agent :public UART_Agent<busID>{
 public:
@@ -38,7 +37,7 @@ public:
     void rs485Write(uint8_t* _bufPtr, uint8_t _size, CallbackFuncPtr callPtr = nullptr) {
        // callPtr = [this](const UART_Task_t& uartTask) {};
 #ifndef RS485_NO_XXX
-        HAL_GPIO_WritePin(rs485TxPortList[busID], rs485TxPinList[busID], GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(rs485TxPortList[busID], rs485TxPinList[busID], GPIO_PIN_SET);
 #endif
         UART_Agent<busID>::Write(_bufPtr, _size, callPtr);
     }
@@ -46,9 +45,7 @@ public:
     uint8_t rxbuf[30]{0};
     uint8_t txbuf[11]{0};
     uint32_t addr;
-
 };
-
 
 #endif //RS485_BASE_MODULE
 
