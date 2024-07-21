@@ -98,7 +98,11 @@ private:
         canFilter.FilterMaskIdLow = 0x0000;
         canFilter.FilterFIFOAssignment = CAN_RX_FIFO0;
         canFilter.FilterActivation = ENABLE;
-        canFilter.FilterBank = 0;
+        switch (busID)
+        {
+        case 1:canFilter.FilterBank = 0; break;
+        case 2:canFilter.FilterBank = 14; break;
+        }
         canFilter.SlaveStartFilterBank = 14;
         HAL_CAN_ConfigFilter(qwq[busID - 1], &canFilter);
 
