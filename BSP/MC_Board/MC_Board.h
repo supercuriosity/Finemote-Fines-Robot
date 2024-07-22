@@ -51,7 +51,7 @@ public:
 
 #define HAL_INIT_HANDLE
 
-extern UART_HandleTypeDef *uartHandleList[5];
+extern UART_HandleTypeDef *uartHandleList[];
 extern GPIO_TypeDef *rs485TxPortList[3];
 extern uint16_t rs485TxPinList[3];
 
