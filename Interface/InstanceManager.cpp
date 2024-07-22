@@ -4,9 +4,11 @@
  * All rights reserved.
  ******************************************************************************/
 
+#include <array>
+
 #include "Chassis.h"
 #include "RadioMaster_Zorro.h"
-#include "array"
+#include "FZMotion.h"
 
 
 constexpr PID_Param_t speedPID = {0.3f, 0.002f, 0.3f, 2000, 2000};
@@ -40,3 +42,5 @@ Chassis chassis = Chassis::Build().
         Build();
 
 RadioMaster_Zorro remote;
+
+FZMotion motion;

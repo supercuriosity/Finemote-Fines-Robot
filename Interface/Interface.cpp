@@ -10,6 +10,8 @@
 #include "LED.h"
 #include "Motor4010.h"
 
+#include "UARTBaseLite.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -17,8 +19,14 @@ extern "C" {
 /**
  * @brief 用户初始化
  */
-void Setup() {
+#include "FZMotion.h"
+extern FZMotion motion;
 
+void Setup() {
+    std::function<void(uint8_t *, uint16_t)> decodeFunc = [](uint8_t* data, uint16_t length){
+        motion.Decode(data, length);
+    };
+    UARTBaseLite<5>::GetInstance().Bind(decodeFunc);
 }
 
 /**
@@ -29,7 +37,7 @@ void Loop() {
 }
 
 #ifdef __cplusplus
-};
+}
 #endif
 
 /*****  示例1 *****/
@@ -72,6 +80,15 @@ void Task3() {
     chassis.ChassisSetVelocity(remote.GetInfo().rightCol, remote.GetInfo().rightRol, remote.GetInfo().leftRol * 2 * PI * 2);
 }
 
+/*****  示例4 *****/
+
+/**
+ * @brief 获取动捕数据
+ */
+void Task4() {
+
+}
+
 /*****  不要修改以下代码 *****/
 
 #ifdef __cplusplus
@@ -85,6 +102,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
         Task1();
         Task2();
         Task3();
+        Task4();
 
         CAN_Bus<1>::TxLoader();
         CAN_Bus<2>::TxLoader();

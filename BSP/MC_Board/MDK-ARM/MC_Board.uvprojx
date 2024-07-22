@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F446xx,__MC_BOARD</Define>
               <Undefine></Undefine>
-              <IncludePath>../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..;../../../Interface;../../../Services;../../../Devices;../Core/Inc;../../../Components;../../../Algorithms;..\..\..\Devices\Controllers;..\..\..\Services\MultiMedia;..\..\..\Devices\Motors;..\..\..\Devices;..\..\..\Algorithms\Communication;..\..\..\Services\Bus</IncludePath>
+              <IncludePath>../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../Core/Inc;..;../../../Interface;../../../Services;../../../Devices;../../../Components;..\..\..\Devices\Controllers;..\..\..\Devices\Motors;..\..\..\Devices;..\..\..\Algorithms\Communication;../../../Algorithms;..\..\..\Services\Bus;..\..\..\Services\MultiMedia;..\..\..\Services\FineWarden</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -745,6 +745,16 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>BSP</GroupName>
+          <Files>
+            <File>
+              <FileName>MC_Board.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\MC_Board.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>Interface</GroupName>
           <Files>
             <File>
@@ -756,16 +766,6 @@
               <FileName>InstanceManager.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\Interface\InstanceManager.cpp</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Services/MultiMedia</GroupName>
-          <Files>
-            <File>
-              <FileName>BeepMusic.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Services\MultiMedia\BeepMusic.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -790,7 +790,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Devices</GroupName>
+          <GroupName>Devices/Motors</GroupName>
           <Files>
             <File>
               <FileName>DeviceBase.cpp</FileName>
@@ -835,6 +835,21 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Algorithm/Communication</GroupName>
+          <Files>
+            <File>
+              <FileName>Verify.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Algorithms\Communication\Verify.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Verify.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\..\Algorithms\Communication\Verify.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>Services/Bus</GroupName>
           <Files>
             <File>
@@ -855,27 +870,22 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>BSP</GroupName>
+          <GroupName>Services/MultiMedia</GroupName>
           <Files>
             <File>
-              <FileName>MC_Board.cpp</FileName>
+              <FileName>BeepMusic.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\MC_Board.cpp</FilePath>
+              <FilePath>..\..\..\Services\MultiMedia\BeepMusic.cpp</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Algorithm/Communication</GroupName>
+          <GroupName>Services/FineWarden</GroupName>
           <Files>
             <File>
-              <FileName>Verify.cpp</FileName>
+              <FileName>FZMotion.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Algorithms\Communication\Verify.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>Verify.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Algorithms\Communication\Verify.h</FilePath>
+              <FilePath>..\..\..\Services\FineWarden\FZMotion.cpp</FilePath>
             </File>
           </Files>
         </Group>
