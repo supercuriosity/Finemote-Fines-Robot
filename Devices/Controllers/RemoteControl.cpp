@@ -5,21 +5,3 @@
  ******************************************************************************/
 
 #include "RemoteControl.h"
-
-
-RemoteControl::RemoteControl() {
-
-}
-
-RemoteControl::~RemoteControl() {
-
-}
-
-void RemoteControl::Handle(void) {
-
-}
-
-void RemoteControl::Decode(UART_Task_t _data) {
-
-}
-

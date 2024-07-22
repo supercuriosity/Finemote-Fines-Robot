@@ -14,7 +14,7 @@
 #include "DeviceBase.h"
 #include "Bus/UART_Base.h"
 
-class RemoteControl : public DeviceBase{
+class RemoteControl {
 public:
     enum SWITCH_STATE_E{
         UP_POS = 1u, MID_POS = 3u, DOWN_POS = 2u
@@ -36,16 +36,15 @@ public:
         Mouse_t mouse;
         Keyboard_t keyboard;
     };
-protected:
-    RemoteControlData_t info;
-public:
-    RemoteControl();
-    ~RemoteControl();
-    void Handle() override;
-    virtual void Decode(UART_Task_t _data) = 0;
-    inline const RemoteControlData_t& GetInfo() {
+
+    virtual void Decode(uint8_t* data, uint16_t length) = 0;
+
+    const RemoteControlData_t& GetInfo() {
         return info;
     };
+
+protected:
+    RemoteControlData_t info = {};
 };
 
 #endif

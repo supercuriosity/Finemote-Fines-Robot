@@ -7,7 +7,6 @@
 #ifndef FINEMOTE_DJI_DT7_H
 #define FINEMOTE_DJI_DT7_H
 
-
 #include "ProjectConfig.h"
 
 #ifdef DJI_DT7_MODULE
@@ -17,10 +16,8 @@
 
 class DT7 : public RemoteControl{
 public:
-    DT7();
-    ~DT7();
-    void Handle(void) override;
-    void Decode(UART_Task_t _data) override;
+    void Decode(uint8_t*, uint16_t) override {};
+
 private:
     static constexpr uint32_t SBUS_RX_BUF_NUM = 50;
     static constexpr int32_t RC_CH_VALUE_OFFSET = 1024;
@@ -29,6 +26,6 @@ private:
     UART_Agent<0> remoteUart;
 };
 
-#endif
+#endif DJI_DT7_MODULE
 
-#endif //FINEMOTE_DJI_DT7_H
+#endif FINEMOTE_DJI_DT7_H
