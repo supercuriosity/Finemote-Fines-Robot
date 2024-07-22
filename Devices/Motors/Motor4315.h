@@ -45,7 +45,7 @@ private:
     void MessageGenerate() {
         switch (params.ctrlType) {
             case Motor_Ctrl_Type_e::Position: {
-                uint32_t txAngle = controller->GetOutput() * 16384.0f / 360.0f;
+                int32_t txAngle = controller->GetOutput() * 16384.0f / 360.0f;
 
                 rs485Agent.txbuf[0] = 0x3E;//协议头
                 rs485Agent.txbuf[1] = 0x00;//包序号
