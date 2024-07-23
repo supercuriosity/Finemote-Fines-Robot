@@ -7,7 +7,6 @@
 #include "Chassis.h"
 #include <cmath>
 
-
 void Chassis::ChassisSetVelocity(float _fbV, float _lrV, float _rtV) {
     ChassisStopFlag = false;
     FBVelocity = _fbV;

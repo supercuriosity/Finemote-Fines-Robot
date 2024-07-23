@@ -17,23 +17,19 @@
 #define WHEEL_DIAMETER 0.0528f//4010直径 m
 #define PI 3.1415926f
 
-typedef struct {
-
-
-}CHASSIS_INIT_T;
 class ChassisBuilder;
 
 class Chassis : public DeviceBase {
     friend class ChassisBuilder;
     Chassis(
-    Motor4010<1>* CFLPtr,
-    Motor4010<1>* CFRPtr,
-    Motor4010<1>* CBLPtr,
-    Motor4010<1>* CBRPtr,
-    Motor4315<1>* SFLPtr,
-    Motor4315<1>* SFRPtr,
-    Motor4315<1>* SBLPtr,
-    Motor4315<1>* SBRPtr):
+    MotorBase* CFLPtr,
+    MotorBase* CFRPtr,
+    MotorBase* CBLPtr,
+    MotorBase* CBRPtr,
+    MotorBase* SFLPtr,
+    MotorBase* SFRPtr,
+    MotorBase* SBLPtr,
+    MotorBase* SBRPtr):
     CFL(*CFLPtr),
     CFR(*CFRPtr),
     CBL(*CBLPtr),
@@ -51,33 +47,31 @@ public:
     bool ChassisStopFlag = true;
     float FBVelocity{}, LRVelocity{}, RTVelocity{};
 
-
-    Motor4010<1> &CFL,&CFR,&CBL,&CBR;
-    Motor4315<1> &SFL,&SFR,&SBL,&SBR;
-
+    MotorBase &CFL,&CFR,&CBL,&CBR;
+    MotorBase &SFL,&SFR,&SBL,&SBR;
 
     static ChassisBuilder Build();
 };
 //TODO 实际上建造者应该只使用电机基类指针，底盘类使用的应该也是电机基类指针
 class ChassisBuilder{
 private:
-    Motor4010<1>* CFLPtr{nullptr};
-    Motor4010<1>* CFRPtr{nullptr};
-    Motor4010<1>* CBLPtr{nullptr};
-    Motor4010<1>* CBRPtr{nullptr};
-    Motor4315<1>* SFLPtr{nullptr};
-    Motor4315<1>* SFRPtr{nullptr};
-    Motor4315<1>* SBLPtr{nullptr};
-    Motor4315<1>* SBRPtr{nullptr};
+    MotorBase* CFLPtr{nullptr};
+    MotorBase* CFRPtr{nullptr};
+    MotorBase* CBLPtr{nullptr};
+    MotorBase* CBRPtr{nullptr};
+    MotorBase* SFLPtr{nullptr};
+    MotorBase* SFRPtr{nullptr};
+    MotorBase* SBLPtr{nullptr};
+    MotorBase* SBRPtr{nullptr};
 public:
-    ChassisBuilder& AddCFLMotor(Motor4010<1> &cflMotor){CFLPtr = &cflMotor;return *this;};
-    ChassisBuilder& AddCFRMotor(Motor4010<1> &cfrMotor){CFRPtr = &cfrMotor;return *this;};
-    ChassisBuilder& AddCBLMotor(Motor4010<1> &cblMotor){CBLPtr = &cblMotor;return *this;};
-    ChassisBuilder& AddCBRMotor(Motor4010<1> &cbrMotor){CBRPtr = &cbrMotor;return *this;};
-    ChassisBuilder& AddSFLMotor(Motor4315<1> &sflMotor){SFLPtr = &sflMotor;return *this;};
-    ChassisBuilder& AddSFRMotor(Motor4315<1> &sfrMotor){SFRPtr = &sfrMotor;return *this;};
-    ChassisBuilder& AddSBLMotor(Motor4315<1> &sblMotor){SBLPtr = &sblMotor;return *this;};
-    ChassisBuilder& AddSBRMotor(Motor4315<1> &sbrMotor){SBRPtr = &sbrMotor;return *this;};
+    ChassisBuilder& AddCFLMotor(MotorBase& cflMotor){CFLPtr = &cflMotor;return *this;};
+    ChassisBuilder& AddCFRMotor(MotorBase& cfrMotor){CFRPtr = &cfrMotor;return *this;};
+    ChassisBuilder& AddCBLMotor(MotorBase& cblMotor){CBLPtr = &cblMotor;return *this;};
+    ChassisBuilder& AddCBRMotor(MotorBase& cbrMotor){CBRPtr = &cbrMotor;return *this;};
+    ChassisBuilder& AddSFLMotor(MotorBase& sflMotor){SFLPtr = &sflMotor;return *this;};
+    ChassisBuilder& AddSFRMotor(MotorBase& sfrMotor){SFRPtr = &sfrMotor;return *this;};
+    ChassisBuilder& AddSBLMotor(MotorBase& sblMotor){SBLPtr = &sblMotor;return *this;};
+    ChassisBuilder& AddSBRMotor(MotorBase& sbrMotor){SBRPtr = &sbrMotor;return *this;};
 
     Chassis Build(){
         if (!(CFLPtr && CFRPtr && CBLPtr && CBRPtr && SFLPtr && SFRPtr && SBLPtr && SBRPtr)){
