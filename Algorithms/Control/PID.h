@@ -41,7 +41,7 @@ private:
     float totalError = 0, lastError = 0;
 };
 
-template<int K>
+template<size_t K>
 class CascadePID : public PID {
 public:
     template<typename... Params>
