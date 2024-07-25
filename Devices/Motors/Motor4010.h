@@ -64,8 +64,8 @@ private:
                 break;
             }
             case Motor_Ctrl_Type_e::Position: {
-                constexpr uint16_t txSpeed = 0x300;
-                uint32_t txAngle = 100 * controller->GetOutput();
+                constexpr uint16_t txSpeed = 0x800;
+                int32_t txAngle = 100 * controller->GetOutput() * -1; //统一正方向
 
                 canAgent[0] = 0xA4;
                 canAgent[1] = 0x00;
