@@ -10,8 +10,8 @@
 #include "ProjectConfig.h"
 
 #include "DeviceBase.h"
-#include "Motors/Motor4010.h"
-#include "Motors/Motor4315.h"
+#include "MotorBase.h"
+
 #define LENGTH  0.24f //车身长
 #define WIDTH  0.24f //车身宽
 #define WHEEL_DIAMETER 0.0528f//4010直径 m
