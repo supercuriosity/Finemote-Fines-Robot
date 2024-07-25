@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F446xx,__MC_BOARD</Define>
               <Undefine></Undefine>
-              <IncludePath>../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../Core/Inc;..;../../../Interface;../../../Services;../../../Devices;../../../Components;..\..\..\Devices\Controllers;..\..\..\Devices\Motors;..\..\..\Devices;..\..\..\Algorithms\Communication;../../../Algorithms;..\..\..\Services\Bus;..\..\..\Services\MultiMedia;..\..\..\Services\FineWarden</IncludePath>
+              <IncludePath>../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../Core/Inc;..;../../../Interface;../../../Services;../../../Devices;../../../Components;../../../Devices/Controllers;../../../Devices/Motors;../../../Algorithms/Communication;../../../Algorithms;../../../Services/Bus;../../../Services/MultiMedia;../../../Services/FineWarden</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -761,11 +761,6 @@
               <FileName>Interface.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\..\..\Interface\Interface.cpp</FilePath>
-            </File>
-            <File>
-              <FileName>InstanceManager.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Interface\InstanceManager.cpp</FilePath>
             </File>
           </Files>
         </Group>
