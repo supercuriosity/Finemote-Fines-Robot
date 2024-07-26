@@ -34,6 +34,8 @@ public:
     RS485_Agent<busID> rs485Agent;
 
 private:
+    float angleOffset=0.f;
+
     void SetFeedback() override {
         switch (params.ctrlType) {
             case Motor_Ctrl_Type_e::Position:
@@ -45,8 +47,21 @@ private:
     void MessageGenerate() {
         switch (params.ctrlType) {
             case Motor_Ctrl_Type_e::Position: {
-                int32_t txAngle = controller->GetOutput() * 16384.0f / 360.0f;
+                float targetAngle = controller->GetOutput();
 
+                targetAngle += angleOffset; //多圈角度功能实现
+                if(targetAngle-state.position<-180)
+                {
+                    angleOffset += 360.f;
+                    targetAngle += 360.f;
+                }
+                if(targetAngle-state.position>180)
+                {
+                    angleOffset -= 360.f;
+                    targetAngle -= 360.f;
+                }
+
+                int32_t txAngle = targetAngle * 16384.0f / 360.0f;
                 rs485Agent.txbuf[0] = 0x3E;//协议头
                 rs485Agent.txbuf[1] = 0x00;//包序号
                 rs485Agent.txbuf[2] = rs485Agent.addr; //ID
@@ -67,10 +82,11 @@ private:
     }
 
     void Update() {
-        state.position = (float) ((rs485Agent.rxbuf[7] | (rs485Agent.rxbuf[8] << 8u) | (rs485Agent.rxbuf[9] << 16u) | (rs485Agent.rxbuf[10] << 24u)) * 360.0f / 16384.0f);//多圈编码值
-        state.speed = (int16_t)(rs485Agent.rxbuf[11] | (rs485Agent.rxbuf[12] << 8u));
-        state.torque = 0;//电机应答不返回电流值
-        state.temperature = 0;//电机应答不返回温度参数
+        // state.position = (float) ((rs485Agent.rxbuf[7] | (rs485Agent.rxbuf[8] << 8u) | (rs485Agent.rxbuf[9] << 16u) | (rs485Agent.rxbuf[10] << 24u)) * 360.0f / 16384.0f);//多圈编码值
+        // state.speed = (int16_t)(rs485Agent.rxbuf[11] | (rs485Agent.rxbuf[12] << 8u));
+        // state.torque = 0;//电机应答不返回电流值
+        // state.temperature = 0;//电机应答不返回温度参数
+        state.position = target;
     }
 /*    void AngleCalc() {
         state.position = (float) (rs485Agent.rxbuf[7] | (rs485Agent.rxbuf[8] << 8u) | (rs485Agent.rxbuf[9] << 16u) |

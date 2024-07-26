@@ -37,6 +37,8 @@ public:
     CAN_Agent<busID> canAgent;
 
 private:
+    float angleOffset=0.f;
+
     void SetFeedback() final{
         switch (params.targetType) {
             case Motor_Ctrl_Type_e::Position:
@@ -66,8 +68,23 @@ private:
             }
             case Motor_Ctrl_Type_e::Position: {
                 constexpr uint16_t txSpeed = 0x800;
-                int32_t txAngle = 100 * controller->GetOutput() * -1; //统一正方向
+                float targetAngle = controller->GetOutput();
 
+
+                targetAngle += angleOffset; //多圈角度功能实现
+                if(targetAngle+state.position<-180)
+                {
+                    angleOffset += 360.f;
+                    targetAngle += 360.f;
+                }
+                if(targetAngle+state.position>180)
+                {
+                    angleOffset -= 360.f;
+                    targetAngle -= 360.f;
+                }
+
+
+                int32_t txAngle = 100 * targetAngle * -1;//统一正方向
                 canAgent[0] = 0xA4;
                 canAgent[1] = 0x00;
                 canAgent[2] = txSpeed;
@@ -83,7 +100,7 @@ private:
     }
 
     void Update() {
-        state.position = (canAgent.rxbuf[6] | (canAgent.rxbuf[7] << 8u)) * 360.0f / 16384.0f;
+        state.position = (int16_t)(canAgent.rxbuf[6] | (canAgent.rxbuf[7] << 8u));
         state.speed = (int16_t)(canAgent.rxbuf[4] | (canAgent.rxbuf[5] << 8u));
         state.torque = (int16_t)(canAgent.rxbuf[2] | (canAgent.rxbuf[3] << 8u));
         state.temperature = (int8_t)(canAgent.rxbuf[1]);
