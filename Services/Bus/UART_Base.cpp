@@ -37,6 +37,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 // 出错中断回调函数
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) {
     GetUartHandle_BusMap()[huart]->CallbackHandle(UART_Base::Callback_e::ERROR_CALL);
+    if (huart == &huart5) {
+        UARTBaseLite<5>::GetInstance().RxHandle(1);
+    }
+
 }
 
 #ifdef __cplusplus

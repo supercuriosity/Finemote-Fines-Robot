@@ -33,8 +33,8 @@ typedef struct{
 
 class FZMotion {
 public:
-    void Decode(uint8_t* data, uint16_t){
-        memcpy(&rxBuffer, data, sizeof(MQTT_rigid_msg_t));
+    void Decode(uint8_t* data, uint16_t size){
+        if (size >= sizeof(rxBuffer)) memcpy(&rxBuffer, data, sizeof(MQTT_rigid_msg_t));
     };
 
 private:

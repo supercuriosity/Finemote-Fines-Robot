@@ -55,7 +55,7 @@ private:
     }
 
     std::queue<std::pair<uint8_t*, uint16_t>> txQueue;
-    uint8_t rxBuffer[1][100] = {0};
+    uint8_t rxBuffer[1][200] = {0};
     std::function<void(uint8_t*, uint16_t)> decodeFunc = nullptr;
 };
 
