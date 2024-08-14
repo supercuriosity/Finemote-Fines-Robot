@@ -45,13 +45,13 @@ public:
         if(decodeFunc) {
             decodeFunc(rxBuffer[0], size);
         }
-        HAL_UARTEx_ReceiveToIdle_IT(uartHandleList[ID], rxBuffer[0], 50);
+        HAL_UARTEx_ReceiveToIdle_IT(uartHandleList[ID], rxBuffer[0], 200);
     }
 
 private:
     UARTBaseLite() {
         HALInit::GetInstance();
-        HAL_UARTEx_ReceiveToIdle_IT(uartHandleList[ID], rxBuffer[0], 50);
+        HAL_UARTEx_ReceiveToIdle_IT(uartHandleList[ID], rxBuffer[0], 200);
     }
 
     std::queue<std::pair<uint8_t*, uint16_t>> txQueue;
