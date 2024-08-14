@@ -117,7 +117,10 @@ int main(void)
       MX_USART3_UART_Init();
       //MX_IWDG_Init();
       /* USER CODE BEGIN 2 */
-    firstEnter = 0;
+      HAL_GPIO_WritePin(GPIOC, Power_OUT1_EN_Pin|Power_5V_EN_Pin|RS485_DIR1_Pin|LED1_Pin
+                               |GPIO_PIN_1|Power_OUT2_EN_Pin, GPIO_PIN_SET);
+
+      firstEnter = 0;
   } else {
       BSP_Setup();
       Setup();
@@ -184,7 +187,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 /**
- * @brief 将时钟源选择为内部时钟，避免Clion的Debug模式无法使能锁相�????
+ * @brief 将时钟源选择为内部时钟，避免Clion的Debug模式无法使能锁相�????
  */
 void SystemClock_PreConfig(void) {
     RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
