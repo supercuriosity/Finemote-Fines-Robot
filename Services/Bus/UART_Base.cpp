@@ -5,7 +5,7 @@
  ******************************************************************************/
 
 #include "UART_Base.h"
-
+#include "RS485_Base.h"
 #include "UARTBaseLite.h"
 
 #ifdef UART_BASE_MODULE
@@ -24,8 +24,11 @@ extern "C" {
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
     if(huart == &huart5) {
         UARTBaseLite<5>::GetInstance().TxLoader();
+        GetUartHandle_BusMap()[huart]->CallbackHandle(UART_Base::Callback_e::WRITE);
     }
-    GetUartHandle_BusMap()[huart]->CallbackHandle(UART_Base::Callback_e::WRITE);
+    else if(huart == &huart1){
+        RS485_Base<1>::GetInstance().RxHandle();
+    }
     //UART_Bus<0>::GetInstance().CallbackHandle(UART_Bus<0>::Callback_e::WRITE);
 }
 // 接收中断回调函数
