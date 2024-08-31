@@ -72,12 +72,12 @@ private:
 
 
                 targetAngle += angleOffset; //多圈角度功能实现
-                if(targetAngle+state.position<-180)
+                if(targetAngle-state.position<-180)
                 {
                     angleOffset += 360.f;
                     targetAngle += 360.f;
                 }
-                if(targetAngle+state.position>180)
+                if(targetAngle-state.position>180)
                 {
                     angleOffset -= 360.f;
                     targetAngle -= 360.f;
@@ -100,7 +100,7 @@ private:
     }
 
     void Update() {
-        state.position = (int16_t)(canAgent.rxbuf[6] | (canAgent.rxbuf[7] << 8u));
+        state.position = -(int16_t)(canAgent.rxbuf[6] | (canAgent.rxbuf[7] << 8u));//规定电机加速度正方向为顺时针
         state.speed = (int16_t)(canAgent.rxbuf[4] | (canAgent.rxbuf[5] << 8u));
         state.torque = (int16_t)(canAgent.rxbuf[2] | (canAgent.rxbuf[3] << 8u));
         state.temperature = (int8_t)(canAgent.rxbuf[1]);
