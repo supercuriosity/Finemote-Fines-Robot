@@ -62,7 +62,7 @@ private:
                 break;
             }
             case Motor_Ctrl_Type_e::Position: {
-                float pos = controller->GetOutput();
+                float pos = controller->GetOutput()/360.0f;
                 uint32_t pos_binary = *reinterpret_cast<uint32_t*>(&pos);
 
                 for (int i = 0; i < 4; ++i) {
