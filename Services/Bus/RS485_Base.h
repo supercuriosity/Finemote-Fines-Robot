@@ -17,6 +17,16 @@ public:
         HALInit::GetInstance();
         this->SetDivisionFactor(4);
         HAL_UARTEx_ReceiveToIdle_IT(uartHandleList[busID], UARTBaseLite<busID>::GetInstance().rxBuffer[0], 200);
+
+        std::function<void(uint8_t *, uint16_t)> decodeFunc = [](uint8_t* data, uint16_t length){
+            RS485_Base::GetInstance().Decode(data, length);
+        };
+        UARTBaseLite<busID>::GetInstance().Bind(decodeFunc);
+    }
+
+    void Decode(uint8_t* data, uint16_t size){
+        // std::copy(data,data+size,rxBuffer);
+        memcpy(&rxBuffer,data,size);
     }
 
     static RS485_Base& GetInstance() {
@@ -45,7 +55,6 @@ public:
     }
 
     void Handle() final {
-        std::copy(UARTBaseLite<busID>::GetInstance().rxBuffer[0],UARTBaseLite<busID>::GetInstance().rxBuffer[0]+30,rxBuffer);
         TxLoader();
     }
 };
