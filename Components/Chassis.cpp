@@ -26,7 +26,7 @@ void Chassis::ChassisStop() {
 	CBR.Stop();
 }
 
-void Chassis::Odometry() {
+void Chassis::LSOdometry() {
 	struct WheelSet {
 		WheelSet(const float _angle, const float _vel) {
 			angle = _angle / 180.f * PI; //弧度制
@@ -48,8 +48,8 @@ void Chassis::Odometry() {
 	chassisVel = invA * (H1.trans() * FR.vel + H2.trans() * FL.vel + H3.trans() *
 		BL.vel + H4.trans() * BR.vel);
 	float WCSVeldata[3 * 1] = {
-		chassisVel[0][0] * cosf(chassisPos[0][2]) + chassisVel[1][0] * sinf(chassisPos[0][2]),
-		-chassisVel[0][0] * sinf(chassisPos[0][2]) + chassisVel[1][0] * cosf(chassisPos[0][2]),
+		chassisVel[0][0] * cosf(chassisPos[0][2]) - chassisVel[1][0] * sinf(chassisPos[0][2]),
+		chassisVel[0][0] * sinf(chassisPos[0][2]) + chassisVel[1][0] * cosf(chassisPos[0][2]),
 		chassisVel[0][2]
 	};
 	WCSVelocity = Matrixf<3, 1>(WCSVeldata);
@@ -60,6 +60,9 @@ void Chassis::Odometry() {
 	BLX=BL.vel[0][0],BLY=BL.vel[1][0];
 	BRX=BR.vel[0][0],BRY=BR.vel[1][0];
 
+	// x=chassisPos[0][0];
+	// y=chassisPos[1][0];
+	// yaw=chassisPos[2][0];
 }
 
 void Chassis::ICFOdometry() {
@@ -123,12 +126,16 @@ void Chassis::ICFOdometry() {
 	J4=matrixf::inv(matrixf::inv(J4)+Q);
 
 	float WCSVeldata[3 * 1] = {
-		x1[0][0] * cosf(chassisPos[0][2]) + x1[1][0] * sinf(chassisPos[0][2]),
-		-x1[0][0] * sinf(chassisPos[0][2]) + x1[1][0] * cosf(chassisPos[0][2]),
+		x1[0][0] * cosf(chassisPos[0][2]) - x1[1][0] * sinf(chassisPos[0][2]),
+		x1[0][0] * sinf(chassisPos[0][2]) + x1[1][0] * cosf(chassisPos[0][2]),
 		x1[0][2]
 	};
 	WCSVelocity = Matrixf<3, 1>(WCSVeldata);
 	chassisPos += WCSVelocity * 0.001;
+
+	// x=chassisPos[0][0];
+	// y=chassisPos[1][0];
+	// yaw=chassisPos[2][0];
 }
 
 
@@ -141,10 +148,10 @@ void Chassis::WheelsSpeedCalc(float fbVelocity, float lrVelocity,float rtVelocit
 	vy = fbVelocity;
 	w = rtVelocity;
 	float A, B, C, D;
-	A = vx + w * LENGTH / 2;
-	B = vx - w * LENGTH / 2;
-	C = vy + w * WIDTH / 2;
-	D = vy - w * WIDTH / 2;
+	A = vx - w * LENGTH / 2;
+	B = vx + w * LENGTH / 2;
+	C = vy - w * WIDTH / 2;
+	D = vy + w * WIDTH / 2;
 
 	//计算四个轮子角度，单位：度
 	RFRAngle = atan2f(A, D) * 180 / PI;
@@ -174,8 +181,8 @@ void Chassis::WheelsSpeedCalc(float fbVelocity, float lrVelocity,float rtVelocit
 
 void Chassis::Handle() {
 	WheelsSpeedCalc(FBVelocity, LRVelocity, RTVelocity);
-	// Odometry();
-	ICFOdometry();
+	LSOdometry();
+	// ICFOdometry();
 }
 
 

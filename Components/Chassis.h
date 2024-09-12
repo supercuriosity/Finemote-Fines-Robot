@@ -14,7 +14,7 @@
 #include <queue>
 #include <cmath>
 
-#define LENGTH  0.2406f //车身长
+#define LENGTH  0.240225f //车身长
 #define WIDTH  0.24f //车身宽
 #define WHEEL_DIAMETER 0.0525f//4010直径 m
 #define PI 3.1415926f
@@ -42,17 +42,17 @@ class Chassis : public DeviceBase {
     SBL(*SBLPtr),
     SBR(*SBRPtr){
 
-    float H1Data[2*3] = {1,0,LENGTH/2,
-                         0,1,-WIDTH/2};
+    float H1Data[2*3] = {1,0,-LENGTH/2,
+                         0,1,WIDTH/2};
     H1 = Matrixf<2,3>(H1Data);
-    float H2Data[2*3] = {1,0,LENGTH/2,
-                         0,1,WIDTH/2};
-    H2 = Matrixf<2,3>(H2Data);
-    float H3Data[2*3] = {1,0,-LENGTH/2,
-                         0,1,WIDTH/2};
-    H3 = Matrixf<2,3>(H3Data);
-    float H4Data[2*3] = {1,0,-LENGTH/2,
+    float H2Data[2*3] = {1,0,-LENGTH/2,
                          0,1,-WIDTH/2};
+    H2 = Matrixf<2,3>(H2Data);
+    float H3Data[2*3] = {1,0,LENGTH/2,
+                         0,1,-WIDTH/2};
+    H3 = Matrixf<2,3>(H3Data);
+    float H4Data[2*3] = {1,0,LENGTH/2,
+                         0,1,WIDTH/2};
     H4 = Matrixf<2,3>(H4Data);
     float AData[3*3] = {4,0,0,
                         0,4,0,
@@ -74,7 +74,7 @@ public:
     void ChassisStop();
     void WheelsSpeedCalc(float fbVelocity, float lrVelocity, float rtVelocity);
     void Handle() override;
-    void Odometry();
+    void LSOdometry();
     void ICFOdometry();
     void ResetOdometry(float _x,float _y,float _angle);
     bool ChassisStopFlag = true;
@@ -252,11 +252,15 @@ public:
         float wcs_vel_rt = RTVelProfilePtr->GetOutput()[1][0] + (RTVelProfilePtr->GetOutput()[0][0] - currentAngle) *
             Kp;
 
-        FBVel = cosf(currentAngle) * wcs_vel_y + sinf(currentAngle) * wcs_vel_x;
-        LRVel = -sinf(currentAngle) * wcs_vel_y + cosf(currentAngle) * wcs_vel_x;
+        FBVel = cosf(currentAngle) * wcs_vel_y - sinf(currentAngle) * wcs_vel_x;
+        LRVel = sinf(currentAngle) * wcs_vel_y + cosf(currentAngle) * wcs_vel_x;
         RTVel = wcs_vel_rt;
 
-        isArrived = fabsf(target.angle - currentAngle) < 0.03 && fabsf(target.x - currentX) < 0.03 && fabsf(target.y - currentY) < 0.03;
+        if(targetList.empty()) {
+            isArrived = fabsf(target.angle - currentAngle) < 0.003 && fabsf(target.x - currentX) < 0.001 && fabsf(target.y - currentY) < 0.001;
+            return;
+        }
+        isArrived = fabsf(target.angle - currentAngle) < 0.06 && fabsf(target.x - currentX) < 0.03 && fabsf(target.y - currentY) < 0.03;
     }
 
 private:

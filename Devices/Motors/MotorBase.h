@@ -76,6 +76,10 @@ public:
         target = targetAngle;
     }
 
+    Motor_State_t& GetState(){
+        return state;
+    }
+
 protected:
     virtual void SetFeedback() = 0;
 
