@@ -50,7 +50,6 @@ auto swerveControllers = CreateControllers<Amplifier<1>, 4>();
 
 //构建组成底盘的各个电机
 #define TORQUE_2_SPEED {Motor_Ctrl_Type_e::Torque, Motor_Ctrl_Type_e::Speed}
-
 Motor4010<1> CBRMotor(TORQUE_2_SPEED, wheelControllers[0], 0x144);
 Motor4010<1> CBLMotor(TORQUE_2_SPEED, wheelControllers[1], 0x143);
 Motor4010<1> CFLMotor(TORQUE_2_SPEED, wheelControllers[2], 0x142);
@@ -64,10 +63,7 @@ Motor4315<1> SFRMotor(DIRECT_POSITION, swerveControllers[3], 0x01);
 */
 
 
-
-
-constexpr PID_Param_t anglePID = {2.0f, 0.0005f, 0.05f, 2000, 2000};
-constexpr PID_Param_t speedPID = {0.15f, 0.002f, 0.3f, 2000, 2000};
+constexpr PID_Param_t speedPID = {0.1f, 0.003f, 0.1f, 2000, 2000};
 
 auto wheelControllers = CreateControllers<PID, 4>(speedPID);
 auto swerveControllers = CreateControllers<Amplifier<1>, 4>();
