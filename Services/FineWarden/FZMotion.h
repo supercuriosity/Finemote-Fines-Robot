@@ -31,22 +31,21 @@ typedef struct{
     float qua_W;
 } __packed MQTT_rigid_msg_t;
 
+#define RIGID_NUMBER 1
+
 typedef struct{
     float pos_X;
     float pos_Y;
     float pos_Z;
-    float vel_X;
-    float vel_Y;
-    float vel_Z;
     float eul_X;
     float eul_Y;
     float eul_Z;
 } __packed mqtt_brief_t;
 
-#define RIGID_NUMBER 3
+
 typedef struct{
     uint32_t seq_pack;
-    double cam_time;
+    // double cam_time;
     bool rig_0_valid:1;
     bool rig_1_valid:1;
     bool rig_2_valid:1;
@@ -56,8 +55,12 @@ typedef struct{
     bool rig_6_valid:1;
     bool rig_7_valid:1;
     mqtt_brief_t rig0_info;
+#if RIGID_NUMBER > 1
     mqtt_brief_t rig1_info;
+#endif
+#if RIGID_NUMBER > 2
     mqtt_brief_t rig2_info;
+#endif
 #if RIGID_NUMBER > 3
     mqtt_brief_t rig3_info;
 #endif
@@ -79,7 +82,9 @@ typedef struct{
 class FZMotion {
 public:
     void Decode(uint8_t* data, uint16_t size){
-        if (size >= sizeof(rxBuffer)) memcpy(&rxBuffer, data, sizeof(rxBuffer));
+        if(size == 29) {
+            memcpy(&rxBuffer, data, sizeof(rxBuffer));
+        }
     };
     mqtt_brief_composed_t GetData(){
         return rxBuffer;
