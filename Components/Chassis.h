@@ -16,7 +16,7 @@
 
 #define LENGTH  0.240225f //车身长
 #define WIDTH  0.24f //车身宽
-#define WHEEL_DIAMETER 0.0525f//4010直径 m
+#define WHEEL_DIAMETER 0.05229//4010直径 m
 #define PI 3.1415926f
 
 class ChassisBuilder;
@@ -227,6 +227,18 @@ public:
         currentXVel = xVel, currentYVel = yVel, currentAngleVel = angleVel;
     }
 
+    void GetPlannedVel(float& _x,float& _y,float& _angle,float& _xVel,float& _yVel,float& _rtVel) {
+        if(XVelProfilePtr && YVelProfilePtr && RTVelProfilePtr) {
+            _x = XVelProfilePtr->GetOutput()[0][0];
+            _y = YVelProfilePtr->GetOutput()[0][0];
+            _angle = RTVelProfilePtr->GetOutput()[0][0];
+            _xVel = LRVel;
+            _yVel = FBVel;
+            _rtVel = RTVel;
+        }
+    }
+
+
     void CalcSpeed() {
         if (isArrived) {
             if (targetList.empty()) {
@@ -249,8 +261,7 @@ public:
         }
         float wcs_vel_x = XVelProfilePtr->GetOutput()[1][0] + (XVelProfilePtr->GetOutput()[0][0] - currentX) * Kp;
         float wcs_vel_y = YVelProfilePtr->GetOutput()[1][0] + (YVelProfilePtr->GetOutput()[0][0] - currentY) * Kp;
-        float wcs_vel_rt = RTVelProfilePtr->GetOutput()[1][0] + (RTVelProfilePtr->GetOutput()[0][0] - currentAngle) *
-            Kp;
+        float wcs_vel_rt = RTVelProfilePtr->GetOutput()[1][0] + (RTVelProfilePtr->GetOutput()[0][0] - currentAngle) *Kp;
 
         FBVel = cosf(currentAngle) * wcs_vel_y - sinf(currentAngle) * wcs_vel_x;
         LRVel = sinf(currentAngle) * wcs_vel_y + cosf(currentAngle) * wcs_vel_x;

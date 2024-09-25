@@ -55,14 +55,14 @@ void Chassis::LSOdometry() {
 	WCSVelocity = Matrixf<3, 1>(WCSVeldata);
 	chassisPos += WCSVelocity * 0.001;
 
-	FRX=FR.vel[0][0],FRY=FR.vel[1][0];
-	FLX=FL.vel[0][0],FLY=FL.vel[1][0];
-	BLX=BL.vel[0][0],BLY=BL.vel[1][0];
-	BRX=BR.vel[0][0],BRY=BR.vel[1][0];
+	FRX = FR.vel[0][0], FRY = FR.vel[1][0];
+	FLX = FL.vel[0][0], FLY = FL.vel[1][0];
+	BLX = BL.vel[0][0], BLY = BL.vel[1][0];
+	BRX = BR.vel[0][0], BRY = BR.vel[1][0];
 
-	// x=chassisPos[0][0];
-	// y=chassisPos[1][0];
-	// yaw=chassisPos[2][0];
+	x = chassisPos[0][0];
+	y = chassisPos[1][0];
+	yaw = chassisPos[2][0];
 }
 
 void Chassis::ICFOdometry() {
@@ -74,6 +74,7 @@ void Chassis::ICFOdometry() {
 			tmp[0] = _vel / 360.f * PI * WHEEL_DIAMETER * sinf(angle);
 			vel = tmp;
 		}
+
 		float angle{0};
 		Matrixf<2, 1> vel;
 	};
@@ -83,47 +84,54 @@ void Chassis::ICFOdometry() {
 	WheelSet BL(SBL.GetState().position, CBL.GetState().speed);
 	WheelSet BR(SBR.GetState().position, -CBR.GetState().speed);
 
-	FRX=FR.vel[0][0],FRY=FR.vel[1][0];
-	FLX=FL.vel[0][0],FLY=FL.vel[1][0];
-	BLX=BL.vel[0][0],BLY=BL.vel[1][0];
-	BRX=BR.vel[0][0],BRY=BR.vel[1][0];
+	FRX = FR.vel[0][0], FRY = FR.vel[1][0];
+	FLX = FL.vel[0][0], FLY = FL.vel[1][0];
+	BLX = BL.vel[0][0], BLY = BL.vel[1][0];
+	BRX = BR.vel[0][0], BRY = BR.vel[1][0];
 
-	Matrixf<3,3> V1=0.25*J1+H1.trans()*B*H1;
-	Matrixf<3,1> v1=0.25*J1*x1+H1.trans()*B*FR.vel;
-	Matrixf<3,3> V2=0.25*J2+H2.trans()*B*H2;
-	Matrixf<3,1> v2=0.25*J2*x2+H2.trans()*B*FL.vel;
-	Matrixf<3,3> V3=0.25*J3+H3.trans()*B*H3;
-	Matrixf<3,1> v3=0.25*J3*x3+H3.trans()*B*BL.vel;
-	Matrixf<3,3> V4=0.25*J4+H4.trans()*B*H4;
-	Matrixf<3,1> v4=0.25*J4*x4+H4.trans()*B*BR.vel;
+	float plannedVel[3]{LRVelocity, FBVelocity, RTVelocity};
+	x1 = 0.5 * x1 + 0.5 * Matrixf<3, 1>(plannedVel);
+	x2 = 0.5 * x1 + 0.5 * Matrixf<3, 1>(plannedVel);
+	x3 = 0.5 * x1 + 0.5 * Matrixf<3, 1>(plannedVel);
+	x4 = 0.5 * x1 + 0.5 * Matrixf<3, 1>(plannedVel);
 
-	Matrixf<3,3> V1_t=(1-3*epi)*V1+epi*(V2+V3+V4);
-	Matrixf<3,1> v1_t=(1-3*epi)*v1+epi*(v2+v3+v4);
-	Matrixf<3,3> V2_t=(1-3*epi)*V2+epi*(V1+V3+V4);
-	Matrixf<3,1> v2_t=(1-3*epi)*v2+epi*(v1+v3+v4);
-	Matrixf<3,3> V3_t=(1-3*epi)*V3+epi*(V2+V1+V4);
-	Matrixf<3,1> v3_t=(1-3*epi)*v3+epi*(v2+v1+v4);
-	Matrixf<3,3> V4_t=(1-3*epi)*V4+epi*(V2+V3+V1);
-	Matrixf<3,1> v4_t=(1-3*epi)*v4+epi*(v2+v3+v1);
+	J1 = matrixf::inv(0.25 * matrixf::inv(J1) + 0.5 * Q);
+	J2 = matrixf::inv(0.25 * matrixf::inv(J2) + 0.5 * Q);
+	J3 = matrixf::inv(0.25 * matrixf::inv(J3) + 0.5 * Q);
+	J4 = matrixf::inv(0.25 * matrixf::inv(J4) + 0.5 * Q);
 
-	V1=V1_t,v1=v1_t;
-	V2=V2_t,v2=v2_t;
-	V3=V3_t,v3=v3_t;
-	V4=V4_t,v4=v4_t;
+	Matrixf<3, 3> V1 = 0.25 * J1 + H1.trans() * B * H1;
+	Matrixf<3, 1> v1 = 0.25 * J1 * x1 + H1.trans() * B * FR.vel;
+	Matrixf<3, 3> V2 = 0.25 * J2 + H2.trans() * B * H2;
+	Matrixf<3, 1> v2 = 0.25 * J2 * x2 + H2.trans() * B * FL.vel;
+	Matrixf<3, 3> V3 = 0.25 * J3 + H3.trans() * B * H3;
+	Matrixf<3, 1> v3 = 0.25 * J3 * x3 + H3.trans() * B * BL.vel;
+	Matrixf<3, 3> V4 = 0.25 * J4 + H4.trans() * B * H4;
+	Matrixf<3, 1> v4 = 0.25 * J4 * x4 + H4.trans() * B * BR.vel;
 
-	x1=matrixf::inv(V1)*v1;
-	J1=4*V1;
-	x2=matrixf::inv(V2)*v2;
-	J2=4*V2;
-	x3=matrixf::inv(V3)*v3;
-	J3=4*V3;
-	x4=matrixf::inv(V4)*v4;
-	J4=4*V4;
+	Matrixf<3, 3> V1_t = (1 - 3 * epi) * V1 + epi * (V2 + V3 + V4);
+	Matrixf<3, 1> v1_t = (1 - 3 * epi) * v1 + epi * (v2 + v3 + v4);
+	Matrixf<3, 3> V2_t = (1 - 3 * epi) * V2 + epi * (V1 + V3 + V4);
+	Matrixf<3, 1> v2_t = (1 - 3 * epi) * v2 + epi * (v1 + v3 + v4);
+	Matrixf<3, 3> V3_t = (1 - 3 * epi) * V3 + epi * (V2 + V1 + V4);
+	Matrixf<3, 1> v3_t = (1 - 3 * epi) * v3 + epi * (v2 + v1 + v4);
+	Matrixf<3, 3> V4_t = (1 - 3 * epi) * V4 + epi * (V2 + V3 + V1);
+	Matrixf<3, 1> v4_t = (1 - 3 * epi) * v4 + epi * (v2 + v3 + v1);
 
-	J1=matrixf::inv(matrixf::inv(J1)+Q);
-	J2=matrixf::inv(matrixf::inv(J2)+Q);
-	J3=matrixf::inv(matrixf::inv(J3)+Q);
-	J4=matrixf::inv(matrixf::inv(J4)+Q);
+	V1 = V1_t, v1 = v1_t;
+	V2 = V2_t, v2 = v2_t;
+	V3 = V3_t, v3 = v3_t;
+	V4 = V4_t, v4 = v4_t;
+
+	x1 = matrixf::inv(V1) * v1;
+	J1 = 4 * V1;
+	x2 = matrixf::inv(V2) * v2;
+	J2 = 4 * V2;
+	x3 = matrixf::inv(V3) * v3;
+	J3 = 4 * V3;
+	x4 = matrixf::inv(V4) * v4;
+	J4 = 4 * V4;
+
 
 	float WCSVeldata[3 * 1] = {
 		x1[0][0] * cosf(chassisPos[0][2]) - x1[1][0] * sinf(chassisPos[0][2]),
@@ -133,13 +141,13 @@ void Chassis::ICFOdometry() {
 	WCSVelocity = Matrixf<3, 1>(WCSVeldata);
 	chassisPos += WCSVelocity * 0.001;
 
-	// x=chassisPos[0][0];
-	// y=chassisPos[1][0];
-	// yaw=chassisPos[2][0];
+	x = chassisPos[0][0];
+	y = chassisPos[1][0];
+	yaw = chassisPos[2][0];
 }
 
 
-void Chassis::WheelsSpeedCalc(float fbVelocity, float lrVelocity,float rtVelocity) {
+void Chassis::WheelsSpeedCalc(float fbVelocity, float lrVelocity, float rtVelocity) {
 	float ClassisSpeed[4];
 	float RFLAngle, RFRAngle, RBLAngle, RBRAngle;
 	float vx, vy, w;
@@ -181,8 +189,8 @@ void Chassis::WheelsSpeedCalc(float fbVelocity, float lrVelocity,float rtVelocit
 
 void Chassis::Handle() {
 	WheelsSpeedCalc(FBVelocity, LRVelocity, RTVelocity);
-	LSOdometry();
-	// ICFOdometry();
+	// LSOdometry();
+	ICFOdometry();
 }
 
 
@@ -190,14 +198,14 @@ ChassisBuilder Chassis::Build() {
 	return {};
 }
 
-void Chassis::ResetOdometry(float _x=0,float _y=0,float _angle=0) {
+void Chassis::ResetOdometry(float _x = 0, float _y = 0, float _angle = 0) {
 	// chassisPos = matrixf::zeros<3, 1>();
 	chassisPos[0][0] = _x;
-	x=_x;
+	x = _x;
 	chassisPos[1][0] = _y;
-	y=_y;
+	y = _y;
 	chassisPos[2][0] = _angle;
-	yaw=_angle;
+	yaw = _angle;
 }
 
 
