@@ -14,7 +14,7 @@
 #include <queue>
 #include <cmath>
 
-#define LENGTH  0.240225f //车身长
+#define LENGTH  0.2406f //车身长0.240225f
 #define WIDTH  0.24f //车身宽
 #define WHEEL_DIAMETER 0.05229//4010直径 m
 #define PI 3.1415926f
@@ -60,8 +60,8 @@ class Chassis : public DeviceBase {
     Matrixf<3,3> A(AData);
     invA = matrixf::inv(A);
 
-    float BData[2*2] = {0.05,0,
-                        0,0.05};
+    float BData[2*2] = {10,0,
+                        0,10};
     B = Matrixf<2,2>(BData);
     float QData[3*3] = {0.1,0,0,
                         0,0.1,0,
