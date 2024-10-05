@@ -31,7 +31,7 @@ public:
         float dialWheel;
         uint32_t pat;
         uint32_t sRight, sLeft;
-        uint32_t sB, sC, sE, sF;
+        uint32_t sA,sB,sC,sD;
         uint32_t buttonA, buttonD;
         Mouse_t mouse;
         Keyboard_t keyboard;

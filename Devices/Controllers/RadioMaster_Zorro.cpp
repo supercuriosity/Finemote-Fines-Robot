@@ -32,14 +32,19 @@ void RadioMaster_Zorro::Decode(uint8_t* data, uint16_t length) {
         info.leftRol = info.lR;
     else
         info.leftRol = 0;
-    info.sE = ((((data[6] >> 4) | (data[7] << 4)) & 0x07FF) == 191) ? static_cast <SWITCH_STATE_E> (1)
-                                                                    : static_cast <SWITCH_STATE_E> (2);
-    info.sB = ((((data[7] >> 7) | (data[8] << 1) | (data[8] << 9)) & 0x07FF) == 256)
-              ? static_cast <SWITCH_STATE_E> (2) :
-              ((((data[7] >> 7) | (data[8] << 1) | (data[8] << 9)) & 0x07FF) == 1509)
-              ? static_cast <SWITCH_STATE_E> (3) : static_cast <SWITCH_STATE_E> (1);
-    info.sF = ((((data[9] >> 2) | (data[10] << 6)) & 0x07FF) == 191) ? static_cast <SWITCH_STATE_E> (1)
-                                                                     : static_cast <SWITCH_STATE_E> (2);
+
+    info.sA = ((data[6] >> 4 | data[7] << 4) & 0x07FF) == 191 ? UP_POS : DOWN_POS;
+    info.sB = ((data[7] >> 7 | data[8] << 1 | data[9] << 9) & 0x07FF) == 191
+                  ? UP_POS
+                  : ((data[7] >> 7 | data[8] << 1 | data[9] << 9) & 0x07FF) == 997
+                  ? MID_POS
+                  : DOWN_POS;
+    info.sC = ((data[9] >> 2 | data[10] << 6) & 0x07FF) == 191
+                  ? UP_POS
+                  : ((data[9] >> 2 | data[10] << 6) & 0x07FF) == 997
+                  ? MID_POS
+                  : DOWN_POS;
+    info.sD = ((data[10] >> 5 | data[11] << 3) & 0x07FF) == 191 ? UP_POS : DOWN_POS;
 }
 
 #endif
