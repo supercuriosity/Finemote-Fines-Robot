@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx,__ROBOMASTER_C</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../../../Interface;..;../../../Services;../../../Devices;../../../Algorithms/Control;../../../Algorithms;../../../Components/Examples;../../../Components;..\..\..\Services\MultiMedia;..\..\..\Components;..\..\..\Devices\Motors;..\..\..\Devices\Controllers;..\..\..\Algorithms\Communication;..\..\..\Services\Matrix;..\..\..\Services\FineWarden;..\..\..\Services\Bus</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../../../Interface;..;../../../Services;../../../Devices;../../../Algorithms/Control;../../../Algorithms;../../../Components/Examples;../../../Components;..\..\..\Services\MultiMedia;..\..\..\Components;..\..\..\Devices\Motors;..\..\..\Devices\Controllers;..\..\..\Algorithms\Communication;..\..\..\Services\FineWarden;..\..\..\Services\Matrix;..\..\..\Services\Bus</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
