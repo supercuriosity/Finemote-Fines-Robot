@@ -19,3 +19,21 @@ uint16_t CRC16Calc(uint8_t *data, uint16_t length){
     }
     return crc;
 }
+
+uint32_t CRC32Calc(uint8_t *data,uint16_t length) {
+    const uint32_t polynomial = 0xEDB88320; // 标准CRC32多项式
+    uint32_t crc = 0xFFFFFFFF; // 初始值
+
+    while(length--) {
+        crc ^= *data++;
+        for (uint8_t j = 0; j < 8; j++) {
+            if (crc & 1) {
+                crc = (crc >> 1) ^ polynomial;
+            } else {
+                crc >>= 1;
+            }
+        }
+    }
+
+    return ~crc; // 取反得到最终的CRC32值
+}

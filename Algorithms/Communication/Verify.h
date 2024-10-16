@@ -11,4 +11,7 @@
 
 uint16_t CRC16Calc(uint8_t *data, uint16_t length);
 
+uint32_t CRC32Calc(uint8_t *data,uint16_t length);
+
+
 #endif //FINEMOTE_VERIFY_H
