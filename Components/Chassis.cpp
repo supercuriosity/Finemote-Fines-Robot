@@ -149,29 +149,59 @@ void Chassis::ICFOdometry() {
 
 void Chassis::WheelsSpeedCalc(float fbVelocity, float lrVelocity, float rtVelocity) {
 	float ClassisSpeed[4];
-	float RFLAngle, RFRAngle, RBLAngle, RBRAngle;
-	float vx, vy, w;
+	static float lastAngle[4]{};
 
-	vx = lrVelocity;
-	vy = fbVelocity;
-	w = rtVelocity;
-	float A, B, C, D;
-	A = vx - w * LENGTH / 2;
-	B = vx + w * LENGTH / 2;
-	C = vy - w * WIDTH / 2;
-	D = vy + w * WIDTH / 2;
+	const float A = lrVelocity - rtVelocity * LENGTH / 2;
+	const float B = lrVelocity + rtVelocity * LENGTH / 2;
+	const float C = fbVelocity - rtVelocity * WIDTH / 2;
+	const float D = fbVelocity + rtVelocity * WIDTH / 2;
 
 	//计算四个轮子角度，单位：度
-	RFRAngle = atan2f(A, D) * 180 / PI;
-	RFLAngle = atan2f(A, C) * 180 / PI;
-	RBLAngle = atan2f(B, C) * 180 / PI;
-	RBRAngle = atan2f(B, D) * 180 / PI;
+	float RFRAngle = atan2f(A, D) * 180 / PI;
+	float RFLAngle = atan2f(A, C) * 180 / PI;
+	float RBLAngle = atan2f(B, C) * 180 / PI;
+	float RBRAngle = atan2f(B, D) * 180 / PI;
 
 	//计算四个轮子线速度，单位：度/s
 	ClassisSpeed[0] = -sqrtf(A * A + D * D) / (WHEEL_DIAMETER * PI) * 360; //右前轮1
 	ClassisSpeed[1] = sqrtf(A * A + C * C) / (WHEEL_DIAMETER * PI) * 360; //左前轮2
 	ClassisSpeed[2] = sqrtf(B * B + C * C) / (WHEEL_DIAMETER * PI) * 360; //左后轮3
 	ClassisSpeed[3] = -sqrtf(B * B + D * D) / (WHEEL_DIAMETER * PI) * 360; //右后轮4
+
+	float motorAngleState[4];
+	motorAngleState[0] = fmodf(SFR.GetState().position,360);
+	motorAngleState[0] += motorAngleState[0]>180?-360:0;
+	motorAngleState[1] = fmodf(SFL.GetState().position,360);
+	motorAngleState[1] += motorAngleState[1]>180?-360:0;
+	motorAngleState[2] = fmodf(SBL.GetState().position,360);
+	motorAngleState[2] += motorAngleState[2]>180?-360:0;
+	motorAngleState[3] = fmodf(SBR.GetState().position,360);
+	motorAngleState[3] += motorAngleState[3]>180?-360:0;
+	if(fabsf(SFR.GetState().position-RFRAngle) < 270 && fabsf(SFR.GetState().position-RFRAngle)>90){
+		ClassisSpeed[0]*=-1;
+		RFRAngle+=RFRAngle>0?-180:180;
+	}
+	if(fabsf(SFL.GetState().position-RFLAngle) < 270 && fabsf(SFL.GetState().position-RFLAngle)>90){
+		ClassisSpeed[1]*=-1;
+		RFLAngle+=RFLAngle>0?-180:180;
+	}
+	if(fabsf(SBL.GetState().position-RBLAngle) < 270 && fabsf(SBL.GetState().position-RBLAngle)>90){
+		ClassisSpeed[2]*=-1;
+		RBLAngle+=RBLAngle>0?-180:180;
+	}
+	if(fabsf(SBR.GetState().position-RBRAngle) < 270 && fabsf(SBR.GetState().position-RBRAngle)>90){
+		ClassisSpeed[3]*=-1;
+		RBRAngle+=RBRAngle>0?-180:180;
+	}
+
+
+	if(fabsf(fbVelocity)==0.0 && fabsf(lrVelocity)==0.0 && fabsf(rtVelocity)==0.0)
+	{
+		RFRAngle = lastAngle[0];
+		RFLAngle = lastAngle[1];
+		RBLAngle = lastAngle[2];
+		RBRAngle = lastAngle[3];
+	}
 
 	//设置底盘电机角度
 	SFR.SetTargetAngle(RFRAngle);
@@ -184,6 +214,11 @@ void Chassis::WheelsSpeedCalc(float fbVelocity, float lrVelocity, float rtVeloci
 	CFL.SetTargetSpeed(ClassisSpeed[1]);
 	CBL.SetTargetSpeed(ClassisSpeed[2]);
 	CBR.SetTargetSpeed(ClassisSpeed[3]);
+
+	lastAngle[0]=RFRAngle;
+	lastAngle[1]=RFLAngle;
+	lastAngle[2]=RBLAngle;
+	lastAngle[3]=RBRAngle;
 }
 
 
