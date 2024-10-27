@@ -34,8 +34,6 @@ public:
     RS485_Agent<busID> rs485Agent;
 
 private:
-    float angleOffset=0.f;
-
     void SetFeedback() override {
         switch (params.ctrlType) {
         case Motor_Ctrl_Type_e::Position:
@@ -49,15 +47,11 @@ private:
         case Motor_Ctrl_Type_e::Position: {
             float targetAngle = controller->GetOutput();
 
-            targetAngle += angleOffset; //多圈角度功能实现
-            if(targetAngle-state.position<-180)
-            {
-                angleOffset += 360.f;
+             //多圈角度功能实现
+            while(targetAngle-state.position<-180){
                 targetAngle += 360.f;
             }
-            if(targetAngle-state.position>180)
-            {
-                angleOffset -= 360.f;
+            while(targetAngle-state.position>180){
                 targetAngle -= 360.f;
             }
 

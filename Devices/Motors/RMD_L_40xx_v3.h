@@ -37,8 +37,6 @@ public:
     CAN_Agent<busID> canAgent;
 
 private:
-    float angleOffset=0.f;
-
     void SetFeedback() final{
         switch (params.targetType) {
             case Motor_Ctrl_Type_e::Position:
@@ -71,18 +69,13 @@ private:
                 float targetAngle = controller->GetOutput();
 
 
-                targetAngle += angleOffset; //多圈角度功能实现
-                if(targetAngle-state.position<-180)
-                {
-                    angleOffset += 360.f;
+                //多圈角度功能实现
+                while(targetAngle-state.position<-180){
                     targetAngle += 360.f;
                 }
-                if(targetAngle-state.position>180)
-                {
-                    angleOffset -= 360.f;
+                if(targetAngle-state.position>180){
                     targetAngle -= 360.f;
                 }
-
 
                 int32_t txAngle = 100 * targetAngle * -1;//统一正方向
                 canAgent[0] = 0xA4;
