@@ -6,6 +6,23 @@
 
 #include "Verify.h"
 
+uint8_t CRC8Calc(uint8_t *data, uint16_t length) {
+    const uint8_t polynomial = 0x07; // 标准CRC8多项式
+    uint8_t crc = 0x00; //初始值
+
+    while (length--) {
+        crc ^= *data++;
+        for (uint8_t i = 0; i < 8; i++) {
+            if (crc & 0x80) {
+                crc = (uint8_t)((crc << 1) ^ polynomial);
+            } else {
+                crc <<= 1; //
+            }
+        }
+    }
+    return crc;
+}
+
 uint16_t CRC16Calc(uint8_t *data, uint16_t length){
     uint16_t crc = 0xffff;        // Initial value
     while (length--) {
