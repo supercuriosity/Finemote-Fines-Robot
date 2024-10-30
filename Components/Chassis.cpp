@@ -90,15 +90,15 @@ void Chassis::ICFOdometry() {
 	BRX = BR.vel[0][0], BRY = BR.vel[1][0];
 
 	float plannedVel[3]{LRVelocity, FBVelocity, RTVelocity};
-	x1 = 0.5 * x1 + 0.5 * Matrixf<3, 1>(plannedVel);
-	x2 = 0.5 * x1 + 0.5 * Matrixf<3, 1>(plannedVel);
-	x3 = 0.5 * x1 + 0.5 * Matrixf<3, 1>(plannedVel);
-	x4 = 0.5 * x1 + 0.5 * Matrixf<3, 1>(plannedVel);
+	x1 = alpha * x1 + (1-alpha) * Matrixf<3, 1>(plannedVel);
+	x2 = alpha * x2 + (1-alpha) * Matrixf<3, 1>(plannedVel);
+	x3 = alpha * x3 + (1-alpha) * Matrixf<3, 1>(plannedVel);
+	x4 = alpha * x4 + (1-alpha) * Matrixf<3, 1>(plannedVel);
 
-	J1 = matrixf::inv(0.25 * matrixf::inv(J1) + 0.5 * Q);
-	J2 = matrixf::inv(0.25 * matrixf::inv(J2) + 0.5 * Q);
-	J3 = matrixf::inv(0.25 * matrixf::inv(J3) + 0.5 * Q);
-	J4 = matrixf::inv(0.25 * matrixf::inv(J4) + 0.5 * Q);
+	J1 = matrixf::inv(alpha * alpha * matrixf::inv(J1) + 0.5 * Q);
+	J2 = matrixf::inv(alpha * alpha * matrixf::inv(J2) + 0.5 * Q);
+	J3 = matrixf::inv(alpha * alpha * matrixf::inv(J3) + 0.5 * Q);
+	J4 = matrixf::inv(alpha * alpha * matrixf::inv(J4) + 0.5 * Q);
 
 	Matrixf<3, 3> V1 = 0.25 * J1 + H1.trans() * B * H1;
 	Matrixf<3, 1> v1 = 0.25 * J1 * x1 + H1.trans() * B * FR.vel;

@@ -60,8 +60,8 @@ class Chassis : public DeviceBase {
     Matrixf<3,3> A(AData);
     invA = matrixf::inv(A);
 
-    float BData[2*2] = {10,0,
-                        0,10};
+    float BData[2*2] = {100,0,
+                        0,100};
     B = Matrixf<2,2>(BData);
     float QData[3*3] = {0.1,0,0,
                         0,0.1,0,
