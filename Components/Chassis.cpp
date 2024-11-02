@@ -26,6 +26,30 @@ void Chassis::ChassisStop() {
 	CBR.Stop();
 }
 
+void Chassis::CheckWheelSlip(Matrixf<2,1> velFR,Matrixf<2,1> velFL,Matrixf<2,1> velBL,Matrixf<2,1> velBR){
+	float fbVectorData[2]{0,LENGTH};
+	float lrVectorData[2]{WIDTH,0};
+	Matrixf<2,1> vectorA = Matrixf<2,1>(lrVectorData);
+	Matrixf<2,1> vectorB = Matrixf<2,1>(lrVectorData);
+	Matrixf<2,1> vectorC = Matrixf<2,1>(fbVectorData);
+	Matrixf<2,1> vectorD = Matrixf<2,1>(fbVectorData);
+	Matrixf<2,1> vectorBL2FR = vectorB + vectorC;
+	Matrixf<2,1> vectorBR2FL = vectorD - vectorB;
+
+	float frontError = fabsf(((velFR - velFL).trans() * vectorA)[0][0]);
+	float rearError = fabsf(((velBR - velBL).trans() * vectorB)[0][0]);
+	float rightError = fabsf(((velFR - velBR).trans() * vectorD)[0][0]);
+	float leftError = fabsf(((velFL - velBL).trans() * vectorC)[0][0]);
+	float BL2FRError = fabsf(((velFR - velBL).trans() * vectorBL2FR)[0][0]);
+	float BR2FLError = fabsf(((velFL - velBR).trans() * vectorBR2FL)[0][0]);
+
+	wheelError[0] = frontError + rightError + BL2FRError;
+	wheelError[1] = frontError + leftError + BR2FLError;
+	wheelError[2] = rearError + leftError + BL2FRError;
+	wheelError[3] = rearError + rightError + BR2FLError;
+}
+
+
 void Chassis::LSOdometry() {
 	struct WheelSet {
 		WheelSet(const float _angle, const float _vel) {
@@ -35,7 +59,6 @@ void Chassis::LSOdometry() {
 			tmp[0] = _vel / 360.f * PI * WHEEL_DIAMETER * sinf(angle);
 			vel = tmp;
 		}
-
 		float angle{0};
 		Matrixf<2, 1> vel;
 	};

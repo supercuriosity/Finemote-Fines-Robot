@@ -76,12 +76,15 @@ public:
     void Handle() override;
     void LSOdometry();
     void ICFOdometry();
+    void CheckWheelSlip(Matrixf<2,1> velFR,Matrixf<2,1> velFL,Matrixf<2,1> velBL,Matrixf<2,1> velBR);
     void ResetOdometry(float _x,float _y,float _angle);
     bool ChassisStopFlag = true;
     float FBVelocity{}, LRVelocity{}, RTVelocity{};
     float epi = 0.2;
+    float alpha = 0.5;
     float x{0},y{0},yaw{0};
     float FRX,FRY,FLX,FLY,BLX,BLY,BRX,BRY;
+    float wheelError[4]{};
 
     Matrixf<3,3> invA;
     Matrixf<2,3> H1,H2,H3,H4;
