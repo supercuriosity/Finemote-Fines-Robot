@@ -4,7 +4,7 @@
  * All rights reserved.
  ******************************************************************************/
 
-#include "Verify.h"
+#include "CRC.h"
 
 uint8_t CRC8Calc(uint8_t *data, uint16_t length) {
     const uint8_t polynomial = 0x07; // 标准CRC8多项式
