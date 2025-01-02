@@ -7,17 +7,16 @@
 #ifndef FINEMOTE_CHASSIS_H
 #define FINEMOTE_CHASSIS_H
 
+#include <queue>
+
 #include "ProjectConfig.h"
 #include "Matrix/matrix.h"
 #include "DeviceBase.h"
 #include "MotorBase.h"
-#include <queue>
-#include <cmath>
 
 #define LENGTH  0.2406f //车身长0.240225f
 #define WIDTH  0.24f //车身宽
 #define WHEEL_DIAMETER 0.05229//4010直径 m
-#define PI 3.1415926f
 
 class ChassisBuilder;
 class VelocityProfile;
