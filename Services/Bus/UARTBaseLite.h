@@ -60,5 +60,5 @@ private:
     std::function<void(uint8_t*, uint16_t)> decodeFunc = nullptr;
 };
 
-#endif UART_BASE_MODULE
-#endif FINEMOTE_UARTBASELITE_H
+#endif //UART_BASE_MODULE
+#endif //FINEMOTE_UARTBASELITE_H
