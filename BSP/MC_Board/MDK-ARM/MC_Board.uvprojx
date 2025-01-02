@@ -16,8 +16,8 @@
         <TargetCommonOption>
           <Device>STM32F446RCTx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F4xx_DFP.2.14.0</PackID>
-          <PackURL>http://www.keil.com/pack/</PackURL>
+          <PackID>Keil.STM32F4xx_DFP.3.0.0</PackID>
+          <PackURL>https://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000-0x2001FFFF) IROM(0x8000000-0x803FFFF)  CLOCK(25000000) FPU2 CPUTYPE("Cortex-M4") TZ</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F446xx,__MC_BOARD</Define>
               <Undefine></Undefine>
-              <IncludePath>../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../Core/Inc;..;../../../Interface;../../../Services;../../../Devices;../../../Components;../../../Devices/Controllers;../../../Devices/Motors;../../../Algorithms/Communication;../../../Algorithms;../../../Services/Bus;../../../Services/MultiMedia;../../../Services/FineWarden</IncludePath>
+              <IncludePath>../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../Core/Inc;..;../../../Interface;../../../Services;../../../Devices;../../../Devices/Motors;..\..\..\Devices\RemoteControllers;..\..\..\Algorithms;..\..\..\Algorithms\Verification;../../../Services/Bus;../../../Services/MultiMedia;../../../Components</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -765,42 +765,77 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Devices/Controllers</GroupName>
+          <GroupName>Algorithms</GroupName>
           <Files>
             <File>
-              <FileName>DJI_DT7.cpp</FileName>
+              <FileName>ControlBase.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Devices\Controllers\DJI_DT7.cpp</FilePath>
+              <FilePath>..\..\..\Algorithms\Control\ControlBase.cpp</FilePath>
             </File>
             <File>
-              <FileName>RadioMaster_Zorro.cpp</FileName>
+              <FileName>PID.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Devices\Controllers\RadioMaster_Zorro.cpp</FilePath>
+              <FilePath>..\..\..\Algorithms\Control\PID.cpp</FilePath>
             </File>
             <File>
-              <FileName>RemoteControl.cpp</FileName>
+              <FileName>matrix.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Devices\Controllers\RemoteControl.cpp</FilePath>
+              <FilePath>..\..\..\Algorithms\Matrix\matrix.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>CRC.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Algorithms\Verification\CRC.cpp</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Devices/Motors</GroupName>
+          <GroupName>Services</GroupName>
           <Files>
             <File>
-              <FileName>DeviceBase.cpp</FileName>
+              <FileName>BeepMusic.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Devices\DeviceBase.cpp</FilePath>
+              <FilePath>..\..\..\Services\MultiMedia\BeepMusic.cpp</FilePath>
             </File>
             <File>
-              <FileName>MotorBase.cpp</FileName>
+              <FileName>CAN_Base.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Devices\Motors\MotorBase.cpp</FilePath>
+              <FilePath>..\..\..\Services\Bus\CAN_Base.cpp</FilePath>
             </File>
             <File>
-              <FileName>Chassis.cpp</FileName>
+              <FileName>I2C_Base.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Components\Chassis.cpp</FilePath>
+              <FilePath>..\..\..\Services\Bus\I2C_Base.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>RS485_Base.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Services\Bus\RS485_Base.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>UARTBaseLite.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Services\Bus\UARTBaseLite.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Devices</GroupName>
+          <Files>
+            <File>
+              <FileName>D28_485.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Devices\Encoders\D28_485.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Emm28.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Devices\Motors\Emm28.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>HO3507.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Devices\Motors\HO3507.cpp</FilePath>
             </File>
             <File>
               <FileName>Motor4010.cpp</FileName>
@@ -812,75 +847,55 @@
               <FileType>8</FileType>
               <FilePath>..\..\..\Devices\Motors\Motor4315.cpp</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Algorithm/Control</GroupName>
-          <Files>
             <File>
-              <FileName>PID.cpp</FileName>
+              <FileName>MotorBase.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Algorithms\Control\PID.cpp</FilePath>
+              <FilePath>..\..\..\Devices\Motors\MotorBase.cpp</FilePath>
             </File>
             <File>
-              <FileName>Matix.cpp</FileName>
+              <FileName>Odrive.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Algorithms\Matix.cpp</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Algorithm/Communication</GroupName>
-          <Files>
-            <File>
-              <FileName>Verify.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Algorithms\Communication\Verify.cpp</FilePath>
+              <FilePath>..\..\..\Devices\Motors\Odrive.cpp</FilePath>
             </File>
             <File>
-              <FileName>Verify.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\..\..\Algorithms\Communication\Verify.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Services/Bus</GroupName>
-          <Files>
-            <File>
-              <FileName>CAN_Base.cpp</FileName>
+              <FileName>RMD_L_40xx_v3.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Services\Bus\CAN_Base.cpp</FilePath>
+              <FilePath>..\..\..\Devices\Motors\RMD_L_40xx_v3.cpp</FilePath>
             </File>
             <File>
-              <FileName>UART_Base.cpp</FileName>
+              <FileName>DJI_DT7.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Services\Bus\UART_Base.cpp</FilePath>
+              <FilePath>..\..\..\Devices\RemoteControllers\DJI_DT7.cpp</FilePath>
             </File>
             <File>
-              <FileName>UARTBaseLite.cpp</FileName>
+              <FileName>RadioMaster_Pocket.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Services\Bus\UARTBaseLite.cpp</FilePath>
+              <FilePath>..\..\..\Devices\RemoteControllers\RadioMaster_Pocket.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>RadioMaster_Zorro.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Devices\RemoteControllers\RadioMaster_Zorro.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>RemoteControl.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Devices\RemoteControllers\RemoteControl.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>DeviceBase.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\Devices\DeviceBase.cpp</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Services/MultiMedia</GroupName>
+          <GroupName>Components</GroupName>
           <Files>
             <File>
-              <FileName>BeepMusic.cpp</FileName>
+              <FileName>Chassis.cpp</FileName>
               <FileType>8</FileType>
-              <FilePath>..\..\..\Services\MultiMedia\BeepMusic.cpp</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Services/FineWarden</GroupName>
-          <Files>
-            <File>
-              <FileName>FZMotion.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\Services\FineWarden\FZMotion.cpp</FilePath>
+              <FilePath>..\..\..\Components\Chassis.cpp</FilePath>
             </File>
           </Files>
         </Group>
