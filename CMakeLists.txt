@@ -148,5 +148,48 @@ file(GLOB_RECURSE COMMON_SOURCE_FILES
         "Tests/*.*"
         )
 
+include_directories(ThirdParty/CMSIS-DSP/Include)
+include_directories(ThirdParty/CMSIS-DSP/Include/dsp)
+include_directories(ThirdParty/CMSIS-DSP/PrivateInclude)
+
+file(GLOB_RECURSE CMSIS_DSP_SOURCE_FILES
+        "ThirdParty/CMSIS-DSP/Source/BasicMathFunctions/BasicMathFunctions.c"
+        "ThirdParty/CMSIS-DSP/Source/BayesFunctions/BayesFunctions.c"
+        "ThirdParty/CMSIS-DSP/Source/CommonTables/CommonTables.c"
+        "ThirdParty/CMSIS-DSP/Source/ComplexMathFunctions/ComplexMathFunctions.c"
+        "ThirdParty/CMSIS-DSP/Source/ControllerFunctions/ControllerFunctions.c"
+        "ThirdParty/CMSIS-DSP/Source/DistanceFunctions/DistanceFunctions.c"
+        "ThirdParty/CMSIS-DSP/Source/FastMathFunctions/FastMathFunctions.c"
+        "ThirdParty/CMSIS-DSP/Source/FilteringFunctions/FilteringFunctions.c"
+        "ThirdParty/CMSIS-DSP/Source/InterpolationFunctions/InterpolationFunctions.c"
+        "ThirdParty/CMSIS-DSP/Source/MatrixFunctions/MatrixFunctions.c"
+        "ThirdParty/CMSIS-DSP/Source/QuaternionMathFunctions/QuaternionMathFunctions.c"
+        "ThirdParty/CMSIS-DSP/Source/StatisticsFunctions/StatisticsFunctions.c"
+        "ThirdParty/CMSIS-DSP/Source/SupportFunctions/SupportFunctions.c"
+        "ThirdParty/CMSIS-DSP/Source/SVMFunctions/SVMFunctions.c"
+        "ThirdParty/CMSIS-DSP/Source/TransformFunctions/TransformFunctions.c"
+        "ThirdParty/CMSIS-DSP/Source/WindowFunctions/WindowFunctions.c"
+)
+
+if ((NOT ARMAC5) AND (NOT DISABLEFLOAT16))
+file(GLOB_RECURSE CMSIS_DSP_SOURCE_FILES ${CMSIS_DSP_SOURCE_FILES}
+        "ThirdParty/CMSIS-DSP/Source/BasicMathFunctions/BasicMathFunctionsF16.c"
+        "ThirdParty/CMSIS-DSP/Source/BayesFunctions/BayesFunctionsF16.c"
+        "ThirdParty/CMSIS-DSP/Source/CommonTables/CommonTablesF16.c"
+        "ThirdParty/CMSIS-DSP/Source/ComplexMathFunctions/ComplexMathFunctionsF16.c"
+        "ThirdParty/CMSIS-DSP/Source/DistanceFunctions/DistanceFunctionsF16.c"
+        "ThirdParty/CMSIS-DSP/Source/FastMathFunctions/FastMathFunctionsF16.c"
+        "ThirdParty/CMSIS-DSP/Source/FilteringFunctions/FilteringFunctionsF16.c"
+        "ThirdParty/CMSIS-DSP/Source/InterpolationFunctions/InterpolationFunctionsF16.c"
+        "ThirdParty/CMSIS-DSP/Source/MatrixFunctions/MatrixFunctionsF16.c"
+        "ThirdParty/CMSIS-DSP/Source/StatisticsFunctions/StatisticsFunctionsF16.c"
+        "ThirdParty/CMSIS-DSP/Source/SupportFunctions/SupportFunctionsF16.c"
+        "ThirdParty/CMSIS-DSP/Source/SVMFunctions/SVMFunctionsF16.c"
+        "ThirdParty/CMSIS-DSP/Source/TransformFunctions/TransformFunctionsF16.c"
+)
+endif()
+
+file(GLOB_RECURSE COMMON_SOURCE_FILES ${COMMON_SOURCE_FILES} ${CMSIS_DSP_SOURCE_FILES})
+
 add_subdirectory(BSP/MC_Board)
 add_subdirectory(BSP/Robomaster_C)
