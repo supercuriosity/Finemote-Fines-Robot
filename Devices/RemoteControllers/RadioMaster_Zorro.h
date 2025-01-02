@@ -26,6 +26,6 @@ private:
     int32_t channel[16] = {};
 };
 
-#endif RADIOMASTER_ZORRO_MODULE
+#endif //RADIOMASTER_ZORRO_MODULE
 
-#endif FINEMOTE_RADIOMASTER_ZORRO_H
+#endif //FINEMOTE_RADIOMASTER_ZORRO_H

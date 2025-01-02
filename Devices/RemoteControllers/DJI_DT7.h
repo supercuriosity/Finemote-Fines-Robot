@@ -26,6 +26,6 @@ private:
     UART_Agent<0> remoteUart;
 };
 
-#endif DJI_DT7_MODULE
+#endif //DJI_DT7_MODULE
 
-#endif FINEMOTE_DJI_DT7_H
+#endif //FINEMOTE_DJI_DT7_H

@@ -100,5 +100,5 @@ private:
     }
 };
 
-#endif MOTOR_COMPONENTS
-#endif FINEMOTE_RMD_L_40xx_V3_H
+#endif //MOTOR_COMPONENTS
+#endif //FINEMOTE_RMD_L_40xx_V3_H
