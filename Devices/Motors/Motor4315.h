@@ -15,6 +15,7 @@
 #include "DeviceBase.h"
 #include "Bus/RS485_Base.h"
 #include "Motors/MotorBase.h"
+#include "Verification/CRC.h"
 
 template<int busID>
 class Motor4315 : public MotorBase {

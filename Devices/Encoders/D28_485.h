@@ -10,7 +10,7 @@
 #include "ProjectConfig.h"
 #include "DeviceBase.h"
 #include "Bus/RS485_Base.h"
-#include "Communication/Verify.h"
+#include "Verification/CRC.h"
 
 
 template<int busID>

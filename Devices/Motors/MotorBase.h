@@ -3,7 +3,6 @@
 
 #include "DeviceBase.h"
 #include "Control/PID.h"
-#include "Communication/Verify.h"
 
 enum class Motor_Ctrl_Type_e: uint16_t {
     Position = 0,
