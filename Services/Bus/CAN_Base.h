@@ -40,20 +40,31 @@ public:
     CAN_Bus& operator=(const CAN_Bus&) = delete;
 
     static void RxHandle();
+    static void TxReload();
 
-    static void TxLoader();
+    static bool LoadTxData(CAN_Package_t& txbuf) {
+        if (dataQueue.size() < CAN_QUEUE_MAX_NUM) {
+            dataQueue.push(txbuf);
+            if (txOngoing == false) {
+                TxReload();
+                txOngoing = true;
+            }
+            return true;
+        }
+        return false;
+    }
 
     static std::map<uint32_t, uint8_t *> &Getmap(){
         static std::map<uint32_t, uint8_t *> map;
         return map;
     }
-    static std::queue<CAN_Package_t> dataQueue;
     
 private:
     CAN_Bus() {
         static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT), "Using Illegal CAN BUS");
         PeriphralInit();
     }
+
     void PeriphralInit() {
         HALInit::GetInstance();
 
@@ -79,6 +90,9 @@ private:
 
         HAL_CAN_Start(CAN_Buses[busID - 1]);
     }
+
+    static std::queue<CAN_Package_t> dataQueue;
+    static bool txOngoing;
 };
 
 template <int busID>
@@ -105,9 +119,7 @@ public:
         txbuf.IDE = config & CAN_ID_EXT;
         txbuf.RTR = config & CAN_RTR_REMOTE;
 
-        if (CAN_Bus<busID>::GetInstance().dataQueue.size() < CAN_AGNET_TASK_MAX_NUM) {
-            CAN_Bus<busID>::GetInstance().dataQueue.push(txbuf);
-        }
+        CAN_Bus<busID>::LoadTxData(txbuf);
     }
 
     uint8_t& operator[](std::size_t index) {

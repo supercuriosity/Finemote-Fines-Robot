@@ -22,7 +22,7 @@ void CAN_Bus<busID>::RxHandle() {
 }
 
 template <int busID>
-void CAN_Bus<busID>::TxLoader() {
+void CAN_Bus<busID>::TxReload() {
     if (!dataQueue.empty()) {
         CAN_TxHeaderTypeDef Header;
         uint32_t TxMailbox = 0;
@@ -40,16 +40,20 @@ void CAN_Bus<busID>::TxLoader() {
 
         HAL_CAN_AddTxMessage(CAN_Buses[busID - 1], &Header, dataQueue.front().message, &TxMailbox);
         dataQueue.pop();
+    } else {
+        txOngoing = false;
     }
 }
 
 template<int busID>
 std::queue<CAN_Package_t> CAN_Bus<busID>::dataQueue = {};
+template<int busID>
+bool CAN_Bus<busID>::txOngoing = false;
 
 template <int busID>
 void FineMoteAux_CAN::Reloader(CAN_HandleTypeDef* hcan) {
     if (hcan == CAN_Buses[busID - 1]) {
-        CAN_Bus<busID>::TxLoader();
+        CAN_Bus<busID>::TxReload();
     } else {
         Reloader<busID - 1>(hcan);
     }

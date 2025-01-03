@@ -153,9 +153,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
         Task2();
         Task3();
         Task4();
-
-        CAN_Bus<1>::TxLoader();
-        CAN_Bus<2>::TxLoader();
     }
 }
 
