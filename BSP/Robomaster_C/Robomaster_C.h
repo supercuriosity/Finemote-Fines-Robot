@@ -60,7 +60,9 @@ public:
 #define TIM_Control htim7
 #define SPI_BMI088 hspi1 /** todo */
 
-#define CAN_BUS_MAXIMUM_COUNT 2
+#define CAN_PERIPHERAL
+constexpr CAN_HandleTypeDef* CAN_Buses[] = {&hcan1, &hcan2};
+constexpr uint8_t CAN_BUS_MAXIMUM_COUNT = sizeof(CAN_Buses) / sizeof(CAN_HandleTypeDef*);
 
 extern UART_HandleTypeDef *uartHandleList[3];
 #define UART_PERIPHERAL
@@ -69,7 +71,6 @@ extern UART_HandleTypeDef *uartHandleList[3];
 
 #define USER_I2C hi2c2
 #define I2C_PERIPHERAL
-#define CAN_PERIPHERAL
 #define RS485_PERIPHERAL
 
 typedef struct {

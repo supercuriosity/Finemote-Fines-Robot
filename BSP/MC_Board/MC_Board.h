@@ -72,8 +72,9 @@ extern uint16_t rs485TxPinList[3];
 
 #define TIM_Control htim7
 
-#define CAN_BUS_MAXIMUM_COUNT 2
 #define CAN_PERIPHERAL
+constexpr CAN_HandleTypeDef* CAN_Buses[] = {&hcan1, &hcan2};
+constexpr uint8_t CAN_BUS_MAXIMUM_COUNT = sizeof(CAN_Buses) / sizeof(CAN_HandleTypeDef*);
 
 #define RS485_PERIPHERAL
 

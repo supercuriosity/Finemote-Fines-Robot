@@ -19,8 +19,6 @@
  * 远程帧处理
  */
 
-constexpr CAN_HandleTypeDef* qwq[] = {&hcan1, &hcan2};
-
 typedef struct {
     uint8_t DLC;
     uint8_t IDE;
@@ -34,46 +32,16 @@ class CAN_Bus {
 public:
 
     static CAN_Bus &GetInstance() {
-        static CAN_Bus<busID> instance;
+        static CAN_Bus instance;
         return instance;
     }
 
     CAN_Bus(const CAN_Bus &) = delete;
     CAN_Bus& operator=(const CAN_Bus&) = delete;
 
-    static void RxHandle() {
-        uint8_t tempBuf[8];
-        CAN_RxHeaderTypeDef Header;
-        HAL_CAN_GetRxMessage(qwq[busID - 1], CAN_RX_FIFO0, &Header, tempBuf);
+    static void RxHandle();
 
-        if(Header.IDE == CAN_ID_STD) {
-            memcpy(Getmap()[Header.StdId], tempBuf, Header.DLC);
-        }
-        else if(Header.IDE == CAN_ID_EXT) {
-            memcpy(Getmap()[Header.ExtId], tempBuf, Header.DLC);
-        }
-    }
-
-    static void TxLoader() {
-        if (!dataQueue.empty()) {
-            CAN_TxHeaderTypeDef Header;
-            uint32_t TxMailbox = 0;
-
-            if(dataQueue.front().IDE == CAN_ID_STD) {
-                Header.StdId = dataQueue.front().addr;
-            } else if(dataQueue.front().IDE == CAN_ID_EXT) {
-                Header.ExtId = dataQueue.front().addr;
-            }
-
-            Header.DLC = dataQueue.front().DLC;
-            Header.IDE = dataQueue.front().IDE;
-            Header.RTR = dataQueue.front().RTR;
-            Header.TransmitGlobalTime = DISABLE;
-
-            HAL_CAN_AddTxMessage(qwq[busID - 1], &Header, dataQueue.front().message, &TxMailbox);
-            dataQueue.pop();
-        }
-    }
+    static void TxLoader();
 
     static std::map<uint32_t, uint8_t *> &Getmap(){
         static std::map<uint32_t, uint8_t *> map;
@@ -84,10 +52,13 @@ public:
 private:
     CAN_Bus() {
         static_assert((busID > 0) && (busID <= CAN_BUS_MAXIMUM_COUNT), "Using Illegal CAN BUS");
+        PeriphralInit();
+    }
+    void PeriphralInit() {
         HALInit::GetInstance();
 
-        HAL_CAN_ActivateNotification(qwq[busID - 1], CAN_IT_RX_FIFO0_MSG_PENDING);
-        HAL_CAN_ActivateNotification(qwq[busID - 1], CAN_IT_TX_MAILBOX_EMPTY);
+        HAL_CAN_ActivateNotification(CAN_Buses[busID - 1], CAN_IT_RX_FIFO0_MSG_PENDING);
+        HAL_CAN_ActivateNotification(CAN_Buses[busID - 1], CAN_IT_TX_MAILBOX_EMPTY);
 
         CAN_FilterTypeDef canFilter;
         canFilter.FilterMode = CAN_FILTERMODE_IDMASK;
@@ -100,13 +71,13 @@ private:
         canFilter.FilterActivation = ENABLE;
         switch (busID)
         {
-        case 1:canFilter.FilterBank = 0; break;
-        case 2:canFilter.FilterBank = 14; break;
+            case 1:canFilter.FilterBank = 0; break;
+            case 2:canFilter.FilterBank = 14; break;
         }
         canFilter.SlaveStartFilterBank = 14;
-        HAL_CAN_ConfigFilter(qwq[busID - 1], &canFilter);
+        HAL_CAN_ConfigFilter(CAN_Buses[busID - 1], &canFilter);
 
-        HAL_CAN_Start(qwq[busID - 1]);
+        HAL_CAN_Start(CAN_Buses[busID - 1]);
     }
 };
 
@@ -140,7 +111,11 @@ public:
     }
 
     uint8_t& operator[](std::size_t index) {
-            return txbuf.message[index];
+        return txbuf.message[index];
+    }
+
+    uint8_t operator[] (std::size_t index) const {
+        return rxbuf[index];
     }
 
     uint32_t addr;
@@ -148,6 +123,19 @@ public:
 
 private:
     CAN_Package_t txbuf = {8};
+};
+
+class FineMoteAux_CAN {
+public:
+    template <int busID>
+    static void Reloader(CAN_HandleTypeDef* hcan);
+
+    template <int busID>
+    static void Distributer(CAN_HandleTypeDef* hcan);
+
+    static void Reload(CAN_HandleTypeDef* hcan);
+
+    static void Distribute(CAN_HandleTypeDef* hcan);
 };
 
 #endif //CAN_BASE_MODULE
