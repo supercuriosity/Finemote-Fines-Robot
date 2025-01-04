@@ -1,4 +1,3 @@
-#THIS FILE IS AUTO GENERATED FROM THE TEMPLATE! DO NOT CHANGE!
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_VERSION 1)
 cmake_minimum_required(VERSION 3.21)
@@ -24,7 +23,6 @@ set(CMAKE_CXX_COMPILER_WORKS TRUE)
 
 #设置 ASM 的编译器（不设置配合 -masm=auto 使用）
 set(CMAKE_ASM_COMPILER armclang.exe)
-#set(CMAKE_ASM_COMPILER armasm.exe)     # 指明 ASM 编译器，配合 第二种 CMAKE_ASM_FLAGS_INIT 方式使用
 set(CMAKE_ASM_COMPILER_WORKS TRUE)
 
 #设置链接器
@@ -59,31 +57,19 @@ set(COMPILE_RULE_FLAG "-mcpu=${CMAKE_SYSTEM_PROCESSOR}")
 # 设置 C 编译器选项(这里就把MDK中的 C/C++ 分页里最下边一栏的属性贴进来)
 # 参数 -w 表示忽略所有警告，不然要配具体忽略哪些警告，尽管贴过来也行，但是太乱
 # 优化选项 -O 有 1~3   -Os 是平衡  -Oz 是最小体积
-set(CMAKE_C_FLAGS_INIT "${C_TARGET_FLAG} ${COMPILE_RULE_FLAG} \
+set(CMAKE_C_FLAGS "${C_TARGET_FLAG} ${COMPILE_RULE_FLAG} \
     \
     -fno-rtti -funsigned-char -fshort-enums -fshort-wchar \
-    -gdwarf-4 -Oz -ffunction-sections \
-    -w")
-
-
-# -xc -std=c11 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c
-#-fno-rtti -flto -funsigned-char -fshort-enums -fshort-wchar
-#-gdwarf-4 -Os -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../userCode/devices/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc -I ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc -I ../userCode/tasks/Inc -I ../userCode/algorithms/Inc -I ../userCode/bsp/Inc -I ../userCode/drivers/Inc -I ../userCode/MiddleWares/Inc
-#-I./RTE/_RM_Frame_C
-#-IC:/Users/xw/AppData/Local/Arm/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include
-#-IC:/Users/xw/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.14.0/Drivers/CMSIS/Device/ST/STM32F4xx/Include
-#-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx
-#-o ./RM_Frame_C/*.o -MD
+    -gdwarf-4 -O0 -ffunction-sections \
+    -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier \
+    ")
 
 # 设置 C++ 编译器选项
-set(CMAKE_CXX_FLAGS_INIT ${CMAKE_C_FLAGS_INIT})
+set(CMAKE_CXX_FLAGS ${CMAKE_C_FLAGS})
 
-# 设置ASM编译器选项
-# 注意： -masm=auto 选项是 MDK 的 link 分页里没有的参数，需要加上  -g 是debug 用的加不加都行
+
 set(CMAKE_ASM_FLAGS_INIT "${ASM_TARGET_FLAG} ${COMPILE_RULE_FLAG} \
         -masm=auto -c -gdwarf-4")
-# 第二种方式 配套显示执行 armasm.exe 为 ASM 编译器的方法，看上起更清晰一些
-#set(CMAKE_ASM_FLAGS_INIT "${ASM_TARGET_FLAG} --cpu=Cortex-M3")
 
 
 
@@ -139,7 +125,7 @@ INCLUDE_SUB_DIR_INC(${PROJECT_SOURCE_DIR}/Tests)
 
 # 对于混合兼容的环境，需要屏蔽各种编译环境引起的文件“干扰”,通过 list(REMOVE_ITEM) 命令移除不同编译环境下的干扰文件
 # 获取不同芯片的公共代码，于子模块中调用此变量
-file(GLOB_RECURSE COMMON_SOURCE_FILES
+file(GLOB_RECURSE FINEMOTE_SOURCE_FILES
         "Interface/*.*"
         "Devices/*.*"
         "Algorithms/*.*"
@@ -189,7 +175,7 @@ file(GLOB_RECURSE CMSIS_DSP_SOURCE_FILES ${CMSIS_DSP_SOURCE_FILES}
 )
 endif()
 
-file(GLOB_RECURSE COMMON_SOURCE_FILES ${COMMON_SOURCE_FILES} ${CMSIS_DSP_SOURCE_FILES})
+file(GLOB_RECURSE COMMON_SOURCE_FILES ${FINEMOTE_SOURCE_FILES} ${CMSIS_DSP_SOURCE_FILES})
 
 add_subdirectory(BSP/MC_Board)
 add_subdirectory(BSP/Robomaster_C)
