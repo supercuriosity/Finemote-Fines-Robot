@@ -14,7 +14,7 @@ set(SECTIONS_SCRIPT_PATH ${CMAKE_HOME_DIRECTORY}/Bsp/${BOARD_NAME}/MDK-ARM/${BOA
 # 设置链接器选项
 # 这些参数再 ARMCC 文档里么有，但 MDK 的 link 分页有，
 # 使用忽略所有警告的配置时没有 --map 及其之后的内容， 这里根据需要保留了一些信息，在 demo.map 中可以看到
-set(CMAKE_EXE_LINKER_FLAGS_INIT " \
+set(CMAKE_EXE_LINKER_FLAGS " \
     ${LINKER_TARGET_FLAG} \
     --strict \
     --scatter ${SECTIONS_SCRIPT_PATH} \
