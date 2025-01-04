@@ -1,43 +1,36 @@
-# 更换芯片需要修改的部分
-set(BOARD_NAME Robomaster_C)        #对应Bsp包项目名，即开发板板名
-set(CHIP_MODEL STM32F407xx)     #开发板使用的芯片型号，用于添加HAL使用的芯片定义
-
-
-# 以下部分在不同芯片间通用
 #*******************************************************************************************#
-# 获取芯片地址描述信息
-# 获取当前 MCU 的 section 描述，及存储空间和起始地址的描述（注意：需要先用 keil 打开编译一下当前项目才能生成）
-# 设置Sections脚本路径,CubeMX生成 MDK 后先编译一下，就会在MDK-ARM 目录下生成工程名命名的文件夹
-# 在那个目录里会生成以项目名命名的sct文件。 由于在本地调用，不需要加 global 全局变量标记，更简洁
-set(SECTIONS_SCRIPT_PATH ${CMAKE_HOME_DIRECTORY}/Bsp/${BOARD_NAME}/MDK-ARM/${BOARD_NAME}/${BOARD_NAME}.sct)
+# 该部分内容需要根据实际情况修改 Begin
 
-set(CMAKE_EXE_LINKER_FLAGS " \
-    ${LINKER_TARGET_FLAG} \
-    --strict \
-    --scatter ${SECTIONS_SCRIPT_PATH} \
-    --info sizes --info totals --info unused --info veneers \
-    --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols \
-    --list ${BOARD_NAME}.map \
-    " )
+# 更换BSP需要修改的部分
+set(BOARD_NAME Robomaster_C)
+set(CHIP_NAME STM32F407xx)
+set(CMAKE_SYSTEM_PROCESSOR cortex-m4)
 
-include_directories(
-        .
-        Drivers/CMSIS/Include
-        Drivers/CMSIS/Device/ST/STM32F4xx/Include
-        Drivers/STM32F4xx_HAL_Driver/Inc
-        Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
-        Core/Inc
+# FPU设置
+add_compile_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
+add_compile_definitions(ARM_MATH_CM4;ARM_MATH_MATRIX_CHECK;ARM_MATH_ROUNDING)
+
+# 该部分内容需要根据实际情况修改 End
+#*******************************************************************************************#
+# 添加BSP文件
+
+file(GLOB BSP_INCLUDE_DIRS
+        "Drivers/CMSIS/Include"
+        "Drivers/STM32F*xx_HAL_Driver/Inc"
+        "Drivers/STM32F*xx_HAL_Driver/Inc/Legacy"
+        "Drivers/CMSIS/Device/ST/STM32F*xx/Include"
+        "Core/Inc"
 )
 
-# 获取源文件，一并添加公共部分的源文件
-file(GLOB_RECURSE SOURCES ${COMMON_SOURCE_FILES}
+include_directories(. ${BSP_INCLUDE_DIRS})
+
+file(GLOB_RECURSE SOURCES ${FINEMOTE_COMMON_SOURCE_FILES}
         "Drivers/*.*"
         "Core/*.*"
         "MDK-ARM/startup_*.s"
         "./*.cpp"
 )
 
-# 将由 CubeMX 生成的 GCC 编译环境中的会干扰ARMCC环境的文件，放在 EXCLUDE_SRCS 自定义列表中
 file(GLOB_RECURSE EXCLUDE_SRCS
         "Core/Startup/*.*"
         "Core/Src/syscalls.c"
@@ -49,13 +42,41 @@ file(GLOB_RECURSE EXCLUDE_SRCS
 # 从源文件列表(SOURCES)中剔除干扰文件(EXCLUDE_SRCS)
 list(REMOVE_ITEM SOURCES ${EXCLUDE_SRCS})
 
-add_executable(${BOARD_NAME} ${SOURCES} ${LINKER_SCRIPT})
+#*******************************************************************************************#
 
-
-
+# BSP宏定义
 string(TOUPPER ${BOARD_NAME} UPPER_BOARD_NAME)
-add_definitions(-DUSE_HAL_DRIVER -D${CHIP_MODEL} -D__${UPPER_BOARD_NAME})
+add_definitions(-DUSE_HAL_DRIVER -D${CHIP_NAME} -D__${UPPER_BOARD_NAME})
 
+set(COMPILE_RULE_FLAG "-mcpu=${CMAKE_SYSTEM_PROCESSOR}")
+set(LINKER_TARGET_FLAG "--cpu=${CMAKE_SYSTEM_PROCESSOR}")
+
+#*******************************************************************************************#
+# 设置编译选项
+set(CMAKE_C_FLAGS "${C_TARGET_FLAG} ${COMPILE_RULE_FLAG} \
+    -fno-rtti -funsigned-char -fshort-enums -fshort-wchar \
+    -gdwarf-4 -Os -ffunction-sections \
+    -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier \
+    ")
+set(CMAKE_CXX_FLAGS ${CMAKE_C_FLAGS})
+set(CMAKE_ASM_FLAGS "${ASM_TARGET_FLAG} ${COMPILE_RULE_FLAG} -masm=auto -c -gdwarf-4")
+
+#*******************************************************************************************#
+# 设置链接选项
+set(SECTIONS_SCRIPT_PATH ${CMAKE_HOME_DIRECTORY}/Bsp/${BOARD_NAME}/MDK-ARM/${BOARD_NAME}/${BOARD_NAME}.sct)
+
+set(CMAKE_EXE_LINKER_FLAGS " \
+    ${LINKER_TARGET_FLAG} \
+    --strict \
+    --scatter ${SECTIONS_SCRIPT_PATH} \
+    --info sizes --info totals --info unused --info veneers \
+    --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols \
+    --list ${BOARD_NAME}.map \
+    " )
+
+#*******************************************************************************************#
+# 生成可执行文件
+add_executable(${BOARD_NAME} ${SOURCES} ${LINKER_SCRIPT})
 
 set(HEX_FILE ${CMAKE_BINARY_DIR}/bin/${BOARD_NAME}.hex)
 set(BIN_FILE ${CMAKE_BINARY_DIR}/bin/${BOARD_NAME}.bin)
