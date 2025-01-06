@@ -93,7 +93,7 @@ private:
     }
 
     void Update() {
-        state.position = -(int16_t)(canAgent.rxbuf[6] | (canAgent.rxbuf[7] << 8u));//规定电机加速度正方向为顺时针
+        state.position = (int16_t)(canAgent.rxbuf[6] | (canAgent.rxbuf[7] << 8u)) / 65536.0f * 360.0f;
         state.speed = (int16_t)(canAgent.rxbuf[4] | (canAgent.rxbuf[5] << 8u));
         state.torque = (int16_t)(canAgent.rxbuf[2] | (canAgent.rxbuf[3] << 8u));
         state.temperature = (int8_t)(canAgent.rxbuf[1]);
