@@ -17,11 +17,11 @@ typedef struct {
     float temperature;//电机温度，单位摄氏度
 } Motor_State_t;
 
-typedef struct {
+using Motor_Param_t = struct Motor_Param_t {
     Motor_Ctrl_Type_e ctrlType;//控制电机的方式
     Motor_Ctrl_Type_e targetType;//控制电机哪个状态
     float reductionRatio = 1;//减速比
-} Motor_Param_t;
+};
 
 class MotorBase : public DeviceBase {
 public:
