@@ -68,15 +68,6 @@ private:
                 constexpr uint16_t txSpeed = 0x800;
                 float targetAngle = controller->GetOutput();
 
-
-                //多圈角度功能实现
-                while(targetAngle-state.position<-180){
-                    targetAngle += 360.f;
-                }
-                if(targetAngle-state.position>180){
-                    targetAngle -= 360.f;
-                }
-
                 int32_t txAngle = 100 * targetAngle * -1;//统一正方向
                 canAgent[0] = 0xA4;
                 canAgent[1] = 0x00;

@@ -20,6 +20,7 @@ typedef struct {
 using Motor_Param_t = struct Motor_Param_t {
     Motor_Ctrl_Type_e ctrlType;//控制电机的方式
     Motor_Ctrl_Type_e targetType;//控制电机哪个状态
+    bool multiTurnSamePosition = false;//多圈电机是否在同一位置
     float reductionRatio = 1;//减速比
 };
 
@@ -73,6 +74,15 @@ public:
             return;
         }
         target = targetAngle;
+
+        if (params.multiTurnSamePosition) {
+            while (target - state.position < -180.f * params.reductionRatio){
+                target += 360.f * params.reductionRatio;
+            }
+            while (target - state.position > 180.f * params.reductionRatio){
+                target -= 360.f * params.reductionRatio;
+            }
+        }
     }
 
     Motor_State_t& GetState(){

@@ -48,14 +48,6 @@ private:
         case Motor_Ctrl_Type_e::Position: {
             float targetAngle = controller->GetOutput();
 
-             //多圈角度功能实现
-            while(targetAngle-state.position<-180){
-                targetAngle += 360.f;
-            }
-            while(targetAngle-state.position>180){
-                targetAngle -= 360.f;
-            }
-
             int32_t txAngle = targetAngle * 16384.0f / 360.0f;
             rs485Agent.txbuf[0] = 0x3E;//协议头
             rs485Agent.txbuf[1] = 0x00;//包序号
