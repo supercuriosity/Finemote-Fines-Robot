@@ -47,8 +47,7 @@ private:
 
         switch (params.ctrlType) {
             case Motor_Ctrl_Type_e::Torque: {
-                float txTorque = controller->GetOutput();
-                INRANGE(txTorque, -2000, 2000);
+                float txTorque = Clamp(1 * controller->GetOutput(), -2000.f, 2000.f);
                 volatile uint32_t txTorqueFloat = *reinterpret_cast<uint32_t*>(&txTorque);
 
                 for (int i = 0; i < 4; ++i) {

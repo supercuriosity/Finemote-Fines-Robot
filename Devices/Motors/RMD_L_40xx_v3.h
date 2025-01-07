@@ -11,7 +11,6 @@
 
 #ifdef MOTOR_COMPONENTS
 
-#include "DeviceBase.h"
 #include "Bus/CAN_Base.h"
 #include "Motors/MotorBase.h"
 
@@ -51,8 +50,7 @@ private:
     void MessageGenerate() {
         switch (params.ctrlType) {
             case Motor_Ctrl_Type_e::Torque: {
-                volatile int16_t txTorque = controller->GetOutput();
-                INRANGE(txTorque,-2000,2000);
+                int16_t txTorque = Clamp(-controller->GetOutput(), -500.f, 500.f);
 
                 canAgent[0] = 0xA1;
                 canAgent[1] = 0x00;
@@ -66,7 +64,7 @@ private:
             }
             case Motor_Ctrl_Type_e::Position: {
                 constexpr uint16_t txSpeed = 0x800;
-                float targetAngle = controller->GetOutput();
+                float targetAngle = -controller->GetOutput();
 
                 int32_t txAngle = 100 * targetAngle * -1;//统一正方向
                 canAgent[0] = 0xA4;
@@ -84,9 +82,9 @@ private:
     }
 
     void Update() {
-        state.position = (int16_t)(canAgent.rxbuf[6] | (canAgent.rxbuf[7] << 8u)) / 65536.0f * 360.0f;
-        state.speed = (int16_t)(canAgent.rxbuf[4] | (canAgent.rxbuf[5] << 8u));
-        state.torque = (int16_t)(canAgent.rxbuf[2] | (canAgent.rxbuf[3] << 8u));
+        state.position = -(int16_t)(canAgent.rxbuf[6] | (canAgent.rxbuf[7] << 8u)) / 65536.0f * 360.0f;
+        state.speed = -(int16_t)(canAgent.rxbuf[4] | (canAgent.rxbuf[5] << 8u));
+        state.torque = -(int16_t)(canAgent.rxbuf[2] | (canAgent.rxbuf[3] << 8u));
         state.temperature = (int8_t)(canAgent.rxbuf[1]);
     }
 };

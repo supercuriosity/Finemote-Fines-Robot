@@ -11,7 +11,6 @@
 
 #ifdef MOTOR_COMPONENTS
 
-#include "DeviceBase.h"
 #include "Bus/CAN_Base.h"
 #include "Motors/MotorBase.h"
 
@@ -50,8 +49,7 @@ private:
     void MessageGenerate() {
         switch (params.ctrlType) {
             case Motor_Ctrl_Type_e::Torque: {
-                volatile int16_t txTorque = controller->GetOutput();
-                INRANGE(txTorque,-2000,2000);
+                volatile int16_t txTorque = Clamp(1 * controller->GetOutput(), -2000.f, 2000.f);
 
                 canAgent[0] = 0xA1;
                 canAgent[1] = 0x00;
