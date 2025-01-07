@@ -23,7 +23,7 @@ public:
 
     template<typename T>
     RMD_L_40xx_v3(const Motor_Param_t&& params, T& _controller, uint32_t addr) : MotorBase(std::forward<const Motor_Param_t>(params)), canAgent(addr) {
-        SetDivisionFactor(5);
+        SetDivisionFactor(2);
         ResetController(_controller);
     }
 

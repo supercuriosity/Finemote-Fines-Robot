@@ -64,7 +64,7 @@ Motor4315<1> SFLMotor(DIRECT_POSITION, swerveControllers[2], 0x02);
 Motor4315<1> SFRMotor(DIRECT_POSITION, swerveControllers[3], 0x01);*/
 
 
-constexpr PID_Param_t speedPID = {0.1f, 0.003f, 0.1f, 2000, 2000};
+constexpr PID_Param_t speedPID = {0.15f, 0.03f, 0.8f, 2000, 2000};
 constexpr PID_Param_t positionInnerPID = {0.32f, 0.0f, 0.2f, 2000, 2000};
 constexpr PID_Param_t potisionOuterPID = {22.0f, 0.003f, 0.5f, 2000, 2000};
 
