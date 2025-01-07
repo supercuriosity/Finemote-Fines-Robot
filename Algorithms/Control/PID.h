@@ -11,9 +11,21 @@
 
 #include "ControlBase.h"
 
-#define INRANGE(NUM, MIN, MAX) \
-    NUM = ((NUM > (MIN) ? NUM : (MIN)) \
-          < (MAX) ? NUM : (MAX))
+template <typename T>
+T& Clamp(T& value, const T& min, const T& max) {
+    static_assert(std::is_lvalue_reference<T&>::value, "value must be a reference (lvalue)");
+    if (value < min) value = min;
+    else if (value > max) value = max;
+    return value;
+}
+
+template <typename T>
+T Clamp(T&& value, const T& min, const T& max) {
+    static_assert(!std::is_lvalue_reference<T&&>::value, "value must be temporary (rvalue)");
+    if (value < min) value = min;
+    else if (value > max) value = max;
+    return value;
+}
 
 typedef struct PID_Param_t {
     float kp;
@@ -30,10 +42,10 @@ public:
     const float& Calc() override{
         float error = *targetPtr - *feedbackPtr;
         totalError += error;
-        INRANGE(totalError, -1 * params.iMax, params.iMax);
+        Clamp(totalError, -1 * params.iMax, params.iMax);
         output = params.kp * error + params.ki * totalError + params.kd * (error - lastError);
         lastError = error;
-        return INRANGE(output, -1 * params.outputMax, params.outputMax);
+        return Clamp(output, -1 * params.outputMax, params.outputMax);
     }
 
 private:
