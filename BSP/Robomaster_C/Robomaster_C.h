@@ -21,46 +21,20 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern void SystemClock_Config();
+
+extern int main();
+
 #ifdef __cplusplus
-};
+}
 #endif
 
 class HALInit{
 /**
  *  @attention 此函数需要与cube生成的保持一致
  */
-    HALInit(){
-        HAL_Init();
-        SystemClock_Config();
-
-        /* USER CODE BEGIN SysInit */
-
-        /* USER CODE END SysInit */
-
-        /* Initialize all configured peripherals */
-        MX_GPIO_Init();
-        MX_DMA_Init();
-        MX_ADC1_Init();
-        MX_ADC3_Init();
-        MX_CAN1_Init();
-        MX_CAN2_Init();
-        MX_SPI1_Init();
-        MX_TIM4_Init();
-        MX_TIM5_Init();
-        MX_USART3_UART_Init();
-        MX_TIM8_Init();
-        MX_I2C3_Init();
-        MX_TIM1_Init();
-        MX_TIM3_Init();
-        MX_TIM10_Init();
-        MX_USART1_UART_Init();
-        MX_USART6_UART_Init();
-        MX_TIM6_Init();
-       // MX_IWDG_Init();
-        MX_TIM7_Init();
-        MX_I2C2_Init();
-    };
+    HALInit() {
+        main();
+    }
 
 public:
     HALInit(const HALInit &) = delete;
@@ -86,17 +60,18 @@ public:
 #define TIM_Control htim7
 #define SPI_BMI088 hspi1 /** todo */
 
-#define CAN_BUS_MAXIMUM_COUNT 2
+#define CAN_PERIPHERAL
+constexpr CAN_HandleTypeDef* CAN_Buses[] = {&hcan1, &hcan2};
+constexpr uint8_t CAN_BUS_MAXIMUM_COUNT = sizeof(CAN_Buses) / sizeof(CAN_HandleTypeDef*);
 
 extern UART_HandleTypeDef *uartHandleList[3];
-extern GPIO_TypeDef *uartTxPortList[3];
-extern uint16_t uartTxPinList[3];
 #define UART_PERIPHERAL
+
+#define RS485_NO_XXX
 
 #define USER_I2C hi2c2
 #define I2C_PERIPHERAL
-#define CAN_PERIPHERAL
-
+#define RS485_PERIPHERAL
 
 typedef struct {
     TIM_HandleTypeDef* timerPtr; // 定时器HAL对象指针

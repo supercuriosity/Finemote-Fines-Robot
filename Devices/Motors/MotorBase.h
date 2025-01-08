@@ -3,7 +3,6 @@
 
 #include "DeviceBase.h"
 #include "Control/PID.h"
-#include "Communication/Verify.h"
 
 enum class Motor_Ctrl_Type_e: uint16_t {
     Position = 0,
@@ -18,11 +17,12 @@ typedef struct {
     float temperature;//电机温度，单位摄氏度
 } Motor_State_t;
 
-typedef struct {
+using Motor_Param_t = struct Motor_Param_t {
     Motor_Ctrl_Type_e ctrlType;//控制电机的方式
     Motor_Ctrl_Type_e targetType;//控制电机哪个状态
+    bool multiTurnSamePosition = false;//多圈电机是否在同一位置
     float reductionRatio = 1;//减速比
-} Motor_Param_t;
+};
 
 class MotorBase : public DeviceBase {
 public:
@@ -74,6 +74,19 @@ public:
             return;
         }
         target = targetAngle;
+
+        if (params.multiTurnSamePosition) {
+            while (target - state.position < -180.f * params.reductionRatio){
+                target += 360.f * params.reductionRatio;
+            }
+            while (target - state.position > 180.f * params.reductionRatio){
+                target -= 360.f * params.reductionRatio;
+            }
+        }
+    }
+
+    Motor_State_t& GetState(){
+        return state;
     }
 
 protected:

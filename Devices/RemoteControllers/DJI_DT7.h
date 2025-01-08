@@ -4,34 +4,28 @@
  * All rights reserved.
  ******************************************************************************/
 
-#ifndef FINEMOTE_RADIOMASTER_ZORRO_H
-#define FINEMOTE_RADIOMASTER_ZORRO_H
+#ifndef FINEMOTE_DJI_DT7_H
+#define FINEMOTE_DJI_DT7_H
 
 #include "ProjectConfig.h"
 
-#ifdef RADIOMASTER_ZORRO_MODULE
+#ifdef DJI_DT7_MODULE
 
 #include "RemoteControl.h"
+#include "Bus/UART_Base.h"
 
-class RadioMaster_Zorro : public RemoteControl{
+class DT7 : public RemoteControl{
 public:
-    RadioMaster_Zorro()
-    {
-        HALInit::GetInstance();
-        remoteUart.Read(rxBuff, [this](UART_Task_t a) { this->Decode(a); });
-    }
-    ~RadioMaster_Zorro();
-    void Handle(void) override;
-    void Decode(UART_Task_t _data) override;
+    void Decode(uint8_t*, uint16_t) override {};
+
 private:
     static constexpr uint32_t SBUS_RX_BUF_NUM = 50;
     static constexpr int32_t RC_CH_VALUE_OFFSET = 1024;
     uint8_t rxBuff[SBUS_RX_BUF_NUM];
     int32_t channel[16];
     UART_Agent<0> remoteUart;
-    uint32_t last_stamp;
 };
 
-#endif
+#endif //DJI_DT7_MODULE
 
-#endif //FINEMOTE_RADIOMASTER_ZORRO_H
+#endif //FINEMOTE_DJI_DT7_H

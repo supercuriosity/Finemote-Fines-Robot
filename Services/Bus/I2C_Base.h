@@ -24,8 +24,8 @@
 using ByteVector = std::vector<uint8_t>;
 
 typedef enum : uint8_t {
-    READ = 0,
-    WRITE,
+    I2CREAD =0,
+    I2CWRITE,
     WRITE_READ,
     READ_VECTOR,
     WRITE_VECTOR,
@@ -45,7 +45,7 @@ typedef struct I2C_Task_t{
 
 } I2C_Task_t;
 
-using CallbackFuncPtr = std::function<void(I2C_Task_t)>;
+using I2C_CallbackFuncPtr = std::function<void(I2C_Task_t)>;
 
 
 
@@ -78,7 +78,7 @@ public:
         uint8_t tmpVector[8];
         std::copy(tmpResource.data.begin(),tmpResource.data.end(),tmpVector);
         switch (resourceList.back().task) {
-            case READ:
+            case I2CREAD:
                 status =  HAL_I2C_Master_Receive_IT(&USER_I2C, resourceList.back().addr << 1,
                                                     resourceList.back().bufPtr, resourceList.back().size);
                 break;
@@ -86,9 +86,9 @@ public:
                 status =  HAL_I2C_Master_Receive_IT(&USER_I2C, resourceList.back().addr << 1,
                                                     resourceList.back().data.data(), resourceList.back().data.size());
                 break;//TODO 维护多个可用的I2C总线
-            case WRITE:
                 status = HAL_I2C_Master_Transmit_IT(&USER_I2C, resourceList.back().addr << 1 | 0x01,
                                                     resourceList.back().bufPtr, resourceList.back().size);
+            case I2CWRITE:
                 break;
             case WRITE_VECTOR:
                 status = HAL_I2C_Master_Transmit_IT(&USER_I2C, resourceList.back().addr << 1 | 0x01,
@@ -175,12 +175,12 @@ public:
         //HAL_I2C_IsDeviceReady(&hi2c2, addr << 1, 10, 1000);
     }
 
-    void Read(uint8_t * _bufPtr,uint8_t _size,CallbackFuncPtr callPtr = nullptr){
+    void Read(uint8_t * _bufPtr,uint8_t _size,I2C_CallbackFuncPtr callPtr = nullptr){
         if (i2CBusRef.taskQueue.size() >= I2C_AGNET_TASK_MAX_NUM) return;
         I2C_Task_t tmpTask;
         tmpTask.taskID = ++i2CBusRef.taskID;
         tmpTask.addr = addr;
-        tmpTask.task = READ;
+        tmpTask.task = I2CREAD;
         tmpTask.bufPtr = _bufPtr;
         tmpTask.size = _size;
         tmpTask.callbackFuncPtr = callPtr;
@@ -188,7 +188,7 @@ public:
     }
 
 
-    void Read(ByteVector dataVector,CallbackFuncPtr callPtr = nullptr){
+    void Read(ByteVector dataVector,I2C_CallbackFuncPtr callPtr = nullptr){
         if (i2CBusRef.taskQueue.size() >= I2C_AGNET_TASK_MAX_NUM) return;
         I2C_Task_t tmpTask;
         tmpTask.taskID = ++i2CBusRef.taskID;
@@ -199,12 +199,12 @@ public:
         i2CBusRef.taskQueue.push( std::move(tmpTask));
     }
 
-    void Write(uint8_t * _bufPtr,uint8_t _size,CallbackFuncPtr callPtr = nullptr){
+   /* void Write(uint8_t * _bufPtr,uint8_t _size,I2C_CallbackFuncPtr callPtr = nullptr){
         if (i2CBusRef.taskQueue.size() >= I2C_AGNET_TASK_MAX_NUM) return;
         I2C_Task_t tmpTask;
         tmpTask.taskID = ++i2CBusRef.taskID;
         tmpTask.addr = addr;
-        tmpTask.task = WRITE;
+        tmpTask.task = I2CWRITE;
         tmpTask.bufPtr = _bufPtr;
         tmpTask.size = _size;
         tmpTask.callbackFuncPtr = callPtr;
@@ -221,7 +221,7 @@ public:
         i2CBusRef.taskQueue.push( std::move(tmpTask));
     }
 
-    void WriteRead(uint8_t _reg,uint8_t * _bufPtr,uint8_t _size,CallbackFuncPtr callPtr = nullptr){
+    void WriteRead(uint8_t _reg,uint8_t * _bufPtr,uint8_t _size,I2C_CallbackFuncPtr callPtr = nullptr){
         if (i2CBusRef.taskQueue.size() >= I2C_AGNET_TASK_MAX_NUM) return;
         I2C_Task_t tmpTask;
         tmpTask.taskID = ++i2CBusRef.taskID;
@@ -234,7 +234,7 @@ public:
         i2CBusRef.taskQueue.push( std::move(tmpTask));
     }
 
-    void WriteRead(uint8_t reg,ByteVector dataVector,CallbackFuncPtr callPtr = nullptr){
+    void WriteRead(uint8_t reg,ByteVector dataVector,I2C_CallbackFuncPtr callPtr = nullptr){
         if (i2CBusRef.taskQueue.size() >= I2C_AGNET_TASK_MAX_NUM) return;
         I2C_Task_t tmpTask;
         tmpTask.taskID = ++i2CBusRef.taskID;

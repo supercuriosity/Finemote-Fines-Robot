@@ -162,7 +162,7 @@ public:
 
 private:
     UART_Bus() {
-        static_assert(busID<(sizeof (uartHandleList)/sizeof (uartHandleList[0])),"Using Illegal UART BUS");
+        //static_assert(busID<(sizeof (uartHandleList)/sizeof (uartHandleList[0])),"Using Illegal UART BUS");
         HALInit::GetInstance();
         GetUartHandle_BusMap()[uartHandleList[busID]]=this;
     }

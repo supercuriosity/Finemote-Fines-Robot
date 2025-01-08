@@ -8,15 +8,7 @@
 
 #ifdef DJI_DT7_MODULE
 
-DT7::DT7() {
-
-}
-
-DT7::~DT7() {
-
-}
-
-void DT7::Decode(UART_Task_t _data) {
+/*void DT7::Decode(UART_Task_t _data) {
 
     info.sLeft = (SWITCH_STATE_E)((rxBuff[5] >> 4) & 0x000C) >> 2;
     info.sRight = (SWITCH_STATE_E)(rxBuff[5] >> 4) & 0x0003;
@@ -36,10 +28,6 @@ void DT7::Decode(UART_Task_t _data) {
     info.dialWheel = rxBuff[16] | (rxBuff[17] << 8) - RC_CH_VALUE_OFFSET;
 
 //    HAL_IWDG_Refresh(&hiwdg);//喂狗
-}
-
-void DT7::Handle() {
-    remoteUart.Read(rxBuff,[this](UART_Task_t a){this->Decode(a);});
-}
+}*/
 
 #endif

@@ -4,7 +4,9 @@
  * All rights reserved.
  ******************************************************************************/
 
-# include "UART_Base.h"
+#include "UART_Base.h"
+#include "RS485_Base.h"
+#include "UARTBaseLite.h"
 
 #ifdef UART_BASE_MODULE
 
@@ -18,11 +20,23 @@ std::map<UART_HandleTypeDef*,UART_Base*>& GetUartHandle_BusMap() {
 extern "C" {
 #endif
 
-
-
 // 发送完成中断回调函数
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
-    GetUartHandle_BusMap()[huart]->CallbackHandle(UART_Base::Callback_e::WRITE);
+#ifdef __ROBOMASTER_C
+    if (huart == &huart6) {
+        UARTBaseLite<2>::GetInstance().TxLoader();
+        GetUartHandle_BusMap()[huart]->CallbackHandle(UART_Base::Callback_e::WRITE);
+    }
+#endif
+#ifdef __MC_BOARD
+    if(huart == &huart5) {
+        UARTBaseLite<5>::GetInstance().TxLoader();
+        GetUartHandle_BusMap()[huart]->CallbackHandle(UART_Base::Callback_e::WRITE);
+    }
+#endif
+    else if(huart == &huart1){
+        RS485_Base<1>::GetInstance().RxHandle();
+    }
     //UART_Bus<0>::GetInstance().CallbackHandle(UART_Bus<0>::Callback_e::WRITE);
 }
 // 接收中断回调函数
@@ -31,13 +45,19 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     //UART_Bus<0>::GetInstance().CallbackHandle(UART_Bus<0>::Callback_e::READ);
 }
 
-void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
-    GetUartHandle_BusMap()[huart]->CallbackHandle(UART_Base::Callback_e::READ);
-}
-
 // 出错中断回调函数
 void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) {
     GetUartHandle_BusMap()[huart]->CallbackHandle(UART_Base::Callback_e::ERROR_CALL);
+#ifdef __ROBOMASTER_C
+    if (huart == &huart6) {
+        UARTBaseLite<2>::GetInstance().RxHandle(1);
+    }
+#endif
+#ifdef __MC_BOARD
+    if (huart == &huart5) {
+        UARTBaseLite<5>::GetInstance().RxHandle(1);
+    }
+#endif
 }
 
 #ifdef __cplusplus

@@ -30,7 +30,6 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 DMA_HandleTypeDef hdma_usart2_tx;
 DMA_HandleTypeDef hdma_usart2_rx;
-DMA_HandleTypeDef hdma_usart3_rx;
 
 /* UART5 init function */
 void MX_UART5_Init(void)
@@ -44,7 +43,7 @@ void MX_UART5_Init(void)
 
   /* USER CODE END UART5_Init 1 */
   huart5.Instance = UART5;
-  huart5.Init.BaudRate = 115200;
+  huart5.Init.BaudRate = 921600;
   huart5.Init.WordLength = UART_WORDLENGTH_8B;
   huart5.Init.StopBits = UART_STOPBITS_1;
   huart5.Init.Parity = UART_PARITY_NONE;
@@ -301,25 +300,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-    /* USART3 DMA Init */
-    /* USART3_RX Init */
-    hdma_usart3_rx.Instance = DMA1_Stream1;
-    hdma_usart3_rx.Init.Channel = DMA_CHANNEL_4;
-    hdma_usart3_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
-    hdma_usart3_rx.Init.PeriphInc = DMA_PINC_DISABLE;
-    hdma_usart3_rx.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_usart3_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    hdma_usart3_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    hdma_usart3_rx.Init.Mode = DMA_NORMAL;
-    hdma_usart3_rx.Init.Priority = DMA_PRIORITY_VERY_HIGH;
-    hdma_usart3_rx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
-    if (HAL_DMA_Init(&hdma_usart3_rx) != HAL_OK)
-    {
-      Error_Handler();
-    }
-
-    __HAL_LINKDMA(uartHandle,hdmarx,hdma_usart3_rx);
-
     /* USART3 interrupt Init */
     HAL_NVIC_SetPriority(USART3_IRQn, 4, 0);
     HAL_NVIC_EnableIRQ(USART3_IRQn);
@@ -412,9 +392,6 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
     */
     HAL_GPIO_DeInit(GPIOC, GPIO_PIN_5|GPIO_PIN_10);
 
-    /* USART3 DMA DeInit */
-    HAL_DMA_DeInit(uartHandle->hdmarx);
-
     /* USART3 interrupt Deinit */
     HAL_NVIC_DisableIRQ(USART3_IRQn);
   /* USER CODE BEGIN USART3_MspDeInit 1 */
@@ -431,9 +408,9 @@ void Enable_DoubleMemBuff(DMA_HandleTypeDef *hdma, volatile uint32_t buffer0, vo
         __HAL_DMA_DISABLE(hdma);
     }
     hdma->Instance->PAR = (uint32_t) &(USART3->DR);
-    /* memory buffer 内存缓冲�? 0 */
+    /* memory buffer 内存缓冲�? 0 */
     hdma->Instance->M0AR = buffer0;
-    /* memory buffer 2 内存缓冲�? 1 */
+    /* memory buffer 2 内存缓冲�? 1 */
     hdma->Instance->M1AR = buffer1;
     /* data length 数据长度 */
     hdma->Instance->NDTR = buffer_size;

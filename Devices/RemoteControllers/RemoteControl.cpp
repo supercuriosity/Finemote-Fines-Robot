@@ -4,7 +4,4 @@
  * All rights reserved.
  ******************************************************************************/
 
-#ifndef FINEMOTE_HASHMAP_H
-#define FINEMOTE_HASHMAP_H
-
-#endif //FINEMOTE_HASHMAP_H
+#include "RemoteControl.h"

@@ -30,7 +30,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "Interface.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,6 +59,10 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 void SystemClock_PreConfig(void);
 void SystemClock_PostConfig(void);
+
+void BSP_Setup();
+void Setup();
+void Loop();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -73,57 +77,63 @@ void SystemClock_PostConfig(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-goto usercode;
-  /* USER CODE END 1 */
+  static uint8_t firstEnter = 1;
+  if(firstEnter) {
+      /* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
+      /* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+      /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+      HAL_Init();
 
-  /* USER CODE BEGIN Init */
-  SystemClock_PreConfig();
-  /* USER CODE END Init */
+      /* USER CODE BEGIN Init */
+      SystemClock_PreConfig();
+      /* USER CODE END Init */
 
-  /* Configure the system clock */
-  SystemClock_Config();
+      /* Configure the system clock */
+      SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
-  SystemClock_PostConfig();
-  /* USER CODE END SysInit */
+      /* USER CODE BEGIN SysInit */
+      SystemClock_PostConfig();
+      /* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_CAN1_Init();
-  MX_CAN2_Init();
-  MX_SPI1_Init();
-  MX_UART5_Init();
-  MX_USART1_UART_Init();
-  MX_ADC1_Init();
-  MX_I2C1_Init();
-  MX_TIM8_Init();
-  MX_I2C3_Init();
-  MX_SPI2_Init();
-  MX_USART2_UART_Init();
-  MX_TIM3_Init();
-  MX_TIM2_Init();
-  MX_TIM7_Init();
-  MX_USART3_UART_Init();
-  MX_IWDG_Init();
-  /* USER CODE BEGIN 2 */
-  usercode:
-  Setup();
-  /* USER CODE END 2 */
+      /* Initialize all configured peripherals */
+      MX_GPIO_Init();
+      MX_DMA_Init();
+      MX_CAN1_Init();
+      MX_CAN2_Init();
+      MX_SPI1_Init();
+      MX_UART5_Init();
+      MX_USART1_UART_Init();
+      MX_ADC1_Init();
+      MX_I2C1_Init();
+      MX_TIM8_Init();
+      MX_I2C3_Init();
+      MX_SPI2_Init();
+      MX_USART2_UART_Init();
+      MX_TIM3_Init();
+      MX_TIM2_Init();
+      MX_TIM7_Init();
+      MX_USART3_UART_Init();
+      //MX_IWDG_Init();
+      /* USER CODE BEGIN 2 */
+      HAL_GPIO_WritePin(GPIOC, Power_OUT1_EN_Pin|Power_5V_EN_Pin|RS485_DIR1_Pin|LED1_Pin
+                               |GPIO_PIN_1|Power_OUT2_EN_Pin, GPIO_PIN_SET);
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
+      firstEnter = 0;
+  } else {
+      BSP_Setup();
+      Setup();
+      /* USER CODE END 2 */
 
-    /* USER CODE BEGIN 3 */
-    Loop();
+      /* Infinite loop */
+      /* USER CODE BEGIN WHILE */
+      while (1) {
+          /* USER CODE END WHILE */
+
+          /* USER CODE BEGIN 3 */
+          Loop();
+      }
   }
   /* USER CODE END 3 */
 }
@@ -177,7 +187,7 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 /**
- * @brief 将时钟源选择为内部时钟，避免Clion的Debug模式无法使能锁相�????
+ * @brief 将时钟源选择为内部时钟，避免Clion的Debug模式无法使能锁相�????
  */
 void SystemClock_PreConfig(void) {
     RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};

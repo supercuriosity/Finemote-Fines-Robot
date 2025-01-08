@@ -6,7 +6,7 @@
 #ifndef FINEMOTE_PWM_H
 #define FINEMOTE_PWM_H
 
-#include "ProjectConfig.h"
+#include "../../Interface/ProjectConfig.h"
 
 #ifdef PWM_MODULE
 

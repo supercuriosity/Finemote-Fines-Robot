@@ -8,6 +8,7 @@
 #define FINEMOTE_CONTROLBASE_H
 
 #include <utility>
+#include <array>
 #include <vector>
 
 /**
@@ -61,7 +62,7 @@ auto CreateControllers(Args&&... args) {
     return CreateControllersImpl<T<N>, M>(std::make_index_sequence<M>{}, std::forward<Args>(args)...);
 }
 
-template <int K = 1>
+template <size_t K = 1>
 class Amplifier : public ControllerBase {
     const float& Calc() final {
         output = K * (*targetPtr);

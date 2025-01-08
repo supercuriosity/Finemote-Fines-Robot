@@ -1,17 +1,7 @@
-
 /*******************************************************************************
  * Copyright (c) 2024.
  * IWIN-FINS Lab, Shanghai Jiao Tong University, Shanghai, China.
  * All rights reserved.
  ******************************************************************************/
 
-#ifndef FINEMOTE_INSTANCEMANAGER_H
-#define FINEMOTE_INSTANCEMANAGER_H
-
-#include "Chassis.h"
-#include "RadioMaster_Zorro.h"
-
-extern Chassis chassis;
-extern RadioMaster_Zorro zorro;
-
-#endif //FINEMOTE_INSTANCEMANAGER_H
+#include "HO3507.h"

@@ -23,11 +23,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern void SystemClock_Config();
-extern void SystemClock_PreConfig();
-extern void SystemClock_PostConfig();
+
+extern int main();
+
 #ifdef __cplusplus
-};
+}
 #endif
 
 class HALInit {
@@ -35,35 +35,7 @@ class HALInit {
  *  @attention 此函数需要与cube生成的保持一致
  */
     HALInit() {
-
-        HAL_Init();
-        SystemClock_PreConfig();
-        SystemClock_Config();
-        SystemClock_PostConfig();
-
-        //* USER CODE BEGIN SysInit *//
-
-        //* USER CODE END SysInit *//
-
-        //* Initialize all configured peripherals *//
-        MX_GPIO_Init();
-        MX_DMA_Init();
-        MX_CAN1_Init();
-        MX_CAN2_Init();
-        MX_SPI1_Init();
-        MX_UART5_Init();
-        MX_USART1_UART_Init();
-        MX_ADC1_Init();
-        MX_I2C1_Init();
-        MX_TIM8_Init();
-        MX_I2C3_Init();
-        MX_USART2_UART_Init();
-        MX_TIM3_Init();
-        MX_TIM2_Init();
-        MX_TIM7_Init();
-//        MX_IWDG_Init();
-        MX_USART3_UART_Init();
-        MX_SPI2_Init();
+        main();
     };
 
 public:
@@ -79,7 +51,7 @@ public:
 
 #define HAL_INIT_HANDLE
 
-extern UART_HandleTypeDef *uartHandleList[5];
+extern UART_HandleTypeDef *uartHandleList[];
 extern GPIO_TypeDef *rs485TxPortList[3];
 extern uint16_t rs485TxPinList[3];
 
@@ -100,8 +72,9 @@ extern uint16_t rs485TxPinList[3];
 
 #define TIM_Control htim7
 
-#define CAN_BUS_MAXIMUM_COUNT 2
 #define CAN_PERIPHERAL
+constexpr CAN_HandleTypeDef* CAN_Buses[] = {&hcan1, &hcan2};
+constexpr uint8_t CAN_BUS_MAXIMUM_COUNT = sizeof(CAN_Buses) / sizeof(CAN_HandleTypeDef*);
 
 #define RS485_PERIPHERAL
 
