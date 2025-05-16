@@ -17,7 +17,12 @@ Developed by **IWIN-FINS Lab** (https://iwin-fins.com/), **Fines** is a fully se
 - **Modular Design** 🧩: Manages peripheral-device-component dependencies via `ProjectConfig`, allowing flexible enabling/disabling of components.
 - **Modern and Efficient Toolchain** 🔧: Organized with CMake and compiled using Keil’s ArmClang for a balance of modern development and high-efficiency workflows.
 
+
+
+
 ## File Structure 📁
+
+
 
 │ CMakeLists.txt                # Top-level CMake configuration, manages common files and includes BSP submodules
 ├─Algorithms                    # Algorithms and utility classes for robotics tasks
