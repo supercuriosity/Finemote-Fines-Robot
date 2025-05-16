@@ -1,64 +1,97 @@
-# 文件结构
+# Fines: Advanced Steerable Wheeled Mobile Robot 🤖
 
+Developed by **IWIN-FINS Lab** (https://iwin-fins.com/), **Fines** is a fully self-developed, advanced steerable wheeled mobile robot equipped with the **Finemote** embedded framework system. Finemote is a modular, real-time embedded framework that simplifies the development of high-mobility robotics applications. It provides a layered architecture, from chip-level peripherals to user-friendly application interfaces, enabling developers to focus on logic implementation while abstracting hardware complexities.
 
-```
-│ CMakeLists.txt		整个项目的CMAKE配置，在此文件中处理公共部分的文件，并通过子模块的方式引入BSP包中提供的构建目标
-├─Algorithms			算法/工具类
-├─BSP					板级支持包，负责屏蔽开发板/芯片之间的差异。
-│  ├─MC_Board				每个目录代表一个BSP包，目录名即为BSP包名
-│  │  │ CMakeLists.txt			子目录的CMAKE配置，处理BSP包对于的文件与配置，并添加构建目标
-│  │  │ MC_Board.cpp
-│  │  │ MC_Board.h				与BSP包同名的头/源文件，负责提供上层结构调用BSP包的接口
-│  │  │ MC_Board.ioc			CUBE项目文件
-│  │  ├─Core					CUBE生成的外设配置文件
-│  │  ├─Drivers					标准库和HAL库文件
-│  │  └─MDK-ARM					MDK项目文件夹，和keil相关的配置等存储在这里
-│  └─Robomaster_C			结构同上
-├─Components			存储多个设备的集合体：组件类。组件一般在物理结构上具有一定的整体性
-├─Devices				广义上的设备类
-│  │ DeviceBase.cpp			
-│  │ DeviceBase.h			设备基类，定义了定时执行的行为
-│  ├─Controllers
-│  ├─Motors
-│  └─Sensors
-├─Interface
-│  │ InstanceManager.cpp	负责实例管理的文件，项目使用的全部对象将在此进行实例化，复杂的组件对象将使用构建器进行构建
-│  │ InstanceManager.h
-│  │ Interface.cpp			提供用户逻辑编写的接口，提供状态机，初始化，循环，定时中断几种调用方式
-│  │ Interface.h
-│  │ ProjectConfig.h		管理组件-设备-外设依赖链，并且可以手动关闭和启用组件
-├─OpenOCD				OpenOCD烧录的配置文件
-├─Services				服务类，主要涉及通信总线类
-└─Tests					测试类
-```
+## About Fines Robot 🌟
 
-# 项目组织逻辑
+![Fines Robot 1](Docs/fines1.jpg)
+![Fines Robot 2](Docs/fines2.jpg)
 
-项目采取分层逻辑，从芯片外设层次逐步封装，最终提供给用户易于调用的应用层接口。
-要使用FineMote框架，首先要了解的是Interface文件夹中的文件
-### Interface文件夹
-其中InstanceManager管理着项目使用的所有实例化对象：存储一些对象构建时需要使用的参数，进行简单对象的直接构建，复杂对象的构建器调用构建。
+**Fines** (https://www.bilibili.com/video/BV1JafrYuExw/?spm_id_from=333.1387.upload.video_card.click&vd_source=4d4eae62c343c3c7933578033a53666b)  is a high-precision, high-degree-of-freedom research platform developed by **IWIN-FINS Lab** equipped with **Finemote** framework. Equipped with a robotic arm, industrial camera, point cloud lidar, STM32 microcontroller and upper computer, Fines supports advanced research in SLAM, control learning and so on.
 
-- 对象的实例化要求声明与定义的分离，即在InstanceManager头文件中使用extern 关键字声明对象名，在InstanceManager源文件中进行具体的构建。由于Interface文件会包含InstanceManager的头文件，所以所有构建的对象将能在Interface文件中直接使用。
-- 源文件中的对象构建顺序应该遵循：先部分后整体，依赖对象先于被依赖对象的原则
+## Features 🚀
 
-Interface提供了面向用户的调用逻辑其中Setup，Loop为用户提供了类python的使用方式，对于高级用户，也可以直接使用提供的定时器中断回调函数，其调用周期为1ms
+- **Hardware Abstraction** 🛠️: Separates board-level and device logic, enabling applications on various development boards (e.g., RoboMaster C, Damo MC-Board01) without modifying application code.
+- **Simplified Device Interface** 🖥️: Encapsulates low-level MCU peripherals, providing unified APIs to shield users from complex interrupt handling.
+- **Real-Time Control** ⏱️: Supports 1ms periodic interrupts for precise motion control and sensor data processing.
+- **Modular Design** 🧩: Manages peripheral-device-component dependencies via `ProjectConfig`, allowing flexible enabling/disabling of components.
+- **Modern and Efficient Toolchain** 🔧: Organized with CMake and compiled using Keil’s ArmClang for a balance of modern development and high-efficiency workflows.
 
-ProjectConfig管理着项目的外设-设备-组件依赖关系，具体可以查看相关文档
+## File Structure 📁
 
+│ CMakeLists.txt                # Top-level CMake configuration, manages common files and includes BSP submodules
+├─Algorithms                    # Algorithms and utility classes for robotics tasks
+├─BSP                           # Board Support Packages (BSPs) to abstract hardware differences
+│  ├─MC_Board                   # Example BSP package
+│  │  │ CMakeLists.txt          # BSP-specific CMake configuration for build targets
+│  │  │ MC_Board.cpp            # Implementation of BSP interface
+│  │  │ MC_Board.h              # Header file for BSP interface
+│  │  │ MC_Board.ioc            # STM32Cube project configuration file
+│  │  ├─Core                    # Peripheral configuration files generated by STM32Cube
+│  │  ├─Drivers                 # Standard and HAL library files
+│  │  └─MDK-ARM                 # Keil MDK project configurations
+│  └─Robomaster_C               # Another BSP package with similar structure
+├─Components                    # Composite modules representing physically cohesive units
+├─Devices                       # General device classes
+│  │ DeviceBase.cpp             # Base class defining periodic execution behavior
+│  │ DeviceBase.h
+│  ├─Controllers                # Controller-related device classes
+│  ├─Motors                     # Motor-related device classes
+│  └─Sensors                    # Sensor-related device classes
+├─Interface                     # User-facing interfaces for application logic
+│  │ Interface.cpp              # Provides state machine, Setup/Loop, and timer interrupt callbacks
+│  └─ProjectConfig.h            # Manages peripheral-device-component dependencies
+├─OpenOCD                       # Configuration files for OpenOCD flashing
+├─Services                      # Service classes, primarily for communication buses
+└─Tests                         # Test classes for validation
 
-# 启动流程
+## Project Organization 🧠
 
-本框架提供基于MDK-ARM和CMake两种构建方式，两种方式的差异只存在于选择BSP包时的操作上。
+The Finemote framework adopts a layered architecture, encapsulating functionality from chip-level peripherals to user-friendly application interfaces. This design simplifies development by abstracting hardware complexities. To use Finemote, start with the `Interface` folder:
 
-对于MDK-ARM，首先选择要使用的BSP包，通过包中的keil项目文件启动整个项目。
-CMake是通过子模块的方式进行管理的，并且加载了所有的可用BSP包中的构建目标，只需选择对应的构建目标即可。
+### Interface Folder
 
-程序都从名称以startup开头的汇编文件启动，汇编文件内一般调用函数SystemInit后调用__main函数，__main函数由标准库提供，内部会执行程序执行前的准备工作，也包括各个全局变量的构造函数也会在这里被执行。
+- **InstanceManager** 📋: Manages all instantiated objects in the project. It stores parameters for object construction, handles simple object instantiation, and invokes builders for complex objects.
+  - **Instantiation Rule**: Object declarations (using `extern`) are in the `InstanceManager` header, while definitions are in the source file. Since `Interface` includes the `InstanceManager` header, all instantiated objects are accessible in `Interface`.
+  - **Construction Order**: Follows a "parts before whole" principle, ensuring dependencies are built before dependent objects.
+- **Interface** 🖱️: Provides user-friendly APIs with `Setup` and `Loop` functions, mimicking Python-style programming. Advanced users can leverage 1ms timer interrupt callbacks for precise control.
+- **ProjectConfig** ⚙️: Manages dependencies between peripherals, devices, and components. Refer to the documentation for details.
 
+## Getting Started 🚀
 
-> 由于本框架统一将初始化行为的内容放于构造函数之中，而部分设备需要使用HAL库的功能，所以需要在所有其他构造函数执行前，执行HAL库的初始化。具体实现方法是在BSP包中于包名同名的头文件中定义HALInit类，将HAL库初始化的内容复制到HALInit类的构造函数中，同时使用单例模式保证这个类不会被重复构造。在所有对HAL库有依赖的类中获取HALInit类的对象，即可保证HAL库被及时初始化。
+### Prerequisites
 
-综上，先执行HALInit的构造函数，再执行全局变量的构造函数，在HALInit的构造函数中将使能时间中断和其他中断。然后执行main函数中的Setup，死循环执行Loop函数。
+- **Software**: STM32CubeMX, Keil uVision 5 or CMake 3.20+, OpenOCD
+- **Hardware**: STM32-based development board (e.g., RoboMaster C, Damo MC-Board01)
 
-在定时中断时，将根据所有设备类注册的顺序，反向执行设备的Handle函数。
+### Build Process
+
+Finemote supports two build systems: **MDK-ARM** and **CMake**, differing only in BSP package selection.
+
+- **MDK-ARM** 🛠️:
+  1. Select a BSP package and open its Keil project file to start the project.
+- **CMake** 📦:
+  1. All BSP packages are included as submodules with predefined build targets.
+  2. Choose the desired build target to compile.
+
+### Execution Flow
+
+The program starts from an assembly file (named with a `startup` prefix), which calls `SystemInit` and then `__main` (provided by the standard library). The `__main` function handles pre-execution tasks, including invoking constructors for global variables.
+
+> **Note**: Finemote centralizes initialization in constructors. A `HALInit` singleton class (defined in the BSP package’s header) ensures HAL library initialization occurs before other constructors. This class enables interrupts (e.g., timer interrupts) and is accessed by HAL-dependent classes to guarantee proper initialization.
+
+1. `HALInit` constructor initializes the HAL library and enables interrupts ✅.
+2. Global variable constructors are executed.
+3. The `main` function runs `Setup`, followed by an infinite `Loop` 🔄.
+4. During timer interrupts, device `Handle` functions are executed in reverse registration order.
+
+Build completed! 🚀
+
+## License 📜
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact 📧
+
+- **Me**: https://haifengsun.netlify.app/
+- **Website**: https://iwin-fins.com/
