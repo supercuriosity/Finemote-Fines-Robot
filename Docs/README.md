@@ -4,8 +4,8 @@ Developed by **IWIN-FINS Lab** (https://iwin-fins.com/), **Fines** is a fully se
 
 ## About Fines Robot 🌟
 
-![Fines Robot 1](Docs/fines1.jpg)
-![Fines Robot 2](Docs/fines2.jpg)
+![Fines Robot 1](fines1.jpg)
+![Fines Robot 2](fines2.jpg)
 
 **Fines** (https://www.bilibili.com/video/BV1JafrYuExw/?spm_id_from=333.1387.upload.video_card.click&vd_source=4d4eae62c343c3c7933578033a53666b)  is a high-precision, high-degree-of-freedom research platform developed by **IWIN-FINS Lab** equipped with **Finemote** framework. Equipped with a robotic arm, industrial camera, point cloud lidar, STM32 microcontroller and upper computer, Fines supports advanced research in SLAM, control learning and so on.
 
