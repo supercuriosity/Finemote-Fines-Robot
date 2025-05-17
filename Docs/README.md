@@ -96,6 +96,10 @@ Build completed! 🚀
 
 This project is licensed under the MIT License. See the LICENSE file for details.
 
+## Declaration
+
+This project is primarily for personal debugging purposes. For the latest official version, please pull from: https://gitee.com/fins-robotics/FineMote.git
+
 ## Contact 📧
 
 - **Me**: https://haifengsun.netlify.app/
