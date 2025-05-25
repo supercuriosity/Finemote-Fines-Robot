@@ -104,3 +104,4 @@ This project is primarily for personal debugging purposes. For the latest offici
 
 - **Me**: https://haifengsun.netlify.app/
 - **Website**: https://iwin-fins.com/
+- **Instruction made by DeepWiki**:https://deepwiki.com/supercuriosity/Finemote-Fines-Robot/1-overview
