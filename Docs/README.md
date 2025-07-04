@@ -62,6 +62,8 @@ The Finemote framework adopts a layered architecture, encapsulating functionalit
 - **Interface** 🖱️: Provides user-friendly APIs with `Setup` and `Loop` functions, mimicking Python-style programming. Advanced users can leverage 1ms timer interrupt callbacks for precise control.
 - **ProjectConfig** ⚙️: Manages dependencies between peripherals, devices, and components. Refer to the documentation for details.
 
+![Fines Robot 3](concise.png)
+
 ## Getting Started 🚀
 
 ### Prerequisites
