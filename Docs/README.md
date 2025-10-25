@@ -64,6 +64,7 @@ The Finemote framework adopts a layered architecture, encapsulating functionalit
 
 ![Fines Robot 3](concise.png)
 ![Fines Robot 4](fines3.png)
+![Fines Robot 5](fines4.png)
 
 ## Getting Started 🚀
 
