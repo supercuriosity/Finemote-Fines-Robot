@@ -63,7 +63,7 @@ The Finemote framework adopts a layered architecture, encapsulating functionalit
 - **ProjectConfig** ⚙️: Manages dependencies between peripherals, devices, and components. Refer to the documentation for details.
 
 ![Fines Robot 3](concise.png)
-![Fines Robot 4](fines3.jpg)
+![Fines Robot 4](fines3.png)
 
 ## Getting Started 🚀
 
